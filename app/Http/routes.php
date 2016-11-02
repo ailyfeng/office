@@ -38,9 +38,8 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'Offi
 
 
     //公司产品
-    Route::get('product_list', 'ProductController@productList');
-    Route::get('product_add', 'ProductController@productAdd');
-    Route::post('product_storage', 'ProductController@producStorage');
+    Route::resource('product','ProductController');
+    
 
 
     Route::any('upload', 'OfficeCMSController@upload');

@@ -24,9 +24,11 @@ class ProductController extends OfficeCMSController
     /**
      * 查询产品
      */
-    public static function productList(){
+    public static function index(){
 
-        return view('OfficeCMS.Product.list');
+        $data = Product::orderBy('productId','desc')->paginate(15);
+
+        return view('OfficeCMS.Product.index',compact('data'));
     }
 
     /**
@@ -35,7 +37,7 @@ class ProductController extends OfficeCMSController
      * @access public
      * @static funciton
      */
-    public static function productAdd(){
+    public static function create(){
 
         return view('OfficeCMS.Product.add');
     }
@@ -43,11 +45,30 @@ class ProductController extends OfficeCMSController
      * 根据产品ID编辑该产品
      *
      * @param Integer $productId  产品ID
+     * @todo 没有判断ID是否存在
      */
-    public static function productEditView($productId){
-        echo __CLASS__."::".__FUNCTION__;
+    public static function edit($productId){
+        $data = Product::find($productId);
+        return view('OfficeCMS.Product.edit',compact('data'));
     }
 
+    /**
+     * 更新公司产品
+     *
+     * <p>此接口地址：post.cms/product/{productId}</p>
+     * @param Integer $productId  产品ID
+     * @todo 没有判断错误 
+     */
+    public function update($productId){
+
+        $input = Input::except("_token",'_method');
+        $res = Product::where('productId',$productId)->update($input);
+        if($res){
+            return redirect('cms/product');
+        }else{
+            return back()->with('errors','更新失败！');
+        }
+    }
     /**
      * 产品入库
      *
@@ -55,7 +76,7 @@ class ProductController extends OfficeCMSController
      * @access public
      * @static Function
      */
-    public static function producStorage(){
+    public static function store(){
         $input = Input::except("_token");
         if($input){
 
@@ -169,10 +190,26 @@ class ProductController extends OfficeCMSController
     /**
      * 删除该产品
      *
-     * @param $productId
+     * <p> delete.cms/product/{$productId}</p>
+     * @param $productId 公司产品ID
+     * @todo 没有判断ID是否存在
+     * @return json
      */
-    public static function productDelete($productId){
-        echo __CLASS__."::".__FUNCTION__;
+    public static function destroy($productId){
+        $res = Product::where("productId",$productId)->delete();
+        if($res){
+            $data = [
+                'status'=>1,
+                'msg'=>'删除成功',
+            ];
+        }else{
+            $data = [
+                'status'=>0,
+                'msg'=>'删除失败！请稍后重试',
+            ];
+
+        }
+        return $data;
     }
 
 

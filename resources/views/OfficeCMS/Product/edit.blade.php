@@ -33,8 +33,9 @@
     <!--结果集标题与导航组件 结束-->
     
     <div class="result_wrap">
-        <form action="{{url('cms/product')}}" method="post">
+        <form action="{{url('cms/product/'.$data->productId)}}" method="post">
             {{csrf_field()}}
+            <input type="hidden" name="_method" value="put">
             <table class="add_tab">
                 <tbody>
                     <tr>
@@ -70,7 +71,7 @@
                     <tr>
                         <th><i class="require">*</i>品牌(中文)：</th>
                         <td>
-                            <input type="text" class="lg" name="chineseBrand">
+                            <input type="text" class="lg" name="chineseBrand" value="{{$data->chineseBrand}}">
 
                             @if($errors->has('chineseBrand'))
                                 <i class="require"> {{$errors->first('chineseBrand')}}</i>
@@ -82,7 +83,7 @@
                     <tr>
                         <th><i class="require">*</i>品牌(英文)</th>
                         <td>
-                            <input type="text" class="lg" name="englishBrand">
+                            <input type="text" class="lg" name="englishBrand" value="{{$data->englishBrand}}">
                             @if($errors->has('englishBrand'))
                                 <i class="require"> {{$errors->first('englishBrand')}}</i>
                             @else
@@ -93,7 +94,7 @@
                     <tr>
                         <th><i class="require">*</i>品名</th>
                         <td>
-                            <input type="text" class="lg" name="brandName">
+                            <input type="text" class="lg" name="brandName" value="{{$data->brandName}}">
                             @if($errors->has('brandName'))
                                 <i class="require"> {{$errors->first('brandName')}}</i>
                             @else
@@ -104,7 +105,7 @@
                     <tr>
                         <th><i class="require">*</i>货号</th>
                         <td>
-                            <input type="text" class="mg" name="number">
+                            <input type="text" class="mg" name="number"  value="{{$data->number}}">
                             @if($errors->has('number'))
                                 <i class="require"> {{$errors->first('number')}}</i>
                             @else
@@ -115,7 +116,7 @@
                     <tr>
                         <th><i class="require">*</i>简要规格</th>
                         <td>
-                            <textarea class="mg" name="standard"></textarea>
+                            <textarea class="mg" name="standard">{{$data->standard}}</textarea>
                             @if($errors->has('standard'))
                                 <i class="require"> {{$errors->first('standard')}}</i>
                             @else
@@ -126,7 +127,7 @@
                     <tr>
                         <th>颜色：</th>
                         <td>
-                            <input type="text" name="color">
+                            <input type="text" name="color" value="{{$data->color}}">
                             @if($errors->has('color'))
                                 <i class="require"> {{$errors->first('color')}}</i>
                             @else
@@ -137,7 +138,7 @@
                     <tr>
                         <th>单位：</th>
                         <td>
-                            <input type="text" name="unit" class="sm">
+                            <input type="text" name="unit" class="sm" value="{{$data->unit}}">
                             @if($errors->has('unit'))
                                 <i class="require"> {{$errors->first('unit')}}</i>
                             @else
@@ -148,7 +149,7 @@
                     <tr>
                         <th>最小包规计算数量：</th>
                         <td>
-                            <input type="text" name="packageNum" class="sm">
+                            <input type="text" name="packageNum" class="sm" value="{{$data->packageNum}}">
                             @if($errors->has('packageNum'))
                                 <i class="require"> {{$errors->first('packageNum')}}</i>
                             @else
@@ -159,7 +160,7 @@
                     <tr>
                         <th>最小包规单位：</th>
                         <td>
-                            <input type="text" name="packageUnit" class="sm" placeholder="1">
+                            <input type="text" name="packageUnit" class="sm" placeholder="1" value="{{$data->packageUnit}}">
                             @if($errors->has('packageUnit'))
                                 <i class="require"> {{$errors->first('packageUnit')}}</i>
                             @else
@@ -185,7 +186,7 @@
                     <tr>
                         <th><i class="require">*</i>包规：</th>
                         <td>
-                            <input type="text" name="packageRules" class="sm" >
+                            <input type="text" name="packageRules" class="sm"  value="{{$data->packageRules}}">
                             @if($errors->has('packageRules'))
                                 <i class="require"> {{$errors->first('packageRules')}}</i>
                             @else
@@ -196,7 +197,7 @@
                     <tr>
                         <th>产品详细描述：</th>
                         <td>
-                            <textarea class="lg" name="description"></textarea>
+                            <textarea class="lg" name="description">{{$data->packageRules}}</textarea>
                             @if($errors->has('description'))
                                 <i class="require"> {{$errors->first('description')}}</i>
                             @else
@@ -208,7 +209,7 @@
                     <tr>
                         <th>产品效期：</th>
                         <td>
-                            <input type="text" name="expiration">
+                            <input type="text" name="expiration" value="{{$data->expiration}}">
                             @if($errors->has('expiration'))
                                 <i class="require"> {{$errors->first('expiration')}}</i>
                             @else
@@ -219,7 +220,7 @@
                     <tr>
                         <th><i class="require">*</i>进货单价：</th>
                         <td>
-                            <input type="text" class="md" name="stockPrice" placeholder="0000.00">元
+                            <input type="text" class="md" name="stockPrice" placeholder="0000.00" value="{{$data->stockPrice}}">元
                             @if($errors->has('stockPrice'))
                                 <i class="require"> {{$errors->first('stockPrice')}}</i>
                             @else
@@ -229,7 +230,7 @@
                     <tr>
                         <th><i class="require">*</i>成本单价：</th>
                         <td>
-                            <input type="text" class="md" name="costPrice" placeholder="0000.00">元
+                            <input type="text" class="md" name="costPrice" placeholder="0000.00" value="{{$data->costPrice}}">元
                             @if($errors->has('costPrice'))
                                 <i class="require"> {{$errors->first('costPrice')}}</i>
                             @else
@@ -240,7 +241,7 @@
                     <tr>
                         <th><i class="require">*</i>标准售价：</th>
                         <td>
-                            <input type="text" class="md" name="standardPrice" placeholder="0000.00">元
+                            <input type="text" class="md" name="standardPrice" placeholder="0000.00" value="{{$data->standardPrice}}">元
                             @if($errors->has('standardPrice'))
                                 <i class="require"> {{$errors->first('standardPrice')}}</i>
                             @else
@@ -251,7 +252,7 @@
                     <tr>
                         <th><i class="require">*</i>分类售价一：</th>
                         <td>
-                            <input type="text" class="md" name="oneTypePrice" placeholder="0000.00">元
+                            <input type="text" class="md" name="oneTypePrice" placeholder="0000.00" value="{{$data->oneTypePrice}}">元
                             @if($errors->has('oneTypePrice'))
                                 <i class="require"> {{$errors->first('oneTypePrice')}}</i>
                             @else
@@ -262,7 +263,7 @@
                     <tr>
                         <th><i class="require">*</i>分类售价二：</th>
                         <td>
-                            <input type="text" class="md" name="twoTypePrice" placeholder="0000.00">元
+                            <input type="text" class="md" name="twoTypePrice" placeholder="0000.00" value="{{$data->twoTypePrice}}">元
                             @if($errors->has('twoTypePrice'))
                                 <i class="require"> {{$errors->first('twoTypePrice')}}</i>
                             @else
@@ -273,7 +274,7 @@
                     <tr>
                         <th><i class="require">*</i>条形码：</th>
                         <td>
-                            <input type="text" name="barCode">
+                            <input type="text" name="barCode" value="{{$data->barCode}}">
                             <input id="barCode_upload" name="barCode_upload" type="file" multiple="true">
 
                             <script type="text/javascript">
@@ -304,7 +305,7 @@
                     <tr>
                         <th><i class="require">*</i>二维码：</th>
                         <td>
-                            <input type="text" name="qrCode">
+                            <input type="text" name="qrCode" value="{{$data->qrCode}}">
                             <input id="qrCode_upload" name="qrCode_upload" type="file" multiple="true">
 
                             <script type="text/javascript">
