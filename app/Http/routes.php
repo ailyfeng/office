@@ -26,9 +26,6 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'Offi
 	//默认首页
     Route::get('index', 'IndexController@index');
 
-    //供应商
-    Route::get('supplier_list', 'SupplierController@supplierList');
-    Route::get('supplier_add', 'SupplierController@supplierAdd');
 
     //库房管理
     Route::get('warehouse_list', 'WarehouseController@warehouseList');
@@ -36,6 +33,8 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'Offi
     Route::get('warehouse_product_list', 'WarehouseController@warehouseProductList');
     Route::get('warehouseSet_product_add', 'WarehouseController@warehouseProductAdd');
 
+    //供应商
+    Route::resource('supplier', 'SupplierController');
 
     //公司产品
     Route::resource('product','ProductController');

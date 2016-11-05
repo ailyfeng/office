@@ -24,9 +24,9 @@ class WarehouseController extends OfficeCMSController
     /**
      * 查询库房表
      */
-    public static function warehouseList(){
+    public static function index(){
 
-        return view('OfficeCMS.warehouse.list');
+        return view('OfficeCMS.warehouse.index');
     }
 
     /**
@@ -35,19 +35,20 @@ class WarehouseController extends OfficeCMSController
      * @access public
      * @static funciton
      */
-    public static function warehouseAdd(){
+    public static function create(){
 
-        return view('OfficeCMS.warehouse.add');
+        return view('OfficeCMS.warehouse.create');
     }
+
     /**
-     *该库中的所有产品
+     *编辑库房
      *
      * @access public
      * @static funciton
      */
-    public static function warehouseProductList(){
+    public static function edit(){
 
-        return view('OfficeCMS.warehouse.product_list');
+        return view('OfficeCMS.warehouse.edit');
     }
 
     /**
@@ -56,9 +57,15 @@ class WarehouseController extends OfficeCMSController
      * @access public
      * @static funciton
      */
-    public static function warehouseProductAdd(){
+    public static function update(){
 
-        return view('OfficeCMS.warehouse.product_add');
+        $input = Input::except("_token",'_method');
+        $res = Product::where('productId',$productId)->update($input);
+        if($res){
+            return redirect('cms/product');
+        }else{
+            return back()->with('errors','更新失败！');
+        }
     }
 
 

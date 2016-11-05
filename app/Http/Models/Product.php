@@ -47,4 +47,14 @@ class Product extends Model
           'oneTypePrice',
           'twoTypePrice',
         ];
+
+
+    /**
+     * 自定义类别
+     *
+     */
+    public static function type(){
+        return array('lg'=>'大类','md'=>'中类','xs'=>'小类');
+
+    }
 }

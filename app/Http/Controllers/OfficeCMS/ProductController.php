@@ -39,7 +39,9 @@ class ProductController extends OfficeCMSController
      */
     public static function create(){
 
-        return view('OfficeCMS.Product.add');
+        $type = Product::type();
+
+        return view('OfficeCMS.Product.create',compact('type'));
     }
     /**
      * 根据产品ID编辑该产品
@@ -49,7 +51,10 @@ class ProductController extends OfficeCMSController
      */
     public static function edit($productId){
         $data = Product::find($productId);
-        return view('OfficeCMS.Product.edit',compact('data'));
+
+        $type = Product::type();
+
+        return view('OfficeCMS.Product.edit',compact('data','type'));
     }
 
     /**
@@ -163,11 +168,6 @@ class ProductController extends OfficeCMSController
                 'qrCode.max'=>'二维码有误',
 
             ];
-
-        if($input['type']){
-            $input[$input['type']]=1;
-            unset($input['type']);
-        }
 
             $validator = Validator::make($input,$rules,$message);
 

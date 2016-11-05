@@ -172,10 +172,10 @@
                         <th><i class="require">*</i>类别：</th>
                         <td>
                             <select name="type">
-                                <option value="">==请选择==</option>
-                                <option value="lg">大类</option>
-                                <option value="md">中类</option>
-                                <option value="xs">小类</option>
+                                @foreach($type as $k=>$v)
+
+                                <option value="{{$k}}" @if ($k==$data->type) selected @endif>{{$v}}</option>
+                                @endforeach
                             </select>
                             @if($errors->has('type'))
                                 <i class="require"> {{$errors->first('type')}}</i>
