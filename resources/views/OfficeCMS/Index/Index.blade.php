@@ -45,7 +45,7 @@
                 <ul class="sub_menu">
                     <li><a href="{{url('cms/supplier')}}" target="main"><i class="fa fa-fw fa-chain"></i>供应商管理</a></li>
                     <li><a href="{{url('cms/product')}}" target="main"><i class="fa fa-fw fa-font"></i>公司产品</a></li>
-                    <li><a href="{{url('cms/warehouse_list')}}" target="main"><i class="fa fa-fw fa-chain"></i>库房管理</a></li>
+                    <li><a href="{{url('cms/warehouse')}}" target="main"><i class="fa fa-fw fa-chain"></i>库房管理</a></li>
                 </ul>
             </li>
         </ul>

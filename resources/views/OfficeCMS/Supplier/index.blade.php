@@ -110,7 +110,7 @@
             $.post("{{url('cms/supplier/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
                 if(data.status){
                     layer.msg("删除成功", {icon: 1});
-                    location.href = location.href;
+                    window.location.reload();
                 }else{
                     layer.msg("删除失败。。", {icon: 5});
                 }

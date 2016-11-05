@@ -28,10 +28,7 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'Offi
 
 
     //库房管理
-    Route::get('warehouse_list', 'WarehouseController@warehouseList');
-    Route::get('warehouse_add', 'WarehouseController@warehouseAdd');
-    Route::get('warehouse_product_list', 'WarehouseController@warehouseProductList');
-    Route::get('warehouseSet_product_add', 'WarehouseController@warehouseProductAdd');
+    Route::resource('warehouse', 'WarehouseController');
 
     //供应商
     Route::resource('supplier', 'SupplierController');

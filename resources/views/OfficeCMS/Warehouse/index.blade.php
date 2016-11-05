@@ -46,7 +46,7 @@
             <!--快捷导航 开始-->
             <div class="result_content">
                 <div class="short_wrap">
-                    <a href="{{url('cms/warehouse_add')}}"><i class="fa fa-plus"></i>新增库房</a>
+                    <a href="{{url('cms/warehouse/create')}}"><i class="fa fa-plus"></i>新增库房</a>
                     <a href="#" onclick="deleteAction(1)"><i class="fa fa-recycle"></i>批量库除</a>
                 <a href="javascript:void();" onclick="location.reload();"><i class="fa fa-refresh"></i>更新网页</a>
                 </div>
@@ -59,111 +59,39 @@
                 <table class="list_tab">
                     <tr>
                         <th class="tc" width="5%"><input type="checkbox" name=""></th>
-                        <th class="tc">排序</th>
-                        <th class="tc">品牌</th>
-                        <th>品名</th>
-                        <th>货号</th>
-                        <th>颜色</th>
-                        <th>发布人</th>
+                        <th class="tc">库房名称</th>
+                        <th>库房面积</th>
+                        <th>员工人数</th>
+                        <th>配送区域</th>
+                        <th>储值额度</th>
                         <th>更新时间</th>
                         <th>评论</th>
                         <th>操作</th>
                     </tr>
+                    @foreach($data as $list)
                     <tr>
-                        <td class="tc"><input type="checkbox" name="id[]" value="59"></td>
-                        <td class="tc">
-                            <input type="text" name="ord[]" value="0">
-                        </td>
-                        <td class="tc">Gambol</td>
-                        <td>
-                            <a href="#">得力 高品质纤维笔头白板笔 蓝色</a>
-                        </td>
-                        <td>df-34-34</td>
-                        <td>黑色</td>
-                        <td>admin</td>
+                        <td class="tc"><input type="checkbox" name="id[]" value="{{$list->warehouseId}}"></td>
+                        <td class="tc">{{$list->name}}-{{$list->warehouseId}}</td>
+                        <td>{{$list->area}}</td>
+                        <td>{{$list->number}}</td>
+                        <td>{{$list->distrbutionArea}}</td>
+                        <td>{{$list->quota}}</td>
                         <td>2016-09-06 21:11:01</td>
                         <td></td>
                         <td>
                             <a href="#">修改</a>
                             <a href="{{url('cms/warehouseSet_product_add')}}">添加产品</a>
-                            <a href="{{url('cms/warehouse_product_list')}}">产品列表</a>
-                            <a href="#" onclick="deleteAction(1)">删除</a>
+                            <a href="{{url('cms/warehouse')}}">产品列表</a>
+                            <a href="javascript:void();" onclick="deleteAction({{$list->warehouseId}})">删除</a>
                         </td>
                     </tr>
-
-                    <tr>
-                        <td class="tc"><input type="checkbox" name="id[]" value="59"></td>
-                        <td class="tc">
-                            <input type="text" name="ord[]" value="0">
-                        </td>
-                        <td class="tc">Gambol</td>
-                        <td>
-                            <a href="#">多功能电脑桌</a>
-                        </td>
-                        <td>df-34-34</td>
-                        <td>黑色</td>
-                        <td>admin</td>
-                        <td>2016-09-06 21:11:01</td>
-                        <td></td>
-                        <td>
-                            <a href="#">修改</a>
-                            <a href="{{url('cms/warehouseSet_product_add')}}">添加产品</a>
-                            <a href="{{url('cms/warehouse_product_list')}}">产品列表</a>
-                            <a href="#" onclick="deleteAction(1)">删除</a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="tc"><input type="checkbox" name="id[]" value="59"></td>
-                        <td class="tc">
-                            <input type="text" name="ord[]" value="0">
-                        </td>
-                        <td class="tc">Gambol</td>
-                        <td>
-                            <a href="#">5354票据夹</a>
-                        </td>
-                        <td>df-34-34</td>
-                        <td>黑色</td>
-                        <td>admin</td>
-                        <td>2016-09-06 21:11:01</td>
-                        <td></td>
-                        <td>
-                            <a href="#">修改</a>
-                            <a href="{{url('cms/warehouseSet_product_add')}}">添加产品</a>
-                            <a href="{{url('cms/warehouse_product_list')}}">产品列表</a>
-                            <a href="#" onclick="deleteAction(1)">删除</a>
-                        </td>
-                    </tr>
+                    @endforeach
                 </table>
-
-
-<div class="page_nav">
-<div>
-<a class="first" href="/wysls/index.php/Admin/Tag/index/p/1.html">第一页</a>
-<a class="prev" href="/wysls/index.php/Admin/Tag/index/p/7.html">上一页</a>
-<a class="num" href="/wysls/index.php/Admin/Tag/index/p/6.html">6</a>
-<a class="num" href="/wysls/index.php/Admin/Tag/index/p/7.html">7</a>
-<span class="current">8</span>
-<a class="num" href="/wysls/index.php/Admin/Tag/index/p/9.html">9</a>
-<a class="num" href="/wysls/index.php/Admin/Tag/index/p/10.html">10</a>
-<a class="next" href="/wysls/index.php/Admin/Tag/index/p/9.html">下一页</a>
-<a class="end" href="/wysls/index.php/Admin/Tag/index/p/11.html">最后一页</a>
-<span class="rows">11 条记录</span>
-</div>
-</div>
 
 
 
                 <div class="page_list">
-                    <ul>
-                        <li class="disabled"><a href="#">&laquo;</a></li>
-                        <li class="active"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">5</a></li>
-                        <li><a href="#">&raquo;</a></li>
-                    </ul>
+                    {{$data->links()}}
                 </div>
             </div>
         </div>
@@ -171,16 +99,25 @@
     <!--搜索结果页面 列表 结束-->
 
 
-    <script type="text/javascript">
-        function deleteAction(ids){
-            layer.confirm("请确认是否要删除选择的项？", {
-              btn: ["确认","取消"] //按钮
-            }, function(){
-              layer.msg("删除成功", {icon: 1});
-              layer.msg("删除失败。。", {icon: 5});
+<script type="text/javascript">
+    function deleteAction(id){
+        layer.confirm("请确认是否要删除选择的项？", {
+            btn: ["确认","取消"] //按钮
+        }, function(){
+
+            $.post("{{url('cms/warehouse/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
+                if(data.status){
+                    layer.msg("删除成功", {icon: 1});
+                    //location.href = location.href;
+                    window.location.reload();
+                }else{
+                    layer.msg("删除失败。。", {icon: 5});
+                }
             });
 
-        }
-    </script>
+        });
+
+    }
+</script>
 
 @endsection

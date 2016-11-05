@@ -48,7 +48,7 @@
                 <div class="short_wrap">
                     <a href="{{url('cms/product/create')}}"><i class="fa fa-plus"></i>新增产品</a>
                     <a href="#" onclick="deleteAction(1)"><i class="fa fa-recycle"></i>批量删除</a>
-                <a href="javascript:void();" onclick="location.reload();"><i class="fa fa-refresh"></i>更新网页</a>
+                <a href="javascript:void(0);" onclick="location.reload();"><i class="fa fa-refresh"></i>更新网页</a>
                 </div>
             </div>
             <!--快捷导航 结束-->
@@ -80,7 +80,7 @@
                         <td></td>
                         <td>
                             <a href="{{url('cms/product/'.$list->productId.'/edit')}}">修改</a>
-                            <a href="javascript:void();" onclick="deleteAction({{$list->productId}})">删除</a>
+                            <a href="javascript:void(0);" onclick="deleteAction({{$list->productId}})">删除</a>
                         </td>
                     </tr>
                     @endforeach
@@ -105,7 +105,7 @@
                 $.post("{{url('cms/product/')}}/"+productId,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
                     if(data.status){
                         layer.msg("删除成功", {icon: 1});
-                        location.href = location.href;
+                        window.location.reload();
                     }else{
                         layer.msg("删除失败。。", {icon: 5});
                     }
