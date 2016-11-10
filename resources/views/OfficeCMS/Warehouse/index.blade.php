@@ -64,8 +64,6 @@
                         <th>员工人数</th>
                         <th>配送区域</th>
                         <th>储值额度</th>
-                        <th>更新时间</th>
-                        <th>评论</th>
                         <th>操作</th>
                     </tr>
                     @foreach($data as $list)
@@ -76,19 +74,15 @@
                         <td>{{$list->number}}</td>
                         <td>{{$list->distrbutionArea}}</td>
                         <td>{{$list->quota}}</td>
-                        <td>2016-09-06 21:11:01</td>
-                        <td></td>
                         <td>
-                            <a href="#">修改</a>
-                            <a href="{{url('cms/warehouseSet_product_add')}}">添加产品</a>
+                            <a href="{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}">修改</a>
+                            <a href="{{url('cms/product/create')}}">添加产品</a>
                             <a href="{{url('cms/warehouse')}}">产品列表</a>
                             <a href="javascript:void();" onclick="deleteAction({{$list->warehouseId}})">删除</a>
                         </td>
                     </tr>
                     @endforeach
                 </table>
-
-
 
                 <div class="page_list">
                     {{$data->links()}}

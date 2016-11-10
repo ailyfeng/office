@@ -31,8 +31,9 @@
     <!--结果集标题与导航组件 结束-->
 
     <div class="result_wrap">
-        <form action="{{url('cms/supplier')}}" method="post">
+        <form action="{{url('cms/supplier/'.$data->supplierId)}}" method="post">
             {{csrf_field()}}
+            <input type="hidden" name="_method" value="put">
             <table class="add_tab">
                 <tbody>
                 <tr>
@@ -222,7 +223,7 @@
                 <tr>
                     <th><i class="require">*</i>合同到期日：</th>
                     <td>
-                        <input type="text" name="contractDate" class="md" placeholder="20126-12-31" value="{{$data->contractDate}}">
+                        <input type="text" name="contractDate" id="contractDate" class="laydate-icon" placeholder="0000-00-00" value="{{$data->contractDate}}">
                         @if($errors->has('contractDate'))
                             <i class="require"> {{$errors->first('contractDate')}}</i>
                         @else
@@ -277,4 +278,10 @@
         </form>
     </div>
 
+<script>
+laydate({
+  elem: '#contractDate', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+  event: 'focus' //响应事件。如果没有传入event，则按照默认的click
+});
+</script>
 @endsection

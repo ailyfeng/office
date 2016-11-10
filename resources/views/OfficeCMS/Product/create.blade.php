@@ -38,6 +38,53 @@
             <table class="add_tab">
                 <tbody>
                     <tr>
+                        <th>产品图片</th>
+                        <td>
+                            <div class="result_wrap">
+                                <ul class="list_pic">
+                                    <li id="pic_xxx"><img src="/uploads/20161028151139350.png" id="picRightShow" style="width:250px"></li>
+                                    <li id="pic_xxx"><img src="/uploads/20161028151139350.png"  id="picMiddleShow" style="width:250px"></li>
+                                    <li id="pic_xxx"><img src="/uploads/20161028151139350.png"  id="picLeftShow" style="width:250px"></li>
+                                </ul>
+                                <ul class="list_pic">
+                                    <li id="pic_xxx">
+                                        <input type="hidden" name="picRight">
+
+                                        <input id="picRight" type="file" multiple="true">
+
+                                        <script type="text/javascript">
+                                            <?php $timestamp = time();?>
+                                            $(function() {
+                                                $('#picRight').uploadify({
+                                                    'buttonText' : '图片上传',
+                                                    'formData'     : {
+                                                        'timestamp' : '<?php echo $timestamp;?>',
+                                                        '_token'     : "{{csrf_token()}}",
+                                                    },
+                                                    'swf'      : "{{asset('resources/OfficeCMS/uploadify/uploadify.swf')}}",
+                                                    'uploader' : "{{url('cms/upload')}}",
+                                                    'onUploadSuccess' : function(file, data, response) {
+                                                        $('input[name=picRight]').val(data);
+                                                        $('#picRightShow').attr('src','/'+data);
+                                                    }
+
+                                                });
+                                            });
+                                        </script>
+                                    </li>
+
+                                    <li id="pic_xxx"><input type="file" name="picMiddle">
+
+                                    </li>
+                                    <li id="pic_xxx"><input type="file" name="picLeft">
+
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>                        
+
+                    </tr>
+                    <tr>
                         <th width="130"><i class="require">*</i>供应商：</th>
                         <td>
                             <select name="supplierId">

@@ -16,7 +16,7 @@ use Validator;
  *
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
- * @package App\Http\Controllers\\OfficeCMS
+ * @package App\Http\Controllers\OfficeCMS
  * @version V0.1
  */
 class WarehouseController extends OfficeCMSController
@@ -43,31 +43,53 @@ class WarehouseController extends OfficeCMSController
     }
 
     /**
-     *编辑库房
+     * 编辑库房
      *
      * @access public
      * @static funciton
+     * @param   Integer $warehouseId库房id
      */
-    public static function edit(){
+    public static function edit($warehouseId){
 
-        return view('OfficeCMS.warehouse.edit');
+        $data = Warehouse::find($warehouseId);
+
+        return view('OfficeCMS.warehouse.edit',compact('data'));
     }
 
     /**
-     * 向该库添加产品
+     * 更新库房
      *
      * @access public
      * @static funciton
      */
-    public static function update(){
+    public static function update($warehouseId){
 
         $input = Input::except("_token",'_method');
-        $res = Product::where('productId',$productId)->update($input);
-        if($res){
-            return redirect('cms/product');
+
+
+        //验证数据
+        $validatorData = self::validatorData($input);
+
+        if($validatorData){
+
+            $res = Warehouse::where('warehouseId',$warehouseId)->update($validatorData);
+
+            if($res){
+
+                return redirect('cms/warehouse');
+
+            }else{
+
+                return back()->with('errors','更新失败！');
+
+            }
+
         }else{
-            return back()->with('errors','更新失败！');
+
+                return back()->with('errors','更新失败！');
+
         }
+        
     }
 
 
@@ -82,9 +104,52 @@ class WarehouseController extends OfficeCMSController
     public static function store(){
 
         $input = Input::except("_token",'_method');
+
         if($input){
+
+            //验证数据
+            $validatorData = self::validatorData($input);
+
+            if($validatorData){
+
+                $res = Warehouse::create($validatorData);
+                
+                if($res){
+                
+                    return redirect('cms/warehouse');
+                
+                }else{
+                
+                    return back()->with('errors','数据填充失败！请稍后重试');
+                
+                }
+
+            }else{
+
+                return back()->withErrors($validator);
+
+            }
+
+        }
+
+    }
+
+    /**
+     *  验证库房数据
+     *
+     * @param array $input
+     * @return boolean | array
+     *
+     */
+    private static function validatorData($input){
+            if(!is_array($input) && count($input)<5){
+                return false;
+            }
+
             $input['joinDate']=strtotime($input['joinDate']);
+            
             $input['contractDate']=strtotime($input['contractDate']);
+
             $rules = [
                 'name'=>'required|min:2|max:100',
                 'address'=>'required|min:2|max:100',
@@ -136,20 +201,10 @@ class WarehouseController extends OfficeCMSController
 
             $validator = Validator::make($input,$rules,$message);
 
-            if($validator->passes() ===true){
-                $res = Warehouse::create($input);
-                if($res){
-        dd($input);
-                    return redirect('cms/warehouse');
-                }else{
-                    return back()->with('errors','数据填充失败！请稍后重试');
-                }
-            }else{
-
-                return back()->withErrors($validator);
-
-            }
-        }
+            if($validator->passes() ===true)
+                return $input;
+            else
+                return false;
     }
 
     /**

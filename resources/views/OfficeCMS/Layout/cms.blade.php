@@ -9,6 +9,7 @@
     <script type="text/javascript" src="{{asset('resources/officecms/style/js/jquery.js')}}"></script>
     <script type="text/javascript" src="{{asset('resources/officecms/style/js/ch-ui.admin.js')}}"></script>
     <script type="text/javascript" src="{{asset('resources/officecms/layer/layer.js')}}"></script>
+    <script type="text/javascript" src="{{asset('resources/officecms/laydate/laydate.js')}}"></script>
 </head>
 <body>
 @yield("content")
