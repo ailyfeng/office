@@ -11,8 +11,8 @@
             <a class="btn btn-primary radius" data-title="添加产品" _href="{{url('cms/product/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
                 <i class="Hui-iconfont">&#xe600;</i> 添加产品
             </a>
-
-            </span> <span class="r">共有数据：<strong>54</strong> 条</span> </div>
+            </span> <span class="r">共有数据：<strong>54</strong> 条</span>
+    </div>
     <table class="table table-border table-striped table-bordered table-hover table-bg">
         <thead>
             <tr class="text-c">
@@ -21,12 +21,11 @@
                 <th >品名</th>
                 <th>货号</th>
                 <th >颜色</th>
-                <th >更新时间</th>/
+                <th >更新时间</th>
                 <th >操作</th>
             </tr>
         </thead>
         <tbody>
-
             @foreach($data as $list)
             <tr class="text-c">
                 <td><input type="checkbox" value="{{$list->productId}}" checked="checked" name="productId"></td>
