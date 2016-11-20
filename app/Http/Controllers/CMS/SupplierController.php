@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\CMS;
 
-use App\Http\Models\supplier;
+use App\Http\Models\Supplier;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
