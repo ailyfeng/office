@@ -1,37 +1,34 @@
 <?php
 
-
 namespace App\Http\Controllers\OfficeCMS;
 
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Input;
 
 /**
- * 后台首页
+ * 用户管理
  *
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
  * @package App\Http\Controllers\OfficeCMS
  * @version V0.1
  */
-class IndexController extends OfficeCMSController
+class LoginController extends OfficeCMSController
 {
     /**
-     * 后台默认首页
+     *  用户登陆
      *
      * @access public
      * @static function
-     *
      */
-    public static function index(){
-        return view('OfficeCMS.Index.index');
-    }
-
-
-    public function info()
+    public static function login()
     {
-        return view('admin.info');
-    }
 
+        if ($input = Input::all()) {
+            return redirect('admin/index');
+        }
+        return view('OfficeCMS.Login.login');
+    }
 }
