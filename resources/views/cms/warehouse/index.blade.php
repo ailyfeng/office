@@ -83,7 +83,6 @@ function actionEdit(title,url,id,w,h){
 }
 /*删除*/
 function actionDelete(obj,id){
-    alert(typeof(id));
         var tag = false;
             layer.confirm("请确认是否要删除选择的项？", {
               btn: ["确认","取消"] //按钮
@@ -98,7 +97,7 @@ function actionDelete(obj,id){
                 tag = true;
             }
 
-                $.post("{{url('cms/product/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
+                $.post("{{url('cms/warehouse/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
                     layer.closeAll('loading');
                     if(data.status){
                         layer.msg("删除成功", {icon: 1,time:1000});

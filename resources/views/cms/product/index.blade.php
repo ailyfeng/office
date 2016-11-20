@@ -81,7 +81,6 @@ function actionEdit(title,url,id,w,h){
 }
 /*删除*/
 function actionDelete(obj,id){
-    alert(typeof(id));
         var tag = false;
             layer.confirm("请确认是否要删除选择的项？", {
               btn: ["确认","取消"] //按钮
