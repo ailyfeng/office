@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\OA;
+namespace App\Http\Controllers\CMS;
 
 use App\Http\Models\Warehouse;
 use Illuminate\Http\Request;
@@ -16,10 +16,10 @@ use Validator;
  *
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
- * @package App\Http\Controllers\OA
+ * @package App\Http\Controllers\CMS
  * @version V.D.0.1
  */
-class WarehouseController extends OAController
+class WarehouseController extends CMSController
 {
     /**
      * 查询库房表

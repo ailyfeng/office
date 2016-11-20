@@ -24,7 +24,6 @@
         </div>
         <div class="result_content">
             <div class="short_wrap">
-                <a href="#"><i class="fa fa-plus"></i>新增文章</a>
                 <a href="#"><i class="fa fa-recycle"></i>批量删除</a>
                 <a href="javascript:void();" onclick="location.reload();"><i class="fa fa-refresh"></i>更新网页</a>
             </div>
@@ -42,7 +41,7 @@
                         <td>
                             <div class="result_wrap">
                                 <ul class="list_pic">
-                                    <li id="pic_xxx"><img src="/uploads/20161028151139350.png" id="picRightShow" style="width:250px"></li>
+                                    <li id="pic_xxx"><img src="/uploads/20161028151139350.png" id="picRightShow" style="width:250px" class="radius"></li>
                                     <li id="pic_xxx"><img src="/uploads/20161028151139350.png"  id="picMiddleShow" style="width:250px"></li>
                                     <li id="pic_xxx"><img src="/uploads/20161028151139350.png"  id="picLeftShow" style="width:250px"></li>
                                 </ul>
@@ -56,7 +55,7 @@
                                             <?php $timestamp = time();?>
                                             $(function() {
                                                 $('#picRight').uploadify({
-                                                    'buttonText' : '图片上传',
+                                                    'buttonText' : '上传正面图',
                                                     'formData'     : {
                                                         'timestamp' : '<?php echo $timestamp;?>',
                                                         '_token'     : "{{csrf_token()}}",
@@ -73,10 +72,57 @@
                                         </script>
                                     </li>
 
-                                    <li id="pic_xxx"><input type="file" name="picMiddle">
+                                    <li id="pic_xxx">
+                                        <input type="hidden" name="picMiddle">
+
+                                        <input id="picMiddle" type="file" multiple="true">
+
+                                        <script type="text/javascript">
+                                            <?php $timestamp = time();?>
+                                            $(function() {
+                                                $('#picMiddle').uploadify({
+                                                    'buttonText' : '上传侧面图',
+                                                    'formData'     : {
+                                                        'timestamp' : '<?php echo $timestamp;?>',
+                                                        '_token'     : "{{csrf_token()}}",
+                                                    },
+                                                    'swf'      : "{{asset('resources/OfficeCMS/uploadify/uploadify.swf')}}",
+                                                    'uploader' : "{{url('cms/upload')}}",
+                                                    'onUploadSuccess' : function(file, data, response) {
+                                                        $('input[name=picMiddle]').val(data);
+                                                        $('#picMiddleShow').attr('src','/'+data);
+                                                    }
+
+                                                });
+                                            });
+                                        </script>
 
                                     </li>
-                                    <li id="pic_xxx"><input type="file" name="picLeft">
+                                    <li id="pic_xxx">
+
+                                        <input type="hidden" name="picLeft">
+
+                                        <input id="picLeft" type="file" multiple="true">
+
+                                        <script type="text/javascript">
+                                            <?php $timestamp = time();?>
+                                            $(function() {
+                                                $('#picLeft').uploadify({
+                                                    'buttonText' : '上传侧面图',
+                                                    'formData'     : {
+                                                        'timestamp' : '<?php echo $timestamp;?>',
+                                                        '_token'     : "{{csrf_token()}}",
+                                                    },
+                                                    'swf'      : "{{asset('resources/OfficeCMS/uploadify/uploadify.swf')}}",
+                                                    'uploader' : "{{url('cms/upload')}}",
+                                                    'onUploadSuccess' : function(file, data, response) {
+                                                        $('input[name=picLeft]').val(data);
+                                                        $('#picLeftShow').attr('src','/'+data);
+                                                    }
+
+                                                });
+                                            });
+                                        </script>
 
                                     </li>
                                 </ul>

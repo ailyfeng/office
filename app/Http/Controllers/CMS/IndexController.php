@@ -24,7 +24,7 @@ class IndexController extends CMSController
      *
      */
     public static function index(){
-        return view('cms.Index.index');
+        return view('cms.index.index');
     }
 
 
