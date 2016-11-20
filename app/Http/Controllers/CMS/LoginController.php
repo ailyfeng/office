@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\OfficeCMS;
+namespace App\Http\Controllers\CMS;
 
 use Illuminate\Http\Request;
 
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Input;
  * @package App\Http\Controllers\OfficeCMS
  * @version V0.1
  */
-class LoginController extends OfficeCMSController
+class LoginController extends CMSController
 {
     /**
      *  用户登陆

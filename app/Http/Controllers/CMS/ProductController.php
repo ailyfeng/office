@@ -28,7 +28,7 @@ class ProductController extends CMSController
 
         $data = Product::orderBy('productId','desc')->paginate(15);
 
-        return view('cms.Product.index',compact('data'));
+        return view('cms.product.index',compact('data'));
     }
 
     /**
@@ -41,7 +41,7 @@ class ProductController extends CMSController
 
         $type = Product::type();
 
-        return view('cms.Product.create',compact('type'));
+        return view('cms.product.create',compact('type'));
     }
     /**
      * 根据产品ID编辑该产品
@@ -54,7 +54,7 @@ class ProductController extends CMSController
 
         $type = Product::type();
 
-        return view('cms.Product.edit',compact('data','type'));
+        return view('cms.product.edit',compact('data','type'));
     }
 
     /**
