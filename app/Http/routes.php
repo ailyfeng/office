@@ -47,6 +47,7 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cmsd','namespace'=>'Off
 Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'CMS'], function () {
 
     //默认首页
+    Route::get('/', 'IndexController@index');
     Route::resource('index', 'IndexController');
 
     //库房管理
