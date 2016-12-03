@@ -21,7 +21,7 @@ Route::get('user/login', 'OfficeCMS\LoginController@login');
 /**
  * 内容管理系统路由
  */
-Route::group(['middleware' => ['admin.login'],'prefix'=>'cmsd','namespace'=>'OfficeCMS'], function () {
+Route::group(['middleware' => ['admin.login'],'prefix'=>'cmss','namespace'=>'OfficeCMS'], function () {
 
 	//默认首页
     Route::get('index', 'IndexController@index');
@@ -60,6 +60,7 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'CMS'
     Route::resource('product','ProductController');
     
     //上传文件
-    Route::any('upload', 'OfficeCMSController@upload');
+    Route::resource('upload', 'UploadController');
+
 
 });

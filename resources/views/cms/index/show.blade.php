@@ -1,7 +1,7 @@
 @extends('cms.layouts.admin')
 @section('content')
 <div class="page-container">
-	<p class="f-20 text-success">欢迎使用H-ui.admin <span class="f-14">v2.4</span>后台模版！</p>
+	<p class="f-20 text-success">成都欧飞仕科技贸易有限公司 <span class="f-14">v2.4</span>后台模版！</p>
 	<p>登录次数：18 </p>
 	<p>上次登录IP：222.35.131.79.1  上次登录时间：2014-6-14 11:19:55</p>
 	<table class="table table-border table-bordered table-bg">
@@ -78,7 +78,7 @@
 			</tr>
 			<tr>
 				<td>服务器域名</td>
-				<td>www.h-ui.net</td>
+				<td>www.office.com</td>
 			</tr>
 			<tr>
 				<td>服务器端口 </td>
@@ -145,7 +145,7 @@
 				<td>3.29M</td>
 			</tr>
 			<tr>
-				<td>Asp.net所占内存 </td>
+				<td>PHP所占内存 </td>
 				<td>51.46M</td>
 			</tr>
 			<tr>
@@ -166,8 +166,8 @@
 <footer class="footer mt-20">
 	<div class="container">
 		<p>感谢jQuery、layer、laypage、Validform、UEditor、My97DatePicker、iconfont、Datatables、WebUploaded、icheck、highcharts、bootstrap-Switch<br>
-			Copyright &copy;2015 H-ui.admin v2.3 All Rights Reserved.<br>
-			本后台系统由<a href="#" target="_blank" title="H-ui前端框架">H-ui前端框架</a>提供前端技术支持</p>
+			Copyright &copy;2015 成都欧飞仕科技贸易有限公司 v.d.1.0 All Rights Reserved.<br>
+			本后台系统由<a href="#" target="_blank" >成都欧飞仕科技贸易有限公司</a>技术部技术支持</p>
 	</div>
 </footer>
 @endsection

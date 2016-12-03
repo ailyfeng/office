@@ -91,26 +91,26 @@ class ProductController extends CMSController
                 'englishBrand'=>'required|min:5|max:100',
                 'brandName'=>'required|min:2|max:30',
                 'number'=>'required|max:30',
-                'standard'=>'required|max:250',
+                // 'standard'=>'required|max:250',
                 'color'=>'max:30',
                 'unit'=>'max:30',
                 'packageNum'=>'max:30',
-                'type'=>'in:lg,md,xs',
+                // 'type'=>'in:lg,md,xs',
                 'packageRules'=>'max:30',
-                'description'=>'required',
+                // 'description'=>'required',
                 'expiration'=>'max:30',
-                'stockPrice' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
+                'stockPrice' => 'required|numeric',
 
-                'costPrice' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
+                'costPrice' => 'required|numeric',
 
-                'standardPrice' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
+                'standardPrice' => 'required|numeric',
 
-                'oneTypePrice' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
+                // 'oneTypePrice' => 'required|numeric',
 
-                'twoTypePrice' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
+                // 'twoTypePrice' => 'required|numeric',
 
-                'barCode'=>'required|min:10|max:30',
-                'qrCode'=>'required|min:10|max:30',
+                // 'barCode'=>'required|min:10|max:30',
+                // 'qrCode'=>'required|min:10|max:30',
             ];
 
             $message = [
@@ -132,40 +132,40 @@ class ProductController extends CMSController
                 'number.required'=>'货号填写不正确',
                 'number.max'=>'货号最多30个字符',
 
-                'standard.required'=>'简要规格填写不正确',
-                'standard.max'=>'简要规格最多250个字符',
+                // 'standard.required'=>'简要规格填写不正确',
+                // 'standard.max'=>'简要规格最多250个字符',
 
                 'color.max'=>'颜色最多30个字符',
                 'unit.max'=>'单位最多30个字符',
                 'packageNum.max'=>'最小包规计算数量最多30个字符',
-                'type.in'=>'类型选择不正确',
+                // 'type.in'=>'类型选择不正确',
                 'packageRules.max'=>'包规最多30个字符',
-                'description.required'=>'产品详细描述必须填写',
+                // 'description.required'=>'产品详细描述必须填写',
                 'expiration.max'=>'产品效期最多30个字符',
 
                 'stockPrice.required' => '进货单价有误',
-                'stockPrice.regex' => '进货单价有误',
+                'stockPrice.numeric' => '进货单价有误',
 
                 'costPrice.required' => '成本单价有误',
-                'costPrice.regex' => '成本单价有误',
+                'costPrice.numeric' => '成本单价有误',
 
                 'standardPrice.required' => '标准售价有误',
-                'standardPrice.regex' => '标准售价有误',
+                'standardPrice.numeric' => '标准售价有误',
 
-                'oneTypePrice.required' => '分类售价一有误',
-                'oneTypePrice.regex' => '分类售价一有误',
+                // 'oneTypePrice.required' => '分类售价一有误',
+                // 'oneTypePrice.numeric' => '分类售价一有误',
 
-                'twoTypePrice.required' => '分类售价二有误',
-                'twoTypePrice.regex' => '分类售价二有误',
+                // 'twoTypePrice.required' => '分类售价二有误',
+                // 'twoTypePrice.numeric' => '分类售价二有误',
 
 
-                'barCode.required'=>'条形码有误',
-                'barCode.min'=>'条形码有误',
-                'barCode.max'=>'条形码有误',
+                // 'barCode.required'=>'条形码有误',
+                // 'barCode.min'=>'条形码有误',
+                // 'barCode.max'=>'条形码有误',
 
-                'qrCode.required'=>'二维码有误',
-                'qrCode.min'=>'二维码有误',
-                'qrCode.max'=>'二维码有误',
+                // 'qrCode.required'=>'二维码有误',
+                // 'qrCode.min'=>'二维码有误',
+                // 'qrCode.max'=>'二维码有误',
 
             ];
 
@@ -174,14 +174,12 @@ class ProductController extends CMSController
             if($validator->passes() ===true){
                 $res = Product::create($input);
                 if($res){
-//                    dd($res);
-                    return redirect('cms/product_list');
+                     return redirect('cms/product');
                 }else{
                     return back()->with('errors','数据填充失败！请稍后重试');
                 }
             }else{
-
-                return back()->withErrors($validator);
+                return back()->withErrors($validator)->with($input);
 
             }
         }
