@@ -4,7 +4,11 @@
     <script src="{{asset('resources/OfficeCMS/uploadify/jquery.uploadify.min.js')}}" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="{{asset('resources/OfficeCMS/uploadify/uploadify.css')}}">
 
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span class="c-gray en">&gt;</span> 公司产品 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>
+    <a  href="{{url('cms/index/info')}}">首页</a>
+    <span class="c-gray en">&gt;</span> 
+    <a  href="{{url('cms/product')}}">公司产品管理</a> <span class="c-gray en">&gt;</span> 
+    添加公司产品 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
     <article class="page-container">
         <form action="{{url('cms/product')}}" method="post" class="form form-horizontal" id="formProductAdd">
@@ -118,9 +122,16 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">简要规格：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                            <textarea class="textarea radius" name="standard"></textarea>
+                    @if($errors->has('standard'))
+                    <textarea class="textarea radius error" name="standard" placeholder="退换货要求描述" aria-required="true" aria-invalid="true"></textarea>
+                        <label id="account-error" class="error" for="standard">{{$errors->first('standard')}}</label>
+                    @else
+                        <textarea class="textarea radius" name="standard" onKeyUp="textarealength(this,500)"></textarea>
+                        <p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+                    @endif
                 </div>
             </div>
+
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">颜色：</label>
                 <div class="formControls col-xs-8 col-sm-9">
@@ -176,9 +187,23 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">产品详细描述：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                            <textarea class="textarea radius" name="description" placeholder="详细规格和对该产品使用方法的说明,以及对该产品的描述"></textarea>
+                            <textarea class="textarea radius" name="description" ></textarea>
                 </div>
             </div>
+
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">产品详细描述：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    @if($errors->has('description'))
+                    <textarea class="textarea radius error" name="description" aria-required="true" aria-invalid="true"></textarea>
+                        <label id="account-error" class="error" for="description">{{$errors->first('description')}}</label>
+                    @else
+                        <textarea class="textarea radius" name="description" placeholder="详细规格和对该产品使用方法的说明,以及对该产品的描述" onKeyUp="textarealength(this,500)"></textarea>
+                        <p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+                    @endif
+                </div>
+            </div>
+
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">产品效期：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
@@ -272,6 +297,7 @@
         </form>
     </article>
 </div>
+<script type="text/javascript" src="{{asset('resources/cms/static/h-ui/js/H-ui.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/icheck/jquery.icheck.min.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/jquery.validate.min.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/validate-methods.js')}}"></script> 
