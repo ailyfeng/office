@@ -41,7 +41,4 @@ class Supplier extends Model
         return array('0'=>'厂家','1'=>'总代','2'=>'经销商');
     }
 
-    public function hasManyPays(){
-        return $this->hasMany(new SupplierContact, 'supplierId', 'supplierId');
-    }
 }

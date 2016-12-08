@@ -36,7 +36,7 @@ class SupplierController extends CMSController
 
         $isBoolean = Supplier::isBoolean();
 
-       $data = Supplier::where('close','!=',1)->with()->orderBy('supplierId','desc')->paginate(15);
+       $data = Supplier::where('close','!=',1)->orderBy('supplierId','desc')->paginate(15);
 
         // $Supplier = new Supplier();
 
@@ -51,7 +51,7 @@ class SupplierController extends CMSController
 
         //              })->paginate(15);
  
-dd($data);
+// dd($data);
 
         return view('cms.supplier.index',compact('data','isBoolean','selectSupplier','id','name'));
     }
