@@ -11,7 +11,6 @@ use App\Http\Requests;
  *
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
- * @package App\Http\Controllers\CMSController
  * @version V0.1
  */
 class IndexController extends CMSController

@@ -13,8 +13,8 @@
             <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
                 <i class="Hui-iconfont">&#xe6e2;</i> 批量删除
             </a>
-            <a class="btn btn-primary radius" data-title="添加产品" _href="{{url('cms/product/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
-                <i class="Hui-iconfont">&#xe600;</i> 添加产品
+            <a class="btn btn-primary radius" data-title="添加公司产品" _href="{{url('cms/product/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+                <i class="Hui-iconfont">&#xe600;</i> 添加公司产品 
             </a>
             </span> <span class="r">共有数据：<strong>54</strong> 条</span>
     </div>
@@ -48,7 +48,7 @@
             @endforeach
         </tbody>
     </table>
-                <div class="page_list">
+                <div class="page_list f-r">
                     {{$data->links()}}
                 </div>
 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CMS;
 
+use App\Http\Models\Supplier;
 use App\Http\Models\Product;
 use Illuminate\Http\Request;
 
@@ -14,10 +15,9 @@ use Validator;
 /**
  * 公司产品
  *
- * @copyright 成都欧飞仕科技贸易有限公司
- * @author Kenn
- * @package App\Http\Controllers\CMS
- * @version V.d.0.1
+ * @copyright   成都欧飞仕科技贸易有限公司
+ * @author      Kenn
+ * @version     V.d.0.1
  */
 class ProductController extends CMSController
 {
@@ -26,10 +26,11 @@ class ProductController extends CMSController
      */
     public static function index(){
 
-        $data = Product::orderBy('productId','desc')->paginate(15);
+        $data = Product::where('close','!=',1)->orderBy('productId','desc')->paginate(15);
 
         return view('cms.product.index',compact('data'));
     }
+
 
     /**
      * 添加公司产品
@@ -37,11 +38,24 @@ class ProductController extends CMSController
      * @access public
      * @static funciton
      */
-    public static function create(){
+    public static function create($supplierId=false){
 
         $type = Product::type();
 
-        return view('cms.product.create',compact('type'));
+        $supplierId = intval($supplierId);
+
+        if($supplierId>0){
+
+            $data = Supplier::find($supplierId,['fullName','supplierId'])->toArray();
+
+        }else{
+
+            $data = ['fullName'=>false,'supplierId'=>false];
+
+        }
+
+
+        return view('cms.product.create',compact('type','data'));
     }
     /**
      * 根据产品ID编辑该产品
@@ -50,6 +64,7 @@ class ProductController extends CMSController
      * @todo 没有判断ID是否存在
      */
     public static function edit($productId){
+
         $data = Product::find($productId);
 
         $type = Product::type();
@@ -194,7 +209,7 @@ class ProductController extends CMSController
      * @return json
      */
     public static function destroy($productId){
-        $res = Product::where("productId",$productId)->delete();
+        $res = Product::where("productId",$productId)->update(['close'=>1]);
         if($res){
             $data = [
                 'status'=>1,

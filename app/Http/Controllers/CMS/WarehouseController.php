@@ -14,10 +14,9 @@ use Validator;
 /**
  * 库房管理表
  *
- * @copyright 成都欧飞仕科技贸易有限公司
- * @author Kenn
- * @package App\Http\Controllers\CMS
- * @version V.D.0.1
+ * @copyright   成都欧飞仕科技贸易有限公司
+ * @author      Kenn
+ * @version     V.D.1.0
  */
 class WarehouseController extends CMSController
 {
@@ -26,7 +25,7 @@ class WarehouseController extends CMSController
      */
     public static function index(){
 
-        $data = Warehouse::orderBy('warehouseId','desc')->paginate(15);
+        $data = Warehouse::where('close','!=',1)->orderBy('warehouseId','desc')->paginate(15);
 
         return view('cms.warehouse.index',compact('data'));
     }
@@ -36,9 +35,10 @@ class WarehouseController extends CMSController
      *
      * @access public
      * @static funciton
+     * @todo 库房中可以选择配送区域，而不是填写
      */
     public static function create(){
-
+        
         return view('cms.warehouse.create');
     }
 
@@ -66,27 +66,25 @@ class WarehouseController extends CMSController
 
         $input = Input::except("_token",'_method');
 
-
         //验证数据
         $validatorData = self::validatorData($input);
 
-        if($validatorData){
+        if($validatorData['validator']->passes()===true){
 
-            $res = Warehouse::where('warehouseId',$warehouseId)->update($validatorData);
+            $res = Warehouse::where('warehouseId',$warehouseId)->update($validatorData['input']);
 
             if($res){
 
-                return redirect('cms/warehouse');
+                return redirect(url('cms/alert',array('mes'=>'保存成功')));
 
             }else{
 
-                return back()->with('errors','更新失败！');
+                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/warehouse/'.$warehouseId.'/edit')))));
 
             }
 
         }else{
-
-                return back()->with('errors','更新失败！');
+                return back()->withErrors($validatorData['validator']);
 
         }
         
@@ -110,9 +108,9 @@ class WarehouseController extends CMSController
             //验证数据
             $validatorData = self::validatorData($input);
 
-            if($validatorData){
+            if($validatorData['validator']->passes()===true){
 
-                $res = Warehouse::create($validatorData);
+                $res = Warehouse::create($validatorData['input']);
                 
                 if($res){
                 
@@ -126,7 +124,7 @@ class WarehouseController extends CMSController
 
             }else{
 
-                return back()->withErrors($validator);
+                return back()->withErrors($validatorData['validator']);
 
             }
 
@@ -146,65 +144,67 @@ class WarehouseController extends CMSController
                 return false;
             }
 
-            $input['joinDate']=strtotime($input['joinDate']);
-            
-            $input['contractDate']=strtotime($input['contractDate']);
+            $input['joinDate'] = strtotime($input['joinDate']);
+            $input['contractDate'] = strtotime($input['contractDate']);
+
 
             $rules = [
-                'name'=>'required|min:2|max:100',
-                'address'=>'required|min:2|max:100',
-                'area' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
-                'number'=>'numeric',
-                'distrbutionArea'=>'required|min:2|max:100',
-                'distrbutionTools'=>'required|min:2|max:100',
-                'quota' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
-                'credit' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
+                'name'=>'required|min:5|max:100',
+                'address'=>'required|min:5|max:100',
+                'area'=>'required|numeric',
+                'number'=>'required|numeric',
+                'distrbutionArea'=>'required|min:5|max:250',
+                'distrbutionTools'=>'required|min:5|max:250',
+                'quota'=>'required|numeric',
+                'credit'=>'required|numeric',
+                'joinDate'=>'required|numeric',
+                'contractDate'=>'required|numeric'
 
-                //'joinDate'=>'date',
-                //'contractDate'=>'date',
             ];
 
             $message = [
                 'name.required'=>'请填写库房名称',
-                'name.min'=>'库房名称最少2个字符',
+                'name.min'=>'库房名称最少5个字符',
                 'name.max'=>'库房名称最多100个字符',
 
                 'address.required'=>'请填写库房地址',
                 'address.min'=>'库房地址最少2个字符',
-                'address.max'=>'库房地址最多100个字符',
+                'address.max'=>'库房地址最多30个字符',
 
-                'area.required' => '请填写库房面积',
-                'area.regex' => '库房面积保留2位小数',
+                'area.required'=>'请填写库房面积',
+                'area.numeric'=>'库房面积填写有误',
 
-                'number.numeric'=>'请填写员工人数',
+                'number.required'=>'请填写员工人数',
+                'number.numeric'=>'员工人数填写有误',
 
                 'distrbutionArea.required'=>'请填写配送区域',
-                'distrbutionArea.min'=>'配送区域最少4个字符',
-                'distrbutionArea.max'=>'配送区域最多100个字符',
+                'distrbutionArea.min'=>'配送区域最少5个字符',
+                'distrbutionArea.max'=>'配送区域最多250个字符',
 
                 'distrbutionTools.required'=>'请填写配送工具情况',
-                'distrbutionTools.min'=>'配送工具情况最少4个字符',
+                'distrbutionTools.min'=>'配送工具情况最少5个字符',
                 'distrbutionTools.max'=>'配送工具情况最多100个字符',
 
-                'quota.required' => '请填写储值额度',
-                'quota.regex' => '储值额度保留2位小数',
+                'quota.required'=>'请填写授信额度',
+                'quota.numeric'=>'授信额度填写有误',
 
-                'credit.required' => '请填写授信额度',
-                'credit.regex' => '授信额度保留2位小数',
+                'credit.required'=>'请填写储值额度',
+                'credit.numeric'=>'储值额度填写有误',
 
-                //'joinDate.date'=>'请填写加盟日期',
-                //'contractDate.date'=>'请填写合同到期日',
+                'joinDate.required'=>'请填写加盟日期',
+                'joinDate.numeric'=>'加盟日期填写有误',
 
-
+                'contractDate.required'=>'请填写合同到期日',
+                'contractDate.numeric'=>'合同到期日填写有误'
 
             ];
 
             $validator = Validator::make($input,$rules,$message);
 
-            if($validator->passes() ===true)
-                return $input;
-            else
-                return false;
+
+            $data = array('validator'=>$validator,'input'=>$input);
+
+            return $data ;
     }
 
     /**
@@ -218,7 +218,7 @@ class WarehouseController extends CMSController
      * </code>
      */
     public static function destroy($warehouseId){
-        $res = Warehouse::where("warehouseId",$warehouseId)->delete();
+        $res = Warehouse::where("warehouseId",$warehouseId)->update(['close'=>1]);
         if($res){
             $data = [
                 'status'=>1,

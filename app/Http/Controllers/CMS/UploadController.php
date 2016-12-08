@@ -9,10 +9,9 @@ use Illuminate\Support\Facades\Input;
 /**
  * 文件上传  CMS中模块都要继承它
  *
- * @copyright 成都欧飞仕科技贸易有限公司
- * @author Kenn
- * @package App\Http\Controllers\CMS
- * @version V.d.0.1
+ * @copyright   成都欧飞仕科技贸易有限公司
+ * @author      Kenn
+ * @version     V.d.0.1
  */
 class UploadController extends CMSController
 {

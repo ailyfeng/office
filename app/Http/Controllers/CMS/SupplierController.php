@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\CMS;
 
 use App\Http\Models\Supplier;
+use App\Http\Models\SupplierContact;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use phpDocumentor\Reflection\Types\Integer;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\DB;
 use Validator;
 
 
@@ -16,21 +18,44 @@ use Validator;
  *
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
- * @package App\Http\Controllers\CMS
- * @version V.D.0.1
+ * @version V.D.1.0
  */
 class SupplierController extends CMSController
 {
     /**
      * 查询公司产品供应商
+     * 
+     * @todo 如果没有数据会报错
      */
     public static function index(){
 
-        $data = Supplier::orderBy('supplierId','desc')->paginate(15);
+        //产品选择供应商时要用到一下参数
+        $selectSupplier = Input::get('selectSupplier')=='selectSupplier'?true:false;
+        $id = Input::get('id');
+        $name = Input::get('name');
+
         $isBoolean = Supplier::isBoolean();
 
-        return view('cms.supplier.index',compact('data','isBoolean'));
+       $data = Supplier::where('close','!=',1)->with()->orderBy('supplierId','desc')->paginate(15);
+
+        // $Supplier = new Supplier();
+
+        // $Supplier->where('close','!=',1);
+
+        // $Supplier->orderBy('supplierId','desc');
+
+        //  $data = $Supplier->leftJoin("supplier_contact", function ($join){  
+                      
+        //                $join->on("supplier.supplierId", "=", "supplier_contact.supplierId");
+        //                // $join->get(['supplier.*','supplier_contact.name'])
+
+        //              })->paginate(15);
+ 
+dd($data);
+
+        return view('cms.supplier.index',compact('data','isBoolean','selectSupplier','id','name'));
     }
+
 
     /**
      * 添加公司产品供应商
@@ -45,6 +70,7 @@ class SupplierController extends CMSController
 
         return view('cms.supplier.create',compact('isBoolean','type'));
     }
+
     /**
      * 根据供应商ID编辑该供应商
      *
@@ -57,6 +83,7 @@ class SupplierController extends CMSController
         $type = Supplier::type();
 
         $data->type = json_decode(unserialize($data->type),true);
+
         return view('cms.supplier.edit',compact('data','isBoolean','type'));
     }
 
@@ -68,31 +95,69 @@ class SupplierController extends CMSController
      * @static Function
      */
     public static function store(){
+
         $input = Input::except("_token");
+
         if($input){
+
+            $validator = self::validatorData($input);
+
+            if($validator['validator']->passes() ===true){
+                
+                $res = Supplier::create($validator['input']);
+
+                if($res){
+                    
+                    return redirect('cms/supplier');
+                
+                }else{
+
+                    return back()->with('errors','数据填充失败！请稍后重试');
+                }
+            }else{
+
+                return back()->withErrors($validator['validator']);
+
+            }
+        }
+    }
+
+    /**
+     *  验证供应商入库时的参数
+     *  
+     *  @param Array $input 供应商入库时的参数
+     *  @static Function
+     *  @return Array | false
+     */
+    public static function validatorData($input){
+
+        if(!is_array($input)){
+            return false;
+        }
+            $input['contractDate'] = strtotime($input['contractDate']);
             $input['type'] = serialize(json_encode($input['type']));
             $rules = [
-                'fullName'=>'required|min:2|max:100',
-                'abbreviation'=>'required|min:2|max:30',
+                'fullName'=>'required|min:5|max:100',
+                'abbreviation'=>'min:2|max:30',
                 'brand'=>'required|min:2|max:30',
                 'brand'=>'required|min:2|max:30',
                 'brandType'=>'required|min:2|max:30',
-                'officeAdd'=>'required|min:2|max:100',
-                'warehoustAdd'=>'required|min:2|max:100',
+                'officeAdd'=>'required|min:5|max:100',
+                'warehoustAdd'=>'required|min:5|max:100',
                 'area'=>'required|min:2|max:30',
-                'settlementMmethod'=>'required|min:2|max:30',
-                'paymentMethod'=>'required|min:2|max:30',
-                'priceTax' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
-                'priceNoTax' => 'required|regex:[[0-9]{1,10}\.[0-9]{2}]',
-                'credit'=>'required|min:2|max:30',
+                'settlementMmethod'=>'min:2|max:30',
+                'paymentMethod'=>'min:2|max:30',
+                'priceTax' => 'numeric',
+                'priceNoTax' => 'numeric',
+                'credit'=>'min:2|max:30',
             ];
 
             $message = [
                 'fullName.required'=>'请填写供应商全称',
-                'fullName.min'=>'供应商全称最少2个字符',
+                'fullName.min'=>'供应商全称最少5个字符',
                 'fullName.max'=>'供应商全称最多100个字符',
 
-                'abbreviation.required'=>'请填写供应商简称',
+                // 'abbreviation.required'=>'请填写供应商简称',
                 'abbreviation.min'=>'供应商简称最少2个字符',
                 'abbreviation.max'=>'供应商简称最多30个字符',
 
@@ -105,11 +170,11 @@ class SupplierController extends CMSController
                 'brandType.max'=>'供应品类最多30个字符',
 
                 'officeAdd.required'=>'请填写办公地址',
-                'officeAdd.min'=>'办公地址最少2个字符',
+                'officeAdd.min'=>'办公地址最少5个字符',
                 'officeAdd.max'=>'办公地址最多100个字符',
 
                 'warehoustAdd.required'=>'请填写库房地址',
-                'warehoustAdd.min'=>'库房地址最少2个字符',
+                'warehoustAdd.min'=>'库房地址最少5个字符',
                 'warehoustAdd.max'=>'库房地址最多100个字符',
 
                 'area.required'=>'请填写采购区域',
@@ -120,17 +185,17 @@ class SupplierController extends CMSController
                 'settlementMmethod.min'=>'结算方式最少2个字符',
                 'settlementMmethod.max'=>'结算方式最多30个字符',
 
-                'paymentMethod.required'=>'请填写收款方式',
+                // 'paymentMethod.required'=>'请填写收款方式',
                 'paymentMethod.min'=>'收款方式最少2个字符',
                 'paymentMethod.max'=>'收款方式最多30个字符',
 
-                'priceTax.required' => '请填写结算价格（含税）',
-                'priceTax.regex' => '结算价格（含税）有误',
+                // 'priceTax.required' => '请填写结算价格（含税）',
+                'numeric' => '结算价格（含税）有误',
 
-                'priceNoTax.required' => '请填写结算价格（不含税）',
-                'priceNoTax.regex' => '结算价格（不含税）有误',
+                // 'priceNoTax.required' => '请填写结算价格（不含税）',
+                'numeric' => '结算价格（不含税）有误',
 
-                'credit.required'=>'请填写授信额度',
+                // 'credit.required'=>'请填写授信额度',
                 'credit.min'=>'授信额度最少2个字符',
                 'credit.max'=>'授信额度最多30个字符',
             ];
@@ -138,21 +203,11 @@ class SupplierController extends CMSController
 
             $validator = Validator::make($input,$rules,$message);
 
-            if($validator->passes() ===true){
-                $res = Supplier::create($input);
-                if($res){
-                    return redirect('cms/supplier');
-                }else{
-                    return back()->with('errors','数据填充失败！请稍后重试');
-                }
-            }else{
+            $data = array('input'=>$input,'validator'=>$validator);
 
-                return back()->withErrors($validator);
+            return $data;
 
-            }
-        }
     }
-
     /**
      * 更新供应商
      *
@@ -163,12 +218,29 @@ class SupplierController extends CMSController
     public static function update($supplierId){
 
         $input = Input::except("_token",'_method');
-        $input['type'] = serialize(json_encode($input['type']));
-        $res = Supplier::where('supplierId',$supplierId)->update($input);
-        if($res){
-            return redirect('cms/supplier');
+
+
+        //验证数据
+        $validatorData = self::validatorData($input);
+  
+
+        if($validatorData['validator']->passes()===true){
+
+            $res = Supplier::where('supplierId',$supplierId)->update($validatorData['input']);
+
+            if($res){
+
+                return redirect(url('cms/alert',array('mes'=>'保存成功')));
+
+            }else{
+
+                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/supplier/'.$supplierId.'/edit')))));
+
+            }
+
         }else{
-            return back()->with('errors','更新失败！');
+                return back()->withErrors($validatorData['validator']);
+
         }
     }
 
@@ -181,7 +253,7 @@ class SupplierController extends CMSController
      * @return json
      */
     public static function destroy($supplierId){
-        $res = Supplier::where("supplierId",$supplierId)->delete();
+        $res = Supplier::where("supplierId",$supplierId)->update(['close'=>1]);
         if($res){
             $data = [
                 'status'=>1,
@@ -196,5 +268,30 @@ class SupplierController extends CMSController
         }
         return $data;
     }
+
+    /**
+     * 添加供应商联系人
+     *
+     * @access  public
+     * @static  Function 
+     * @param   Integer $id 供应商ID
+     */
+    public static function contractCreate($id=false){
+        
+        $id = intval($id);
+
+        if($id>0){
+
+
+        }
+
+        $isBoolean = Supplier::isBoolean();
+
+        $data = Supplier::find($id,['fullName']);
+
+
+        return view('cms.supplier.contract_reate',compact('data','isBoolean'));
+    }
+
 
 }

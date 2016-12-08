@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
  * @package App\Http\Model\OfficeCMS
- * @version V0.1
+ * @version V.D.1.0
  *
  *
  */

@@ -6,11 +6,14 @@
 
 <nav class="breadcrumb">
     <i class="Hui-iconfont">&#xe67f;</i> <a href="{{url('cms/index/info')}}" >首页 </a><span class="c-gray en">&gt;</span> 
-        <a href="{{url('cms/supplier')}}" >供应商管理 </a><span class="c-gray en">&gt;</span> 
+        <a href="javascript:;" data-title="供应商管理" _href="{{url('cms/supplier')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+            供应商管理
+        </a>
+        <span class="c-gray en">&gt;</span> 
         添加供应商 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
     <article class="page-container">
-        <form action="{{url('cms/product')}}" method="post" class="form form-horizontal" id="formSupplierAdd">
+        <form action="{{url('cms/supplier')}}" method="post" class="form form-horizontal" id="formSupplierAdd">
             {{csrf_field()}}
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商全称：</label>
@@ -36,15 +39,27 @@
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商类型：</label>
-                <div class="formControls col-xs-8 col-sm-9">
+                <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+
+
+                    @foreach($type as $k=>$v)
+                          <div class="check-box">
+                            <input type="checkbox" id="checkbox" value="{{$k}}"  @if($k==0)checked="checked" @endif  name="type[]">
+                            <label for="checkbox">{{$v}}</label>
+                          </div>
+                    @endforeach
+<!-- 
                     @if($errors->has('type'))
                         <input type="text" class="input-text radius error" value="" name="type" aria-required="true" aria-invalid="true">
                         <label id="type-error" class="error" for="type">{{$errors->first('type')}}</label>
+
+
                     @else
                          <input type="text" class="input-text radius " value=""  placeholder="2-30个汉字" name="type" >
-                    @endif
+                    @endif -->
                 </div>
             </div>
+
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应品牌：</label>
                 <div class="formControls col-xs-8 col-sm-9">
@@ -129,7 +144,7 @@
                         <input type="text" class="input-text radius error" value="" name="priceTax" aria-required="true" aria-invalid="true">
                         <label id="priceTax-error" class="error" for="priceTax">{{$errors->first('priceTax')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" placeholder="5-30个字符" name="priceTax" >
+                         <input type="text" class="input-text radius " value="" placeholder="0000.00" name="priceTax" >
                     @endif
                 </div>
             </div>
@@ -140,7 +155,7 @@
                         <input type="text" class="input-text radius error" value="" name="priceNoTax" aria-required="true" aria-invalid="true">
                         <label id="priceNoTax-error" class="error" for="priceNoTax">{{$errors->first('priceNoTax')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" placeholder="5-30个字符" name="priceNoTax" >
+                         <input type="text" class="input-text radius " value="" placeholder="0000.00" name="priceNoTax" >
                     @endif
                 </div>
             </div>
@@ -158,27 +173,31 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">是否送货：</label>
                 <div class="formControls col-xs-8 col-sm-9">
+
+                    @foreach($isBoolean as $k=>$v)
+
                      <div class="radio-box">
-                        <input type="radio" id="radio-1" name="deliveryIs" checked>
-                        <label for="radio-1">是</label>
+                        <input type="radio" id="radio-{{$k}}" name="deliveryIs" value="{{$k}}" @if($k==0)checked="checked" @endif >
+                        <label for="radio-{{$k}}">{{$v}}</label>
                       </div>
-                      <div class="radio-box">
-                        <input type="radio" id="radio-2" name="deliveryIs" >
-                        <label for="radio-2">否</label>
-                      </div>
+
+                    @endforeach
+
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">是否签协：</label>
                 <div class="formControls col-xs-8 col-sm-9">
+
+                    @foreach($isBoolean as $k=>$v)
+                    
                      <div class="radio-box">
-                        <input type="radio" id="radio-1" name="signIs" checked>
-                        <label for="radio-1">是</label>
+                        <input type="radio" id="radio-{{$k}}" name="signIs" value="{{$k}}" @if($k==0)checked="checked" @endif >
+                        <label for="radio-{{$k}}">{{$v}}</label>
                       </div>
-                      <div class="radio-box">
-                        <input type="radio" id="radio-2" name="signIs" >
-                        <label for="radio-2">否</label>
-                      </div>
+
+                    @endforeach
+
                 </div>
             </div>
             <div class="row cl">
@@ -197,10 +216,11 @@
                 <label class="form-label col-xs-4 col-sm-2">合同到期日：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('contractDate'))
-                        <input type="text" class="input-text radius error" value="" name="contractDate" aria-required="true" aria-invalid="true">
+                        <input type="text" name="contractDate" id="contractDate" class=" input-text radius error" aria-required="true" readonly  aria-invalid="true">
                         <label id="contractDate-error" class="error" for="contractDate">{{$errors->first('contractDate')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" placeholder="5-30个字符" name="contractDate" >
+                         <input type="text" name="contractDate" id="contractDate" class=" input-text radius " readonly  placeholder="0000-00-00">
+                        
                     @endif
                 </div>
             </div>
@@ -244,7 +264,7 @@
 
             <div class="row cl">
                 <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                    <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button>
+                    <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 提交 </button>
                     <!-- <button onClick="article_save();" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存草稿</button> -->
                     <!-- <button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button> -->
                 </div>
@@ -257,6 +277,7 @@
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/jquery.validate.min.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/validate-methods.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/messages_zh.min.js')}}"></script> 
+<script type="text/javascript" src="{{asset('resources/officecms/laydate/laydate.js')}}"></script>
 
 <script type="text/javascript">
 
@@ -334,22 +355,24 @@ $(document).ready(function(){
                 minlength:5,
                 maxlength:30
             }, 
+            priceTax:{
+                number:true
+            },
             priceNoTax:{
-                minlength:5,
-                maxlength:30
+                number:true
             }, 
             account:{
                 minlength:5,
                 maxlength:30
             },
+            contractDate:{
+                date:true
+            }
             // returnRequirements:{
             //     required:true,
             //     minlength:5,
             //     maxlength:30
             // }, 
-            priceTax:{
-                number:true
-            }
         },
         //表单提示信息 
         messages:{
@@ -401,26 +424,32 @@ $(document).ready(function(){
                 minlength:"最小为5位",
                 maxlength:"最大为30位"
             },
+            priceTax:{
+                number:"请输入正确的价格"
+            },
             priceNoTax:{
-                minlength:"最小为5位",
-                maxlength:"最大为30位"
+                number:"请输入正确的价格"
             },
             account:{
                 minlength:"最小为5位",
                 maxlength:"最大为30位"
             },
+            contractDate:{
+                date:"请选择正确的日期"
+            }
             // returnRequirements:{
             //     minlength:"最小为10位",
             //     maxlength:"最大为500位"
             // },
-            priceTax:{
-                number:"请输入正确的价格"
-            }
         }
 
     });
 });
-
+ 
+laydate({
+  elem: '#contractDate', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+  event: 'focus' //响应事件。如果没有传入event，则按照默认的click
+}); 
 
 </script>
 

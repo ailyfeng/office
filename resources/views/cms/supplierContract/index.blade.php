@@ -44,8 +44,6 @@
             </tr>
         </thead>
         <tbody>
-
-            
             @foreach($data as $list)
             <tr class="text-c">
 
@@ -72,7 +70,7 @@
                     @if($selectSupplier)
                     <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                    @else
-                    <a style="text-decoration:none" data-title="添加供应商联系人" title="添加供应商联系人" _href="{{url('cms/supplierContract/create/'.$list->supplierId)}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+                    <a style="text-decoration:none" data-title="添加公司产品" title="添加公司产品" _href="{{url('cms/product/create/'.$list->supplierId)}}" onclick="Hui_admin_tab(this)" href="javascript:;">
                         <i class="Hui-iconfont">&#xe600;</i>
                     </a>
                     <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/supplier/'.$list->supplierId.'/edit')}}','{{$list->supplierId}}')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 

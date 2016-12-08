@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Input;
  *
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
- * @package App\Http\Controllers\OfficeCMS
  * @version V0.1
  */
 class LoginController extends CMSController

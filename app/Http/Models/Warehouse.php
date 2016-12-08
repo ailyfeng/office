@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Model;
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
  * @package App\Http\Models
- * @version V0.1
+ * @version V.D.1.0
  */
 class Warehouse extends Model
 {
-    protected   $table           = 'warehouse';
+    protected   $table          = 'warehouse';
     protected   $primaryKey     = 'warehouseId';
     public      $timestamps     = false;
-    protected $guarded = [];
+    protected 	$guarded 		= [];
 }

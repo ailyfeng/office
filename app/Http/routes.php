@@ -23,7 +23,7 @@ Route::get('user/login', 'OfficeCMS\LoginController@login');
  */
 Route::group(['middleware' => ['admin.login'],'prefix'=>'cmss','namespace'=>'OfficeCMS'], function () {
 
-	//默认首页
+    //默认首页
     Route::get('index', 'IndexController@index');
 
     //库房管理
@@ -56,11 +56,23 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'CMS'
     //供应商
     Route::resource('supplier', 'SupplierController');
 
+    //供应商联系人
+    Route::resource('supplierContract', 'SupplierContractController');
+    Route::get('supplierContract/create/{supplierId}', 'SupplierContractController@create');
+    // Route::get('supplier/contractCreate/{id}','SupplierController@contractCreate');
+
     //公司产品
     Route::resource('product','ProductController');
+    Route::get('product/create/{supplierId}','ProductController@create');
+    // Route::resource('product/create/{productId}','ProductController@create');
     
     //上传文件
     Route::resource('upload', 'UploadController');
 
+    //消息提示
+    Route::any('alert/{mes}','AlertController@show');
+    Route::any('alert/{mes}/{url}','AlertController@show');
+
 
 });
+

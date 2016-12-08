@@ -56,22 +56,24 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('supplierId'))
-                        <input type="text" class="input-text radius error" value="" name="supplierId" aria-required="true" aria-invalid="true">
-                        <label id="supplierId-error" class="error" for="supplierId">{{$errors->first('supplierId')}}</label>
+                        <input type="hidden" name="supplierId" value="{{$data['supplierId']}}">
+                    @if($errors->has('fullName'))
+                        <input type="text" class="input-text radius error" value="{{$data['fullName']}}"  readonly="readonly" name="fullName" placeholder="请选择供应商" onclick="actionEdit('选择供应商','{{url('cms/supplier')}}','1')" aria-required="true" aria-invalid="true">
+                        <label id="fullName-error" class="error" for="fullName">{{$errors->first('supplierId')}}</label>
                     @else
-                         <input type="text" class="input-text radius" value="" placeholder="请选择供应商" name="supplierId" >
+                         <input type="text" class="input-text radius" value="{{$data['fullName']}}" readonly="readonly" placeholder="请选择供应商" name="fullName" id="fullName">
                     @endif
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">辅助供应商：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('supplierIdExt'))
-                        <input type="text" class="input-text radius error" value="" name="supplierIdExt" aria-required="true" aria-invalid="true">
-                        <label id="supplierIdExt-error" class="error" for="supplierIdExt">{{$errors->first('supplierIdExt')}}</label>
+                        <input type="hidden" name="supplierIdExt" id="supplierIdExt">
+                    @if($errors->has('fullNameExt'))
+                        <input type="text" class="input-text radius error" value="" readonly="readonly"  name="fullNameExt" id="fullNameExt" aria-required="true" aria-invalid="true">
+                        <label id="fullNameExt-error" class="error" for="fullNameExt">{{$errors->first('fullNameExt')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" placeholder="请选择辅助供应商"  name="supplierIdExt" >
+                         <input type="text" class="input-text radius " value="" readonly="readonly" placeholder="请选择辅助供应商"  id="fullNameExt" name="fullNameExt" >
                     @endif
                 </div>
             </div>
@@ -289,7 +291,7 @@
                 </div>
             <div class="row cl">
                 <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                    <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button>
+                    <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 提交 </button>
                     <!-- <button onClick="article_save();" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存草稿</button> -->
                     <!-- <button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button> -->
                 </div>
@@ -304,6 +306,8 @@
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/messages_zh.min.js')}}"></script> 
 
 <script type="text/javascript">
+
+
 
 //打开子网页
 function openUrl(id){
@@ -324,9 +328,32 @@ function deleteImage(id){
 
 }
 
+/*编辑*/
+function actionEdit(title,url,id,w,h){
+    //layer_show(title,url,w,h);
+
+    layer.open({
+      type: 2,
+      area: ['800px', '700px'],
+      fixed: false, //不固定
+      maxmin: true,
+      content: url
+    });
+}
 
 //验证表单
 $(document).ready(function(){
+
+    //选择供应商
+    $('#fullName').focus(function(){
+        actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=selectSupplier')}}&id=supplierId&name=fullName','1');
+    });
+
+    //选择辅助供应商
+    $('#fullNameExt').focus(function(){
+        actionEdit('选择辅助供应商','{{url('cms/supplier?selectSupplier=selectSupplier')}}&id=supplierIdExt&name=fullNameExt','1');
+    });
+
 
     ////该表单的每个提示信息再input右边展示
     $('#formProductAdd input').iCheck({
@@ -335,12 +362,11 @@ $(document).ready(function(){
         increaseArea: '20%'
     });
 
+    //表单规则
     $("#formProductAdd").validate({
-        //表单规则
         rules:{
-            supplierId:{
+            supplierName:{
                 required:true,
-                number:true
             },
             chineseBrand:{
                 required:true,
@@ -380,7 +406,6 @@ $(document).ready(function(){
         messages:{
             supplierId:{
                 required:"必须选择供应商",
-                number:"必须选择供应商",
             },
             chineseBrand:{
                 required:"必须填写2-30个汉字",
