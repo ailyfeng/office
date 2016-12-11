@@ -70,6 +70,7 @@
 				<ul>
 					<li><a _href="{{url('cms/supplier')}}" data-title="供应商" href="javascript:void(0)">供应商</a></li>
 					<li><a _href="{{url('cms/product')}}" data-title="公司产品" href="javascript:void(0)">公司产品</a></li>
+					<li><a _href="{{url('cms/classify')}}" data-title="公司产品" href="javascript:void(0)">产品分类</a></li>
 					<li><a _href="{{url('cms/warehouse')}}" data-title="库房管理" href="javascript:void(0)">库房管理</a></li>
 				</ul>
 			</dd>

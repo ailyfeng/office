@@ -65,6 +65,10 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'CMS'
     Route::resource('product','ProductController');
     Route::get('product/create/{supplierId}','ProductController@create');
     // Route::resource('product/create/{productId}','ProductController@create');
+
+    //分类
+    Route::resource('classify','ClassifyController');
+    Route::get('classify/create/{id}','ClassifyController@create');
     
     //上传文件
     Route::resource('upload', 'UploadController');

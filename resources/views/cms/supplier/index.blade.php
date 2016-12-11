@@ -47,8 +47,12 @@
 
             
             @foreach($data as $list)
-            <tr class="text-c">
 
+            @if($selectSupplier)
+            <tr class="text-c" onclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');">
+            @else
+            <tr class="text-c" onclick="actionEdit('编辑','{{url('cms/supplier/'.$list->supplierId.'/edit')}}','1');" >
+            @endif
                 @if($selectSupplier)@else
                 <td class="tc"><input type="checkbox" name="id[]" value="{{$list->supplierId}}"></td>
                 @endif

@@ -32,7 +32,7 @@
         </thead>
         <tbody>
             @foreach($data as $list)
-            <tr class="text-c">
+            <tr class="text-c" data-title="产品编辑{{$list->productId}}" _href="{{url('cms/product/create')}}" onclick="Hui_admin_tab(this)" >
                 <td><input type="checkbox" value="{{$list->productId}}" checked="checked" name="productId"></td>
                 <td class="tc">{{$list->productId}}{{$list->chineseBrand}}</td>
                 <td>
@@ -42,7 +42,7 @@
                 <td>{{$list->color}}a</td>
                 <td>asdf</td>
                 <td class="f-14">
-                    <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/product/create')}}','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
+                    <a title="编辑" href="javascript:;" onclick="actionEdit('编辑','{{url('cms/product/create')}}','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
                     <a title="删除" href="javascript:;" onclick="actionDelete(this,'{{$list->productId}}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
             </tr>
             @endforeach

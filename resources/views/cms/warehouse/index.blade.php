@@ -27,7 +27,7 @@
         </thead>
         <tbody>
             @foreach($data as $list)
-                <tr class="text-c">
+                <tr class="text-c" onclick="actionEdit('角色编辑','{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}','1');" >
                     <td class="tc"><input type="checkbox" name="id[]" value="{{$list->warehouseId}}"></td>
                     <td class="tc">{{$list->name}}-{{$list->warehouseId}}</td>
                     <td>{{$list->area}}</td>
@@ -35,7 +35,7 @@
                     <td>{{$list->distrbutionArea}}</td>
                     <td>{{$list->quota}}</td>
                     <td>
-                        <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/warehouse/')}}/{{$list->warehouseId}}/edit','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
+                        <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
                         <a title="删除" href="javascript:;" onclick="actionDelete(this,'{{$list->warehouseId}}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
         
                     </td>
