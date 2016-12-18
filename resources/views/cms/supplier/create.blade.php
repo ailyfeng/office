@@ -334,7 +334,7 @@ $(document).ready(function(){
             },
             officeAdd:{
                 required:true,
-                minlength:2,
+                minlength:5,
                 maxlength:30
             },
             warehoustAdd:{

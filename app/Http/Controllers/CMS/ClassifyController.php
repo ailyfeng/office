@@ -9,6 +9,7 @@ use App\Http\Requests;
 use phpDocumentor\Reflection\Types\Integer;
 use Illuminate\Support\Facades\Input;
 use Validator;
+use Monolog\Logger;
 
 
 /**
@@ -16,7 +17,8 @@ use Validator;
  *
  * @copyright   成都欧飞仕科技贸易有限公司
  * @author      Kenn
- * @version     V.D.1.0
+ * @version     V.D.1.
+ * @todo  分类点击分类 
  */
 class ClassifyController extends CMSController
 {
@@ -41,7 +43,7 @@ class ClassifyController extends CMSController
     public static function create($id=false){
         
         $id=intval($id);
-        
+
         if($id){
             $data = Classify::find($id);
 
@@ -50,7 +52,12 @@ class ClassifyController extends CMSController
                 return redirect(url('cms/alert',array('mes'=>'必须启用该类，才能添加子类的！')));
             }
             
+        }else{
+
+             $data = array('id'=>false);
+             
         }
+
         $parentData = Classify::where('close','!=',1)->where('type','=',1)->orderBy('sort','asc')->get();
         
 
@@ -313,7 +320,7 @@ class ClassifyController extends CMSController
         }else{
             $data = [
                 'status'=>0,
-                'msg'=>'删除失败！请稍后重试',
+                'msg'=>'操作失败！请稍后重试',
             ];
 
         }

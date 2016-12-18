@@ -56,24 +56,24 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                        <input type="hidden" name="supplierId" value="{{$data['supplierId']}}">
-                    @if($errors->has('fullName'))
-                        <input type="text" class="input-text radius error" value="{{$data['fullName']}}"  readonly="readonly" name="fullName" placeholder="请选择供应商" onclick="actionEdit('选择供应商','{{url('cms/supplier')}}','1')" aria-required="true" aria-invalid="true">
-                        <label id="fullName-error" class="error" for="fullName">{{$errors->first('supplierId')}}</label>
+                        <input type="hidden" name="supplierId" value="{{$data['supplierId']}}" class="supplierId">
+                    @if($errors->has('supplierId'))
+                        <input type="text" class="input-text radius error" value="{{$data['supplierId']}}"  readonly="readonly" name="supplierId_" id="supplierId" placeholder="请选择供应商" onclick="actionEdit('选择供应商','{{url('cms/supplier')}}','1')" aria-required="true" aria-invalid="true">
+                        <label id="supplierId-error" class="error" for="supplierId">{{$errors->first('supplierId')}}</label>
                     @else
-                         <input type="text" class="input-text radius" value="{{$data['fullName']}}" readonly="readonly" placeholder="请选择供应商" name="fullName" id="fullName">
+                         <input type="text" class="input-text radius" value="{{$data['supplierId']}}" readonly="readonly" placeholder="请选择供应商" name="supplierId_" id="supplierId">
                     @endif
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">辅助供应商：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                        <input type="hidden" name="supplierIdExt" id="supplierIdExt">
-                    @if($errors->has('fullNameExt'))
-                        <input type="text" class="input-text radius error" value="" readonly="readonly"  name="fullNameExt" id="fullNameExt" aria-required="true" aria-invalid="true">
-                        <label id="fullNameExt-error" class="error" for="fullNameExt">{{$errors->first('fullNameExt')}}</label>
+                        <input type="hidden" name="supplierIdExt" class="supplierIdExt">
+                    @if($errors->has('supplierIdExt'))
+                        <input type="text" class="input-text radius error" value=""  readonly="readonly" name="supplierIdExt_" id="supplierIdExt" placeholder="请选辅助择供应商" onclick="actionEdit('选择辅助供应商','{{url('cms/supplier')}}','1')" aria-required="true" aria-invalid="true">
+                        <label id="supplierIdExt-error" class="error" for="supplierIdExt">{{$errors->first('supplierIdExt')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" readonly="readonly" placeholder="请选择辅助供应商"  id="fullNameExt" name="fullNameExt" >
+                         <input type="text" class="input-text radius" value="" readonly="readonly" placeholder="请选择辅助供应商" name="supplierIdExt_" id="supplierIdExt">
                     @endif
                 </div>
             </div>
@@ -161,18 +161,13 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">类别：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                     <div class="radio-box">
-                        <input type="radio" id="radio-1" name="type" checked>
-                        <label for="radio-1">大类</label>
-                      </div>
-                      <div class="radio-box">
-                        <input type="radio" id="radio-2" name="type" >
-                        <label for="radio-2">中类</label>
-                      </div>
-                      <div class="radio-box">
-                        <input type="radio" id="radio-2" name="type">
-                        <label for="radio-2">小类</label>
-                      </div>
+                    <span class="select-box radius ">
+                      <select class="input-text radius" size="1" name="type">
+                        @foreach($type as $list)
+                            <option value="{{$list['id']}}" ><?php $sunNum = substr_count($list['sort'],'-'); for($i=0;$i<$sunNum;$i++){echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";} ?>{{$list['name']}}</option>
+                        @endforeach
+                      </select>
+                    </span>
                 </div>
             </div>
             <div class="row cl">
@@ -345,13 +340,13 @@ function actionEdit(title,url,id,w,h){
 $(document).ready(function(){
 
     //选择供应商
-    $('#fullName').focus(function(){
-        actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=selectSupplier')}}&id=supplierId&name=fullName','1');
+    $('#supplierId').focus(function(){
+        actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=1')}}&id=supplierId&name=supplierId','1');
     });
 
     //选择辅助供应商
-    $('#fullNameExt').focus(function(){
-        actionEdit('选择辅助供应商','{{url('cms/supplier?selectSupplier=selectSupplier')}}&id=supplierIdExt&name=fullNameExt','1');
+    $('#supplierIdExt').focus(function(){
+        actionEdit('选择辅助供应商','{{url('cms/supplier?selectSupplier=1')}}&id=supplierIdExt&name=supplierIdExt','1');
     });
 
 
@@ -365,6 +360,7 @@ $(document).ready(function(){
     //表单规则
     $("#formProductAdd").validate({
         rules:{
+
             supplierName:{
                 required:true,
             },

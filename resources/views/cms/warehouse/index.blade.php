@@ -5,8 +5,12 @@
 <div class="page-container">
     <div class="cl pd-5 bg-1 bk-gray">
         <span class="l">
-            <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
-                <i class="Hui-iconfont">&#xe6e2;</i> 批量删除
+            <a href="javascript:;" onclick="actionStatus(1)" class="btn btn-danger radius">
+                <i class="Hui-iconfont">&#xe6e2;</i> 批量停用
+            </a>
+
+            <a href="javascript:;" onclick="actionStatus(0)" class="btn btn-primary radius">
+                <i class="Hui-iconfont">&#xe6e2;</i> 批量启用
             </a>
             <a class="btn btn-primary radius" data-title="添加库房" _href="{{url('cms/warehouse/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
                 <i class="Hui-iconfont">&#xe600;</i> 添加库房
@@ -27,17 +31,21 @@
         </thead>
         <tbody>
             @foreach($data as $list)
-                <tr class="text-c" onclick="actionEdit('角色编辑','{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}','1');" >
+                <tr class="text-c @if($list->close) c-warning @endif" ondblclick="actionEdit('编辑','{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}','1');" >
                     <td class="tc"><input type="checkbox" name="id[]" value="{{$list->warehouseId}}"></td>
-                    <td class="tc">{{$list->name}}-{{$list->warehouseId}}</td>
-                    <td>{{$list->area}}</td>
-                    <td>{{$list->number}}</td>
-                    <td>{{$list->distrbutionArea}}</td>
-                    <td>{{$list->quota}}</td>
+                    <td class="tc @if($list->close) c-warning @endif">{{$list->name}}-{{$list->warehouseId}}</td>
+                    <td @if($list->close)  class="c-warning " @endif >{{$list->area}}</td>
+                    <td @if($list->close)  class="c-warning " @endif >{{$list->number}}</td>
+                    <td @if($list->close)  class="c-warning " @endif >{{$list->distrbutionArea}}</td>
+                    <td @if($list->close)  class="c-warning " @endif >{{$list->quota}}</td>
                     <td>
+                        @if($list->close)
+                        <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->warehouseId}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                        @else
+                        <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->warehouseId}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
+                        @endif
                         <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
-                        <a title="删除" href="javascript:;" onclick="actionDelete(this,'{{$list->warehouseId}}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
-        
+                        
                     </td>
                 </tr>
 
@@ -50,6 +58,23 @@
 </div>
 <script type="text/javascript">
 
+//多选
+function actionStatus(close){
+    var ids = $("input[type='checkbox']:checked").map(function(){
+      var id = $(this).val();
+      if(!isNaN(id)){
+           return id;
+      }
+    }).get().join(',');
+
+    if(!ids){
+        layer.msg("您没有选择任务项哦！", {icon: 1,time:1000});
+    }else{
+        actionDelete(ids,close);
+
+    }
+
+}
 
 /*添加*/
 function actionAdd(title,url,w,h){
@@ -67,10 +92,14 @@ function actionEdit(title,url,id,w,h){
       content: url
     });
 }
-/*删除*/
-function actionDelete(obj,id){
+/*启用关闭*/
+function actionDelete(id,status){
         var tag = false;
-            layer.confirm("请确认是否要删除选择的项？", {
+        alert = '启用';
+        if(status){
+            alert = '停用';
+        }
+            layer.confirm("请确认"+alert+"该项？", {
               btn: ["确认","取消"] //按钮
             }, function(){
               
@@ -83,21 +112,19 @@ function actionDelete(obj,id){
                 tag = true;
             }
 
-                $.post("{{url('cms/warehouse/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
+                $.post("{{url('cms/warehouse/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}",'status':status},function(data){
                     layer.closeAll('loading');
                     if(data.status){
-                        layer.msg("删除成功", {icon: 1,time:1000});
-                        // $(obj).parents("tr").remove();
+                        layer.msg(data.msg, {icon: 1,time:1000});
                         
                         window.location.reload();
                     }else{
-                        layer.msg("删除失败！请重新操作！", {icon: 5,time:1000});
+                        layer.msg("操作失败！请重新操作！", {icon: 5,time:1000});
                     }
                 });
 
             });
     }
-
 
 
 </script>

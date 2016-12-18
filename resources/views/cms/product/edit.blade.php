@@ -4,11 +4,12 @@
     <script src="{{asset('resources/OfficeCMS/uploadify/jquery.uploadify.min.js')}}" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="{{asset('resources/OfficeCMS/uploadify/uploadify.css')}}">
 
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span class="c-gray en">&gt;</span> 公司产品 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span class="c-gray en">&gt;</span>您正在编辑公司产品：{{$data->chineseBrand}} <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
     <article class="page-container">
         <form action="{{url('cms/product/'.$data->productId)}}" method="post" class="form form-horizontal" id="formProductAdd">
             {{csrf_field()}}
+            <input type="hidden" name="_method" value="put">
             <div class="row cl">
                 <label class=" col-xs-4 col-sm-2 text-r"></label>
                 <div class="formControls col-xs-8 col-sm-9">
@@ -16,8 +17,8 @@
                       <tr>
                         <th class="va-t">
                             <p>
-                                <input type="hidden" name="picPositive" value="">
-                                <img width=140 class="picPositive radius"  src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTEwYmJhZjQzYSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MTBiYmFmNDNhIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=" alt="..." > 
+                                <input type="hidden" name="picPositive" value="{{$data->picPositive}}">
+                                <img width=140 class="picPositive radius"  src="@if($data->picPositive) {{$data->picPositive}} @else data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTEwYmJhZjQzYSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MTBiYmFmNDNhIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4= @endif" alt="..." > 
                             </p>
                             <p>
                                 <button type="button" class="btn btn-secondary radius size-MINI" onclick="openUrl('picPositive');">上传图片</button>
@@ -26,8 +27,8 @@
                          </th>
                         <th class="va-m">
                             <p>
-                                <input type="hidden" name="picSide" value="" >
-                                <img width=140 class="picSide radius"   src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTEwYmJhZjQzYSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MTBiYmFmNDNhIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=" alt="..." > 
+                                <input type="hidden" name="picSide" value="{{$data->picSide}}" >
+                                <img width=140 class="picSide radius"   src="@if($data->picSide) {{$data->picSide}} @else data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTEwYmJhZjQzYSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MTBiYmFmNDNhIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4= @endif" alt="..." > 
                             </p>
                             <p>
                                 <button type="button" class="btn btn-secondary radius size-MINI" onclick="openUrl('picSide');">上传图片</button>
@@ -36,8 +37,8 @@
                          </th>
                         <th class="va-b">
                             <p>
-                                <input type="hidden" name="picBackground" value="" >
-                                <img width=140 class="picBackground radius"   src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTEwYmJhZjQzYSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MTBiYmFmNDNhIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=" alt="..." > 
+                                <input type="hidden" name="picBackground" value="{{$data->picBackground}}" >
+                                <img width=140 class="picBackground radius"   src="@if($data->picBackground) {{$data->picBackground}} @else data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTEwYmJhZjQzYSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1MTBiYmFmNDNhIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjA1NDY4NzUiIHk9Ijc0LjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4= @endif" alt="..." > 
                             </p>
                             <p>
                                 <button type="button" class="btn btn-secondary radius size-MINI" onclick="openUrl('picBackground');">上传图片</button>
@@ -52,22 +53,24 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商：</label>
                 <div class="formControls col-xs-8 col-sm-9">
+                        <input type="hidden" name="supplierId" value="{{$data['supplierId']}}" class="supplierId">
                     @if($errors->has('supplierId'))
-                        <input type="text" class="input-text radius error" value="" name="supplierId" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="@if(isset($supplier['0'])){{$supplier['0']['fullName']}}@endif" name="supplierId_" aria-required="true" aria-invalid="true">
                         <label id="supplierId-error" class="error" for="supplierId">{{$errors->first('supplierId')}}</label>
                     @else
-                         <input type="text" class="input-text radius" value="" placeholder="请选择供应商" name="supplierId" >
+                         <input type="text" class="input-text radius" value="@if(isset($supplier['0'])){{$supplier['0']['fullName']}}@endif" placeholder="请选择供应商" name="supplierId_" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">辅助供应商：</label>
                 <div class="formControls col-xs-8 col-sm-9">
+                        <input type="hidden" name="supplierId" value="{{$data['supplierIdExt']}}" class="supplierIdExt">
                     @if($errors->has('supplierIdExt'))
-                        <input type="text" class="input-text radius error" value="" name="supplierIdExt" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="@if(isset($supplier['1'])){{$supplier['1']['fullName']}}@endif" name="supplierIdExt_" aria-required="true" aria-invalid="true">
                         <label id="supplierIdExt-error" class="error" for="supplierIdExt">{{$errors->first('supplierIdExt')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" placeholder="请选择辅助供应商"  name="supplierIdExt" >
+                         <input type="text" class="input-text radius " value="@if(isset($supplier['1'])){{$supplier['1']['fullName']}}@endif" placeholder="请选择辅助供应商"  name="supplierIdExt_" >
                     @endif
                 </div>
             </div>
@@ -75,10 +78,10 @@
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>品牌(中文)：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('chineseBrand'))
-                        <input type="text" class="input-text radius error" value="" name="chineseBrand" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->chineseBrand}}" name="chineseBrand" aria-required="true" aria-invalid="true">
                         <label id="chineseBrand-error" class="error" for="chineseBrand">{{$errors->first('chineseBrand')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value=""  placeholder="2-30个汉字" name="chineseBrand" >
+                         <input type="text" class="input-text radius " value="{{$data->chineseBrand}}"  placeholder="2-30个汉字" name="chineseBrand" >
                     @endif
                 </div>
             </div>
@@ -86,10 +89,10 @@
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>品牌(英文)：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('englishBrand'))
-                        <input type="text" class="input-text radius error" value="" name="englishBrand" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->englishBrand}}" name="englishBrand" aria-required="true" aria-invalid="true">
                         <label id="englishBrand-error" class="error" for="englishBrand">{{$errors->first('englishBrand')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" placeholder="5-100个字符"  name="englishBrand" >
+                         <input type="text" class="input-text radius " value="{{$data->englishBrand}}" placeholder="5-100个字符"  name="englishBrand" >
                     @endif
                 </div>
             </div>
@@ -97,10 +100,10 @@
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>品名：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('brandName'))
-                        <input type="text" class="input-text radius error" value="" name="brandName" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->brandName}}" name="brandName" aria-required="true" aria-invalid="true">
                         <label id="brandName-error" class="error" for="brandName">{{$errors->first('brandName')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value=""  placeholder="5-100个字符"  name="brandName" >
+                         <input type="text" class="input-text radius " value="{{$data->brandName}}"  placeholder="5-100个字符"  name="brandName" >
                     @endif
                 </div>
             </div>
@@ -108,81 +111,76 @@
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>货号：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('number'))
-                        <input type="text" class="input-text radius error" value="" name="number" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->number}}" name="number" aria-required="true" aria-invalid="true">
                         <label id="number-error" class="error" for="number">{{$errors->first('number')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" placeholder="该产品上(或外包装上)标示的货号" name="number" >
+                         <input type="text" class="input-text radius " value="{{$data->number}}" placeholder="该产品上(或外包装上)标示的货号" name="number" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">简要规格：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                            <textarea class="textarea radius" name="standard"></textarea>
+                            <textarea class="textarea radius" name="standard">{{$data->standard}}</textarea>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">颜色：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text radius" value="" placeholder="白色" id="" name="color">
+                    <input type="text" class="input-text radius" value="{{$data->color}}" placeholder="白色" id="" name="color">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">单位：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text radius" value="" placeholder="0" id="" name="unit">
+                    <input type="text" class="input-text radius" value="{{$data->unit}}" placeholder="0" id="" name="unit">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">最小包规计算数量：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text radius" value="" placeholder="用于计算拿货时最小包装的数量,如:要进24支笔此处数量为12时(即12支/盒)则计为2盒_ 每盒数量" id="" name="packageNum">
+                    <input type="text" class="input-text radius" value="{{$data->packageNum}}" placeholder="用于计算拿货时最小包装的数量,如:要进24支笔此处数量为12时(即12支/盒)则计为2盒_ 每盒数量" id="" name="packageNum">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">最小包规单位：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text radius" value="" placeholder="0" id="" name="packageUnit">
+                    <input type="text" class="input-text radius" value="{{$data->packageUnit}}" placeholder="0" id="" name="packageUnit">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">类别：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                     <div class="radio-box">
-                        <input type="radio" id="radio-1" name="type" checked>
-                        <label for="radio-1">大类</label>
-                      </div>
-                      <div class="radio-box">
-                        <input type="radio" id="radio-2" name="type" >
-                        <label for="radio-2">中类</label>
-                      </div>
-                      <div class="radio-box">
-                        <input type="radio" id="radio-2" name="type">
-                        <label for="radio-2">小类</label>
-                      </div>
+                    <span class="select-box radius ">
+                      <select class="input-text radius" size="1" name="type">
+                        @foreach($type as $list)
+                            <option value="{{$list['id']}}" @if($data->type==$list['id']) selected="selected" @endif><?php $sunNum = substr_count($list['sort'],'-'); for($i=0;$i<$sunNum;$i++){echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";} ?>{{$list['name']}}</option>
+                        @endforeach
+                      </select>
+                    </span>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>包规：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
                     @if($errors->has('packageRules'))
-                        <input type="text" class="input-text radius error" value="" placeholder="" name="packageRules" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->packageRules}}" placeholder="" name="packageRules" aria-required="true" aria-invalid="true">
                         <label id="packageRules-error" class="error" for="packageRules">{{$errors->first('packageRules')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" name="packageRules" >
+                         <input type="text" class="input-text radius " value="{{$data->packageRules}}" name="packageRules" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">产品详细描述：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                            <textarea class="textarea radius" name="description" placeholder="详细规格和对该产品使用方法的说明,以及对该产品的描述"></textarea>
+                            <textarea class="textarea radius" name="description" placeholder="详细规格和对该产品使用方法的说明,以及对该产品的描述">{{$data->description}}</textarea>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">产品效期：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
-                    <input type="text" class="input-text radius" value="" placeholder="" id="" name="expiration">
+                    <input type="text" class="input-text radius" value="{{$data->expiration}}" placeholder="" id="" name="expiration">
                 </div>
             </div>
 
@@ -191,10 +189,10 @@
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>进货单价：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
                     @if($errors->has('stockPrice'))
-                        <input type="text" class="input-text radius error" value="" placeholder="" name="stockPrice" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->stockPrice}}" placeholder="" name="stockPrice" aria-required="true" aria-invalid="true">
                         <label id="stockPrice-error" class="error" for="stockPrice">{{$errors->first('stockPrice')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value=""  placeholder="0000.00" name="stockPrice" >
+                         <input type="text" class="input-text radius " value="{{$data->stockPrice}}"  placeholder="0000.00" name="stockPrice" >
                     @endif
                 </div>
             </div>
@@ -202,10 +200,10 @@
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>成本单价：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
                     @if($errors->has('costPrice'))
-                        <input type="text" class="input-text radius error" value="" placeholder="直接进货价加采管成本后的价格" name="costPrice" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->costPrice}}" placeholder="直接进货价加采管成本后的价格" name="costPrice" aria-required="true" aria-invalid="true">
                         <label id="costPrice-error" class="error" for="costPrice">{{$errors->first('costPrice')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value=""  placeholder="0000.00" name="costPrice" >
+                         <input type="text" class="input-text radius " value="{{$data->costPrice}}"  placeholder="0000.00" name="costPrice" >
                     @endif
                 </div>
             </div>
@@ -213,23 +211,23 @@
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>标准售价：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
                     @if($errors->has('standardPrice'))
-                        <input type="text" class="input-text radius error" value="" placeholder="针对未分级客户或标准级客户的售价" name="standardPrice" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->standardPrice}}" placeholder="针对未分级客户或标准级客户的售价" name="standardPrice" aria-required="true" aria-invalid="true">
                         <label id="standardPrice-error" class="error" for="standardPrice">{{$errors->first('standardPrice')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="" placeholder="针对未分级客户或标准级客户的售价" name="standardPrice" >
+                         <input type="text" class="input-text radius " value="{{$data->standardPrice}}" placeholder="针对未分级客户或标准级客户的售价" name="standardPrice" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">分类售价一：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
-                    <input type="text" class="input-text radius" value="" placeholder="针对一级客户的售价" id="" name="oneTypePrice">
+                    <input type="text" class="input-text radius" value="{{$data->oneTypePrice}}" placeholder="针对一级客户的售价" id="" name="oneTypePrice">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">分类售价一：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
-                    <input type="text" class="input-text radius" value="" placeholder="针对二级客户的售价" id="" name="twoTypePrice">
+                    <input type="text" class="input-text radius" value="{{$data->twoTypePrice}}" placeholder="针对二级客户的售价" id="" name="twoTypePrice">
                 </div>
             </div>
 
@@ -241,8 +239,8 @@
                       <tr>
                         <th class="va-t">
                             <p>
-                                <input type="hidden" name="barCode" value="" >
-                                <img width=140  class="radius barCode" src="{{asset('resources/cms/images/barCode.png')}}" > 
+                                <input type="hidden" name="barCode" value="{{$data->barCode}}" >
+                                <img width=140  class="radius barCode" src="@if($data->barCode) {{$data->barCode}} @else {{asset('resources/cms/images/barCode.png')}} @endif" > 
                             </p>
                             <p>
                                 <button type="button" class="btn btn-secondary radius size-MINI" onclick="openUrl('barCode');">上传图片</button>
@@ -251,8 +249,8 @@
                           </th>
                         <th class="va-m">
                             <p>
-                                <input type="hidden" name="qrCode" value="" >
-                                <img width=140 class=" radius qrCode" src="{{asset('resources/cms/images/qrCode.png')}}" > 
+                                <input type="hidden" name="qrCode" value="{{$data->qrCode}}" >
+                                <img width=140 class=" radius qrCode" src="@if($data->qrCode) {{$data->qrCode}} @else {{asset('resources/cms/images/qrCode.png')}} @endif" > 
 
                             <p>
                                 <button type="button" class="btn btn-secondary radius size-MINI" onclick="openUrl('qrCode');">上传图片</button>

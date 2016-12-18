@@ -20,12 +20,17 @@
 <link rel="stylesheet" type="text/css" href="{{asset('resources/cms/static/h-ui.admin/skin/default/skin.css')}}" id="skin" />
 <link rel="stylesheet" type="text/css" href="{{asset('resources/cms/static/h-ui.admin/css/style.css')}}" />
 
+<link rel="stylesheet" type="text/css" href="{{asset('resources/cms/lib/jquery-ui/jquery-ui.css')}}" />
+
 
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery/1.9.1/jquery.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery/1.9.1/jquery.min.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/layer/2.1/layer.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/static/h-ui/js/H-ui.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/static/h-ui.admin/js/H-ui.admin.js')}}"></script> 
+
+
+<script type="text/javascript" src="{{asset('resources/cms/lib/jquery-ui/jquery.autocomplete.js')}}"></script> 
 
 <title>办公自动化管理</title>
 <meta name="keywords" content="成都欧飞仕科技贸易有限公司">

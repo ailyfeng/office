@@ -22,6 +22,9 @@ use Validator;
  */
 class SupplierController extends CMSController
 {
+
+    const whereField = array('fullName'=>'供应商全称','abbreviation'=>'供应商简称','brand'=>'品牌');
+
     /**
      * 查询公司产品供应商
      * 
@@ -29,14 +32,60 @@ class SupplierController extends CMSController
      */
     public static function index(){
 
+
+        $input = Input::except("_token");
+
+
+        $id = isset($input['id'])?$input['id']:false;
+        $name = isset($input['name'])?$input['name']:false;
+        $type = isset($input['type'])?$input['type']:false;
+        $field  = self::whereField;
+        $typeTemp = false;
+        foreach (self::whereField as $key => $value) {
+            if($type==$key){
+                $typeTemp = $key;
+                break;
+            }
+        }
+
+        $type = empty($typeTemp)?'fullName':$typeTemp;
+
         //产品选择供应商时要用到一下参数
-        $selectSupplier = Input::get('selectSupplier')=='selectSupplier'?true:false;
-        $id = Input::get('id');
-        $name = Input::get('name');
+        if(!empty($input['selectSupplier'])){
+
+            $selectSupplier = true;
+
+            $pageParam = [
+                            'type'=>$type,
+                            'name'=>$name,
+                            'selectSupplier'=>$input['selectSupplier'],
+                            'id'=>$id
+                        ];
+
+        }else{
+
+            $selectSupplier = false;
+            $pageParam =[];
+
+        }
+
 
         $isBoolean = Supplier::isBoolean();
 
-       $data = Supplier::where('close','!=',1)->orderBy('supplierId','desc')->paginate(15);
+
+        if(!empty($input['keyword'])){
+            $pageParam['keyword']=$input['keyword'];
+
+            $data = Supplier::where($type,'regexp',$input['keyword'])->orderBy('supplierId','desc')->paginate(15);
+
+        }else{
+
+            $data = Supplier::orderBy('supplierId','desc')->paginate(15);
+        
+        }
+
+
+       $data->appends($pageParam);
 
         // $Supplier = new Supplier();
 
@@ -53,8 +102,50 @@ class SupplierController extends CMSController
  
 // dd($data);
 
-        return view('cms.supplier.index',compact('data','isBoolean','selectSupplier','id','name'));
+        return view('cms.supplier.index',compact(
+                                                'data',
+                                                'isBoolean',
+                                                'selectSupplier',
+                                                'id',
+                                                'name',
+                                                'field',
+                                                'type'
+                                                )
+        );
     }
+
+    /**
+     * ajax 查找供应商检查
+     *
+     * @access public
+     * @static funciton
+     */
+    public static function keyword(){
+
+        $query = Input::only('query');
+        
+        $input = $query['query'];
+
+        $typeTemp = false;
+        foreach (self::whereField as $key => $value) {
+            if($input['type']==$key){
+                $typeTemp = $key;
+                break;
+            }
+        }
+
+        $type = empty($typeTemp)?'fullName':$typeTemp;
+
+
+        $res  = Supplier::select($type)->
+                        where($type,'regexp',$input['keyword'])->get()->toArray();
+        $data = array();
+        foreach( $res as $list){
+            $data[]=['fullName'=>$list[$type]];
+        }
+        echo json_encode($data);
+    }
+
 
 
     /**
@@ -190,10 +281,10 @@ class SupplierController extends CMSController
                 'paymentMethod.max'=>'收款方式最多30个字符',
 
                 // 'priceTax.required' => '请填写结算价格（含税）',
-                'numeric' => '结算价格（含税）有误',
+                'priceTax.numeric' => '结算价格（含税）有误',
 
                 // 'priceNoTax.required' => '请填写结算价格（不含税）',
-                'numeric' => '结算价格（不含税）有误',
+                'priceNoTax.numeric' => '结算价格（不含税）有误',
 
                 // 'credit.required'=>'请填写授信额度',
                 'credit.min'=>'授信额度最少2个字符',
@@ -248,21 +339,49 @@ class SupplierController extends CMSController
      * 删除供应商
      *
      * <p> delete.cms/supplier/{$supplierId}</p>
-     * @param $supplierId 公司产品ID
+     * @param Integer | String $supplierId 公司产品ID
      * @todo 没有判断ID是否存在
      * @return json
      */
     public static function destroy($supplierId){
-        $res = Supplier::where("supplierId",$supplierId)->update(['close'=>1]);
+
+        $input = Input::only("status");
+
+        $status = intval($input['status']);
+
+
+        $ids = explode(',', $supplierId);
+
+        if(count($ids)>1){// 批量操作
+            
+            foreach ($ids as $k => $id) {
+                
+                $id =intval($id); 
+
+                if($k==0){
+                    $resQuery = Supplier::where('supplierId',$id);
+                }else{
+                    $resQuery->orWhere('supplierId',$id);
+                }
+            }
+ 
+            $res = $resQuery->update(['close'=>$status]);
+            
+        }else{
+
+            $res = Supplier::where("supplierId",$supplierId)->update(['close'=>$status]);
+        }
+
+
         if($res){
             $data = [
                 'status'=>1,
-                'msg'=>'删除成功',
+                'msg'=>$status?'已经停用':'开启使用'
             ];
         }else{
             $data = [
                 'status'=>0,
-                'msg'=>'删除失败！请稍后重试',
+                'msg'=>'操作失败！请稍后重试',
             ];
 
         }

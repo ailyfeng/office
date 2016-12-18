@@ -11,7 +11,8 @@ $(window).ready(function(){
     	parent.layer.msg('{{$mes}}');
     	window.location.href='{{$url}}';
     @else
-    	parent.location.reload();
+    	// parent.location.reload();
+    	parent.location.replace(parent.location.href);
     	parent.layer.msg('{{$mes}}');
     	parent.layer.close(index);
     @endif

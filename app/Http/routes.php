@@ -54,6 +54,7 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'CMS'
     Route::resource('warehouse', 'WarehouseController');
 
     //供应商
+    Route::any('supplier/keyword','SupplierController@keyword');
     Route::resource('supplier', 'SupplierController');
 
     //供应商联系人

@@ -28,11 +28,11 @@
         </thead>
         <tbody>
             @foreach($data as $list)
-                <tr class="text-c @if($list->close) c-warning @endif " >
+                <tr class="text-c @if($list->close) c-warning @endif "  ondblclick="actionEdit('编辑','{{url('cms/classify/'.$list->id.'/edit')}}','1');" >
                     <td class="tc"  >
                         <input type="checkbox" name="id[]" value="{{$list->id}}" >
                     </td>
-                    <td class="text-l @if($list->close) c-warning @endif " onclick="actionEdit('角色编辑','{{url('cms/classify/'.$list->id.'/edit')}}','1');" >
+                    <td class="text-l @if($list->close) c-warning @endif ">
                         <?php $sunNum = substr_count($list->sort,'-'); for($i=0;$i<$sunNum;$i++){echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";} ?>
                         {{$list->name}}
 
@@ -41,9 +41,9 @@
                         <a title="添加子类" href="javascript:;" onclick="actionEdit('添加子类','{{url('cms/classify/create/'.$list->id)}}','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe600;</i></a>
                         <a title="编辑" href="javascript:;" onclick="actionEdit('编辑','{{url('cms/classify/'.$list->id.'/edit')}}','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
                         @if($list->close)
-                        <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->id}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a></td>
+                        <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->id}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                         @else
-                        <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->id}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a></td>
+                        <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->id}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
                         @endif
                     </td>
                 </tr>
@@ -93,7 +93,7 @@ function actionEdit(title,url,id,w,h){
     });
 }
 
-/*删除*/
+/*启用关闭*/
 function actionDelete(id,status){
         var tag = false;
         alert = '启用';
@@ -120,7 +120,7 @@ function actionDelete(id,status){
                         
                         window.location.reload();
                     }else{
-                        layer.msg("删除失败！请重新操作！", {icon: 5,time:1000});
+                        layer.msg("操作失败！请重新操作！", {icon: 5,time:1000});
                     }
                 });
 

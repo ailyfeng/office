@@ -25,7 +25,7 @@ class WarehouseController extends CMSController
      */
     public static function index(){
 
-        $data = Warehouse::where('close','!=',1)->orderBy('warehouseId','desc')->paginate(15);
+        $data = Warehouse::orderBy('warehouseId','desc')->paginate(15);
 
         return view('cms.warehouse.index',compact('data'));
     }
@@ -211,23 +211,51 @@ class WarehouseController extends CMSController
      * 删除库房
      *
      * <p> delete.cms/warehouse/{$warehouseId}</p>
-     * @param $warehouseId
+     * @param Integer | String $warehouseId 库房ID
      * @return json
      * <code>
      *      {"status":0,"msg":"\删除成功"}
      * </code>
      */
     public static function destroy($warehouseId){
-        $res = Warehouse::where("warehouseId",$warehouseId)->update(['close'=>1]);
+
+        $input = Input::only("status");
+
+        $status = intval($input['status']);
+
+
+        $ids = explode(',', $warehouseId);
+
+        if(count($ids)>1){// 批量操作
+            
+            foreach ($ids as $k => $id) {
+                
+                $id =intval($id); 
+
+                if($k==0){
+                    $resQuery = Warehouse::where('warehouseId',$id);
+                }else{
+                    $resQuery->orWhere('warehouseId',$id);
+                }
+            }
+ 
+            $res = $resQuery->update(['close'=>$status]);
+            
+        }else{
+
+            $res = Warehouse::where("warehouseId",$warehouseId)->update(['close'=>$status]);
+        }
+
+
         if($res){
             $data = [
                 'status'=>1,
-                'msg'=>'删除成功',
+                'msg'=>$status?'已经停用':'开启使用'
             ];
         }else{
             $data = [
                 'status'=>0,
-                'msg'=>'删除失败！请稍后重试',
+                'msg'=>'操作失败！请稍后重试',
             ];
 
         }

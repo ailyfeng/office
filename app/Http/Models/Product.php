@@ -20,33 +20,13 @@ class Product extends Model
     protected   $table           = 'product';
     protected   $primaryKey     = 'productId';
     public      $timestamps     = false;
-    protected $fillable=[
-          'supplierId',
-          'warehouseId',
-          'supplierIdExt',
-          'barCode',
-          'qrCode',
-          'lg',
-          'md',
-          'xs' ,
-          'chineseBrand',
-          'englishBrand',
-          'brandName',
-          'number',
-          'standard',
-          'color',
-          'unit',
-          'packageNum',
-          'packageUnit',
-          'packageRules',
-          'description',
-          'expiration',
-          'stockPrice',
-          'costPrice',
-          'standardPrice',
-          'oneTypePrice',
-          'twoTypePrice',
-        ];
+
+    protected   $guarded        = [];
+    
+    public function supplier(){
+        return $this->morphMany('App\Models\Supplier', 'supplierId');
+    }
+
 
 
     /**

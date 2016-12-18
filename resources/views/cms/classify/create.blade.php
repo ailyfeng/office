@@ -25,7 +25,7 @@
                               <select class="select radius error" size="1" name="parentId" aria-required="true" aria-invalid="true">
                                 <option value="0" selected>顶级分类</option>
                                 @foreach($parentData as $list)
-                                    <option value="{{$list->id}}" @if($data->id==$list->id) selected="selected" @endif >{{$list->name}}</option>
+                                    <option value="{{$list->id}}" @if($data['id']==$list->id) selected="selected" @endif >{{$list->name}}</option>
                                 @endforeach
 
                               </select>
@@ -36,7 +36,7 @@
                               <select class="input-text radius" size="1" name="parentId">
                                 <option value="0" selected>顶级分类</option>
                                 @foreach($parentData as $list)
-                                    <option value="{{$list->id}}" @if($data->id==$list->id) selected="selected" @endif ><?php $sunNum = substr_count($list->sort,'-'); for($i=0;$i<$sunNum;$i++){echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";} ?>{{$list->name}}</option>
+                                    <option value="{{$list->id}}" @if($data['id']==$list->id) selected="selected" @endif ><?php $sunNum = substr_count($list->sort,'-'); for($i=0;$i<$sunNum;$i++){echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";} ?>{{$list->name}}</option>
                                 @endforeach
                               </select>
                             </span>

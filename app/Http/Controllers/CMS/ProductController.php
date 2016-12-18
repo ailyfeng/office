@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CMS;
 
+use App\Http\Models\Classify;
 use App\Http\Models\Supplier;
 use App\Http\Models\Product;
 use Illuminate\Http\Request;
@@ -26,11 +27,10 @@ class ProductController extends CMSController
      */
     public static function index(){
 
-        $data = Product::where('close','!=',1)->orderBy('productId','desc')->paginate(15);
+        $data = Product::orderBy('productId','desc')->paginate(15);
 
         return view('cms.product.index',compact('data'));
     }
-
 
     /**
      * 添加公司产品
@@ -40,7 +40,8 @@ class ProductController extends CMSController
      */
     public static function create($supplierId=false){
 
-        $type = Product::type();
+        //查找公司产品分类
+        $type = Classify::select(['id','name','sort'])->where('close','0')->where('type','=',1)->orderBy('sort','asc')->get()->toArray();
 
         $supplierId = intval($supplierId);
 
@@ -66,10 +67,20 @@ class ProductController extends CMSController
     public static function edit($productId){
 
         $data = Product::find($productId);
+ 
+        //查找该产品的供应商
+        $type = Classify::select(['id','name','sort'])->where('close','0')->where('type','=',1)->orderBy('sort','asc')->get()->toArray();
 
-        $type = Product::type();
+        $supplierData = Supplier::select(['fullName'])->where('supplierId',$data->supplierId);
 
-        return view('cms.product.edit',compact('data','type'));
+        if($supplierData && $data->supplierIdExt){
+            $supplierData->orWhere('supplierId',$data->supplierIdExt);
+        }
+
+        $supplier = $supplierData->get()->toArray();
+
+
+        return view('cms.product.edit',compact('data','type','supplier'));
     }
 
     /**
@@ -77,16 +88,28 @@ class ProductController extends CMSController
      *
      * <p>此接口地址：post.cms/product/{productId}</p>
      * @param Integer $productId  产品ID
-     * @todo 没有判断错误 
      */
     public function update($productId){
 
-        $input = Input::except("_token",'_method');
-        $res = Product::where('productId',$productId)->update($input);
-        if($res){
-            return redirect('cms/product');
+        $input = Input::except('_token','_method','supplierId_','supplierIdExt_');
+
+        //验证数据
+        $validatorData = self::validatorData($input);
+
+        if($validatorData['validator']->passes()===true){
+
+            $res = Product::where('productId',$productId)->update($validatorData['input']);
+            
+            if($res){
+                return redirect(url('cms/alert',array('mes'=>'更新成功！','url'=>urlencode(url('cms/product/'.$productId.'/edit')))));
+            }else{
+                return redirect(url('cms/alert',array('mes'=>'更新失败！','url'=>urlencode(url('cms/product/'.$productId.'/edit')))));
+            }
+
         }else{
-            return back()->with('errors','更新失败！');
+
+            return back()->withErrors($validatorData['validator']);
+
         }
     }
     /**
@@ -98,10 +121,43 @@ class ProductController extends CMSController
      */
     public static function store(){
         $input = Input::except("_token");
+
         if($input){
 
+            //验证数据
+            $validatorData = self::validatorData($input);
+
+            if($validatorData['validator']->passes()===true){
+
+                $res = Product::create($input);
+                if($res){
+                     return redirect('cms/product');
+                }else{
+                    return back()->with('errors','数据填充失败！请稍后重试');
+                }
+            }else{
+                return back()->withErrors($validatorData['validator']);
+
+            }
+        }
+    }
+
+
+    /**
+     *  验证库房数据
+     *
+     * @param array $input
+     * @return boolean | array
+     *
+     */
+    private static function validatorData($input){
+            if(!is_array($input) && count($input)<5){
+                return false;
+            }
+
             $rules = [
-                'supplierId'=>'integer',
+                'supplierId'=>'required|integer',
+                'supplierIdExt'=>'integer',
                 'chineseBrand'=>'required|min:2|max:30',
                 'englishBrand'=>'required|min:5|max:100',
                 'brandName'=>'required|min:2|max:30',
@@ -129,7 +185,11 @@ class ProductController extends CMSController
             ];
 
             $message = [
+
+                'supplierId.required'=>'请选择正确的供应商',
                 'supplierId.integer'=>'请选择正确的供应商',
+
+                'supplierIdExt.integer'=>'请选择正确的辅助供应商',
 
                 'chineseBrand.required'=>'品牌(中文)填写不正确',
                 'chineseBrand.min'=>'品牌(中文)最少2个字符',
@@ -186,39 +246,60 @@ class ProductController extends CMSController
 
             $validator = Validator::make($input,$rules,$message);
 
-            if($validator->passes() ===true){
-                $res = Product::create($input);
-                if($res){
-                     return redirect('cms/product');
-                }else{
-                    return back()->with('errors','数据填充失败！请稍后重试');
-                }
-            }else{
-                return back()->withErrors($validator)->with($input);
+            $data = array('validator'=>$validator,'input'=>$input);
 
-            }
-        }
+            return $data ;
     }
+
 
     /**
      * 删除该产品
      *
      * <p> delete.cms/product/{$productId}</p>
-     * @param $productId 公司产品ID
+     * @param Integer | String $productId 公司产品ID
      * @todo 没有判断ID是否存在
      * @return json
      */
     public static function destroy($productId){
-        $res = Product::where("productId",$productId)->update(['close'=>1]);
+
+
+        $input = Input::only("status");
+
+        $status = intval($input['status']);
+
+
+        $ids = explode(',', $productId);
+
+        if(count($ids)>1){// 批量操作
+            
+            foreach ($ids as $k => $id) {
+                
+                $id =intval($id); 
+
+                if($k==0){
+                    $resQuery = Product::where('productId',$id);
+                }else{
+                    $resQuery->orWhere('productId',$id);
+                }
+            }
+ 
+            $res = $resQuery->update(['close'=>$status]);
+            
+        }else{
+
+            $res = Product::where("productId",$productId)->update(['close'=>$status]);
+        }
+
+
         if($res){
             $data = [
                 'status'=>1,
-                'msg'=>'删除成功',
+                'msg'=>$status?'已经停用':'开启使用'
             ];
         }else{
             $data = [
                 'status'=>0,
-                'msg'=>'删除失败！请稍后重试',
+                'msg'=>'操作失败！请稍后重试',
             ];
 
         }
