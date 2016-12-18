@@ -232,10 +232,11 @@ class ClassifyController extends CMSController
     }
 
     /**
-     * 删除库房
+     * 停用某个分类
      *
      * <p> delete.cms/destroy/{$id}</p>
-     * @param $id
+     * @param String $id
+     * @todo 产品分类停用了，没有停用产品 product
      * @return json
      * <code>
      *      {"status":0,"msg":"\删除成功"}

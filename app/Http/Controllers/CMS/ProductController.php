@@ -6,6 +6,7 @@ use App\Http\Models\Classify;
 use App\Http\Models\Supplier;
 use App\Http\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Requests;
 use phpDocumentor\Reflection\Types\Integer;
@@ -23,13 +24,249 @@ use Validator;
 class ProductController extends CMSController
 {
     /**
+     * 要查找的字段范围  品名（中英文）统计、货号、规格、颜色 、类别
+     *
+     * @count  whereField
+     */
+    const whereField    = ['chineseBrand','englishBrand','brandName','number','color','name'];
+
+
+    /**
+     * 要查找的默认字段
+     *
+     * @count  defaultField
+     */
+    const defaultField  = 'chineseBrand';
+
+    /**
      * 查询产品
      */
     public static function index(){
 
-        $data = Product::orderBy('productId','desc')->paginate(15);
+        $input = Input::except('_token');
 
-        return view('cms.product.index',compact('data'));
+        //搜索词
+        $keyword = !empty($input['keyword'])?$input['keyword']:false; 
+        
+        //搜索字段
+        $field = !empty($input['field'])?$input['field']:false;
+
+        //判断查询的字段和keyword是否合法
+        $tempField = false;
+        foreach (self::whereField as $k => $v) {
+            if($v==$field){
+                $tempField = $field;
+                break;
+            }
+        }
+
+        $Product = new Product();
+        
+        if($keyword){//筛选查找
+
+            $field = $tempField?$tempField:self::defaultField;
+            
+            if(!$tempField){ // 用户没用根据快捷搜索的功能查找 需要统计关键字使用最高的字段
+
+                foreach (self::whereField as $field) {
+
+                    if($field=='name'){//类别统计
+                        
+                        $num[$field] = Classify::where('type' ,'=', 1)->where($field,'regexp',$keyword)->count();
+
+                    }else{
+
+                        $num[$field] = Product::where($field ,'regexp',$keyword)->count();
+
+                    }
+                }
+                // dd($num);
+                $tmpFiledKey=self::defaultField;
+
+                $tmpFiledValue=0;
+
+                foreach ($num as $key => $value) {
+
+                    if($value>$tmpFiledValue){
+                        $tmpFiledValue=$value;
+                        $field=$key;
+
+                    }
+                }
+
+                 
+            }
+     // echo $field;exit;
+
+            if($field=='name'){//根据类别查找
+
+                //根据产品分类查找
+                $classifyRes  = Classify::select('id')->where('type' ,'=', 1)->where($field,'regexp',$keyword)->orderBy($field,'asc')->first()->toArray();
+                $classifyId = $classifyRes['id'];
+
+                //通过产品类别查找产品
+                $data = $Product->select(['product.*','classify.name as name',
+                                        'classify.id as id',
+                                        'classify.close as classifyClose',
+                                        'classify.sort as sort'
+                                        ])->join("classify", function ($join){ 
+
+                               $join->on("product.type", "=", "classify.id");
+
+                             })->where('product.type','=',$classifyId)->paginate(15);
+
+
+            }else{ //不需要产品类别查找数据
+
+                // $data = Product::where($field,'regexp',$keyword)->orderBy($field,'asc')->paginate(15);
+
+                $data = $Product->select(['product.*','classify.name as name',
+                                        'classify.id as id',
+                                        'classify.close as classifyClose',
+                                        'classify.sort as sort'
+                                        ])->join("classify", function ($join){ 
+
+                               $join->on("product.type", "=", "classify.id");
+
+                             })->where($field,'regexp',$keyword)->orderBy("product.".$field,'desc')->paginate(15);
+
+            }
+
+ 
+        }else{//没有任何查找条件
+
+
+            $data = $Product->select(['product.*','classify.name as name',
+                                        'classify.id as id',
+                                        'classify.close as classifyClose',
+                                        'classify.sort as sort'
+                                        ])->join("classify", function ($join){ 
+
+                               $join->on("product.type", "=", "classify.id");
+
+                             })->orderBy("product.productId",'desc')->paginate(15);
+
+        }
+
+        $pageParam = ['keyword'=>$keyword, 'field'=>$field];
+
+
+        
+        //公司产品分类名称
+        $classifyData = self::classify();
+        
+        foreach ($data  as &$list) {
+            if(strrpos($list->sort, '-')){
+                $list->parentName = $classifyData[substr($list->sort,0,abs(strrpos($list->sort,'-')))];
+            }else{
+                $list->parentName = $classifyData[$list->sort];
+            }
+        } 
+        
+
+        //添加分页时的参数
+       $data->appends($pageParam);
+
+        return view('cms.product.index',compact('data','pageParam'));
+    }
+
+
+    /**
+     * 产品分类
+     *
+     * @access private
+     * @static funciton
+     * @return Array
+     */
+    private static function classify(){
+
+        //查找产品类别中的父类名称  type=1 公司产品分类
+         $classifyRes = Classify::where('type','=','1')->select(['sort','name','parentId'])->get();
+
+         if(!$classifyRes){
+
+            return array();
+
+         }
+
+         $classifyData = array();
+
+         foreach ($classifyRes as $list) {
+
+            if($list->parentId=='0'){
+
+            $classifyData[$list->sort]='顶级分类';
+
+            }else{
+
+                $classifyData[$list->sort]=$list->name;
+
+            }
+         }
+
+        return $classifyData;
+    }
+
+    /**
+     * ajax 查找供应商检查
+     *
+     * @access public
+     * @static funciton
+     */
+    public static function keyword(){
+
+        $input = Input::only('query');
+        $query = $input['query'];
+        $keyword = $query['keyword'];
+         
+        $num = array();
+        foreach (self::whereField as $field) {
+
+            if($field=='name'){//类别统计
+                
+                $num[$field] = Classify::where('type' ,'=', 1)->where($field,'regexp',$keyword)->count();
+
+            }else{
+
+                $num[$field] = Product::where($field ,'regexp',$keyword)->count();
+
+            }
+        }
+
+        $tmpFiledKey=self::defaultField;
+        $tmpFiledValue=0;
+
+        foreach ($num as $key => $value) {
+
+            if($value>$tmpFiledValue){
+
+                $tmpFiledKey=$key;
+
+                $tmpFiledValue=$value;
+
+            }
+        }
+ 
+
+        if($tmpFiledKey=='name'){//根据类型查找
+
+            $res = Classify::select($field)->where('type' ,'=', 1)->where($field,'regexp',$keyword)->where('close','=',0)->orderBy($tmpFiledKey,'asc')->limit(10)->get()->toArray();
+
+        }else{
+
+            $res = Product::select($tmpFiledKey)->where($tmpFiledKey,'regexp',$keyword)->orderBy($tmpFiledKey,'asc')->limit(10)->get()->toArray();
+
+        }
+
+        $data = array();
+
+        foreach ($res as $key => $list) {
+
+            $data [] = ['name'=>$list[$tmpFiledKey],'field'=>$tmpFiledKey];
+
+        }
+
+        echo json_encode($data);
     }
 
     /**
