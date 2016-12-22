@@ -11,73 +11,12 @@
 
     <!-- 查找 -->
     <form method="get" action="#">
-        <div class="box-shadow">
-            <a class="btn btn-default" src="">产品筛选：</a>
 
-            @foreach($pageParam as $f=>$lista)
-
-                @if($f=='sort')
-                <a class="btn btn-disabled" src="">类别</a>
-                <span class="select-box radius" style="width:120px" >
-                  <select class="select" size="1" name="sort">
-                        <option value="" >无</option>
-                   @foreach($type as $list)
-                        <option value="{{$list->sort}}" @if($lista['value']==$list->sort) selected="selected"  @endif ><?php $sunNum = substr_count($list['sort'],'-'); for($i=0;$i<$sunNum;$i++){echo "&nbsp;&nbsp;&nbsp;";} ?>{{$list['name']}}</option>
-                    @endforeach
-                  </select>
-                </span>
-                @else
-
-                <a class="btn btn-disabled" src="">{{$lista['name']}}</a>
-                <input class="input-text ac_input radius" name="{{$lista['field']}}"  style="width:100px"  type="text" value="{{$lista['value']}}">
-                @endif
-            @endforeach
-
-           {{csrf_field()}}
-            <!-- 选择供应商 -->
-            <input type="hidden" value="" name="field" id="field"> 
-            <button type="submit" class="btn btn-primary radius" >搜索</button> 
-        </div>
-
-        <div class="box-shadow">
-            <a class="btn btn-default" src="">产品排序：</a>
-
-            @foreach($pageParam as $f=>$lista)
-                <a class="btn btn-primary size-MINI radius" href="{{url('cms/product')}}?{{$lista['field']}}=1">{{$lista['name']}}</a>
-            @endforeach
-            <span class="btn btn-primary active size-MINI radius">品牌
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span>
-<!-- 
-            <span class="btn btn-primary active size-MINI radius">货号
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span>
-            <span class="btn btn-primary active size-MINI radius">品名
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span>
-            <span class="btn btn-primary active size-MINI radius">规格
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span>
-            <span class="btn btn-primary active size-MINI radius">颜色
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span> -->
-        </div>
-
+        <input placeholder="请输入关键词" class="input-text ac_input " name="keyword" value="{{$pageParam['keyword']}}" id="autocomplete" autocomplete="off" style="width:300px" type="text">
+        {{csrf_field()}}
+        <!-- 选择供应商 -->
+        <input type="hidden" value="" name="field" id="field"> 
+        <button type="submit" class="btn btn-default" id="search_button">搜索</button>
     </form>
 
     <div class="cl pd-5 bg-1 bk-gray">
@@ -100,36 +39,28 @@
                 <th width="25"><input type="checkbox" value="" name=""></th>
                 <th>产品中类</th>
                 <th>产品小类</th>
-                <th>中文品牌</th>
-                <th>英文品牌</th>
+                <th>品牌</th>
                 <th>货号</th>
                 <th>品名</th>
                 <th>规格</th>
                 <th>颜色</th>
-                <th>单个</th>
-                <th>标准价</th>
-                <th>包规</th>
                 <th>操作</th>
             </tr>
         </thead>
         <tbody>
             @foreach($data as $list)
             <tr class="text-c" data-title="产品编辑{{$list->chineseBrand}}" _href="{{url('cms/product/'.$list->productId.'/edit')}}" ondblclick="Hui_admin_tab(this)" >
-                <td @if($list->close) class=" danger " @endif><input type="checkbox" value="{{$list->productId}}" selected="" name="productId"></td>
-                <td class="tc @if($list->close) danger @endif">{{$list->parentName}}</td>
-                <td class="tc @if($list->close) danger @endif">{{$list->name}}</td>
-                <td class="tc @if($list->close) danger @endif">{{$list->chineseBrand}}</td>
-                <td class="tc @if($list->close) danger @endif">{{$list->englishBrand}}</td>
-                <td @if($list->close) class=" danger " @endif>{{$list->number}}</td>
-                <td @if($list->close) class=" danger " @endif>
+                <td><input type="checkbox" value="{{$list->productId}}" selected="" name="productId"></td>
+                <td class="tc @if($list->close) c-warning @endif">{{$list->parentName}}</td>
+                <td class="tc @if($list->close) c-warning @endif">{{$list->name}}</td>
+                <td class="tc @if($list->close) c-warning @endif">{{$list->chineseBrand}}</td>
+                <td @if($list->close) class=" c-warning " @endif>{{$list->number}}</td>
+                <td @if($list->close) class=" c-warning " @endif>
                     <a href="#">{{$list->brandName}}</a>
                 </td>
-                <td @if($list->close) class=" danger " @endif>{{$list->standard}}a</td>
-                <td @if($list->close) class=" danger " @endif>{{$list->color}}</td>
-                <td @if($list->close) class=" danger" @endif>{{$list->unit}}</td>
-                <td @if($list->close) class=" danger " @endif>{{$list->standardPrice}}</td>
-                <td @if($list->close) class=" danger " @endif>{{$list->packageRules}}</td>
-                <td class="f-14 @if($list->close) danger @endif">
+                <td @if($list->close) class=" c-warning " @endif>{{$list->standard}}a</td>
+                <td @if($list->close) class=" c-warning " @endif>{{$list->color}}</td>
+                <td class="f-14 @if($list->close) c-warning @endif">
                     <a title="产品编辑" href="javascript:;" data-title="产品编辑{{$list->chineseBrand}}" _href="{{url('cms/product/'.$list->productId.'/edit')}}" ondblclick="Hui_admin_tab(this)" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
 
                     @if($list->close)
