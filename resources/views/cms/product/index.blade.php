@@ -14,7 +14,7 @@
         <div class="box-shadow">
             <a class="btn btn-default" src="">产品筛选：</a>
 
-            @foreach($pageParam as $f=>$lista)
+            @foreach($whereField as $f=>$lista)
 
                 @if($f=='sort')
                 <a class="btn btn-disabled" src="">类别</a>
@@ -42,40 +42,27 @@
         <div class="box-shadow">
             <a class="btn btn-default" src="">产品排序：</a>
 
-            @foreach($pageParam as $f=>$lista)
-                <a class="btn btn-primary size-MINI radius" href="{{url('cms/product')}}?{{$lista['field']}}=1">{{$lista['name']}}</a>
+            @foreach($whereField as $f=>$lista)
+                <a class="btn btn-primary size-MINI radius" href="{{url('cms/product'.$lista['sortUrl'].'&page='.$data->currentPage())}}">{{$lista['name']}}</a>
             @endforeach
-            <span class="btn btn-primary active size-MINI radius">品牌
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
+
+            @foreach($orderbyCurr as $list)
+            <span class="btn btn-primary active size-MINI radius">
+
+                        <a href="{{$list['sortOne']}}" class="Hui-iconfont" style="color:#fff">
+                            {{$list['name']}}
+                            @if($list['value']==1)
+                                    <i class="Hui-iconfont">&#xe6d6;</i>
+                            @else
+                                <i class="Hui-iconfont">&#xe6d5;</i>
+                            @endif
+                        </a>
                         <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
+                        <a href="{{$list['sortX']}}" class="Hui-iconfont" style="color:#fff">
+                            <i class="Hui-iconfont">&#xe6a6;</i>
+                        </a>
             </span>
-<!-- 
-            <span class="btn btn-primary active size-MINI radius">货号
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span>
-            <span class="btn btn-primary active size-MINI radius">品名
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span>
-            <span class="btn btn-primary active size-MINI radius">规格
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span>
-            <span class="btn btn-primary active size-MINI radius">颜色
-                    <i class="Hui-iconfont">&#xe6d6;</i>
-                    <i class="Hui-iconfont">&#xe6d5;</i>
-                        <span class="pipe">|</span>
-                    <i class="Hui-iconfont">&#xe6a6;</i>
-            </span> -->
+            @endforeach
         </div>
 
     </form>

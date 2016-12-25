@@ -7,12 +7,13 @@ use App\Http\Models\Supplier;
 use App\Http\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Routing\UrlGenerator;
 
 use App\Http\Requests;
 use phpDocumentor\Reflection\Types\Integer;
 use Illuminate\Support\Facades\Input;
 use Validator;
-
+use Symfony\Component\Routing\Route;
 
 /**
  * 公司产品
@@ -208,58 +209,164 @@ class ProductController extends CMSController
                             'sort'          =>['field'=>'sort',           'value'=>false, 'name'=>'产品分类'    ,'sortUrl'=>false],
                             'chineseBrand'  =>['field'=>'chineseBrand' ,  'value'=>false, 'name'=>'中文品牌'    ,'sortUrl'=>false],
                             'englishBrand'  =>['field'=>'englishBrand' ,  'value'=>false, 'name'=>'英文品牌'    ,'sortUrl'=>false],
-                            'standard'      =>['field'=>'standard',       'value'=>false, 'name'=>'规格'       ,'sortUrl'=>false],
-                            'brandName'     =>['field'=>'brandName',      'value'=>false, 'name'=>'品名'       ,'sortUrl'=>false],
                             'number'        =>['field'=>'number',         'value'=>false, 'name'=>'货号'       ,'sortUrl'=>false],
+                            'brandName'     =>['field'=>'brandName',      'value'=>false, 'name'=>'品名'       ,'sortUrl'=>false],
+                            'standard'      =>['field'=>'standard',       'value'=>false, 'name'=>'规格'       ,'sortUrl'=>false],
                             'color'         =>['field'=>'color',          'value'=>false, 'name'=>'颜色'       ,'sortUrl'=>false]
                         ];
 
         $input = Input::except('_token');
         // dd($input);
         $where = array();
-        $orderby = array();
+        $orderbyTemp = array();
+        $pageParam = array();
+        $fieldUrl = false;
 
-        $url = url('cms/product');
 
-        foreach ($whereField as &$list) {
+        $url = false;//当前地址参数
 
-            $key = $list['field'];
-            
+        foreach ($input as $key => $value) {
 
-            $tmp = isset($input[$key])?trim($input[$key]):false;
 
-            if($tmp){
+            //筛选
+            if(isset($whereField[$key])){
+
+                $value = isset($value)?trim($value):false;
+
+                if(!empty($value) &&  isset($whereField[$key])){
+                    
+                    $pageParam[$key] = $value; 
+                    
+                    $url = empty($url)?'?':$url.'&';
+
+                    $url.= $key.'='.$value;  
+
+                    $fieldUrl = empty($fieldUrl)?'?':$fieldUrl.'&';
+                    $fieldUrl .= $key.'='.$value;  
+
+                    $whereField[$key]['value']=$value;
+
+                    if ($key=='sort') {
+
+                        $where[] =['classify.'.$key, 'regexp', $value];
+
+                    }else{
+
+                        $where[] =[$key , 'regexp', $value];
+
+                    }
+
                 
-
-                $list['value']=$tmp;
-
-                if ($key=='sort') {
-
-                    $where[] =['classify.'.$key, 'regexp', $tmp];
-
-                }else{
-
-                    $where[] =[$key , 'regexp', $input[$key]];
-
                 }
+            }
+
+            //排序
+            $keySort = substr($key,0,-4);
+
+            if(isset($whereField[$keySort])){
+                $pageParam[$key]=$value;
                 
+                $url = empty($url)?'?':$url.'&';
+
+                $url.= $key.'='.$value;
+
+                $orderbyTemp[$keySort]=$value;
+
+            }
+
+        }
+
+
+        $orderbyCurr = array();
+        foreach ($orderbyTemp as $key => $value) {
+                    $orderbyCurr[$key]= [
+                            'name'=>$whereField[$key]['name'],
+                            'sortOne'=>$value
+                    ];
+        }
+
+        $orderby = array();
+        foreach ($orderbyTemp as $key => $value) {
+
+            if($key=='sort'){
+
+                $orderby[] = [
+                                'field'=>'classify.'.$key,
+                                'sort'=>$value?'asc':'desc'
+                            ];
+
+            }else{
+
+                $orderby[] = [
+                                'field'=>'product.'.$key,
+                                'sort'=>$value?'asc':'desc'
+                            ];
+
             }
         }
 
-        foreach ($whereField as &$list) {
-            
-            $tmp =array_merge($where,array($list['field'].'Sort'=>1));
+        $tmpI = count($orderby);
 
-            // $list['sortUrl'] = action('cms/'.$list['field'],$tmp);
+        for ($i=$tmpI; $i < 8; $i++) { 
+            $orderby[$i] = [
+                            'field'=>'product.type',
+                            'sort'=>'asc'
+                            ]; 
+        }
 
+        foreach ($orderbyCurr as $keyOne=>&$list) {
+
+                $newOrt= $list['sortOne']?0:1;
+                $sortUrl = $fieldUrl;
+                $sortX = $fieldUrl;
+ 
+                foreach ($orderbyTemp as $keyTwo => $value) {
+
+                    $keyTwoSort = $keyTwo.'Sort';
+
+                    if($keyOne==$keyTwo){
+
+                        $sortUrl .= $sortUrl?'&'.$keyTwoSort.'='.$newOrt:'?'.$keyTwoSort.'='.$newOrt;
+
+                    }else{
+                        $sortUrl .= $sortUrl?'&'.$keyTwoSort.'='.$value:'?'.$keyTwoSort.'='.$value;
+
+                        $sortX .= $sortX?'&'.$keyTwoSort.'='.$value:'?'.$keyTwoSort.'='.$value;
+
+                    }
+                }
+
+
+                $list['value'] = $newOrt;
+                $list['sortOne'] = $sortUrl;
+                $list['sortX'] = $sortX;
+        }
+
+
+        //选择要排序的字段
+        foreach ($whereField as $key=>&$list) {
+
+                if(!$url){
+                    $u = '?';
+                }else{
+                    $u = '&';
+                }
+            if(isset($orderbyCurr[$key])){
+                $tmp = $url;
+            }else{
+                $tmp = $url .$u.$list['field'].'Sort'.'=1';
+            }
+
+            $list['sortUrl'] = $tmp ;
 
         }
 
-// print_r($where);exit;
+
         $Product = new Product();
 
         $data = array();
-        if($where){//筛选查找
+
+        if($where || $orderby){//筛选查找
 
    
                 $data = $Product->select([
@@ -270,7 +377,17 @@ class ProductController extends CMSController
                                         'classify.sort as sort'
                                         ])
                             ->join("classify", "product.type", "=", "classify.id")
-                            ->where($where)->orderBy("product.type",'asc')->orderBy("product.type",'asc')->paginate(15);
+                            ->where($where)
+
+                            ->orderBy($orderby[0]['field'], $orderby[0]['sort'])
+                            ->orderBy($orderby[1]['field'], $orderby[1]['sort'])
+                            ->orderBy($orderby[2]['field'], $orderby[2]['sort'])
+                            ->orderBy($orderby[3]['field'], $orderby[3]['sort'])
+                            ->orderBy($orderby[4]['field'], $orderby[4]['sort'])
+                            ->orderBy($orderby[5]['field'], $orderby[5]['sort'])
+                            ->orderBy($orderby[6]['field'], $orderby[6]['sort'])
+                            ->orderBy($orderby[7]['field'], $orderby[7]['sort'])
+                            ->paginate(15);
 
 
 
@@ -313,14 +430,12 @@ class ProductController extends CMSController
             
             }
         } 
-        $pageParam = $whereField;
         //添加分页时的参数
         if($data){
             $data->appends($pageParam);
         }
-// dd($pageParam);
 
-        return view('cms.product.index',compact('data','pageParam','type'));
+        return view('cms.product.index',compact('data','whereField','type','orderbyCurr'));
     }
 
     /**
