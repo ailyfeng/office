@@ -16,15 +16,12 @@
 
     <!-- 查找 -->
     <form method="get" action="#">
-            <span class="l radius ">
-              <select class="input-text radius" size="1" name="type" id="type">
-                @foreach($field as $k=>$v)
-                    <option value="{{$k}}" @if($k==$type) selected="selected" @endif> >{{$v}}</option>
-                @endforeach
-              </select>
-            </span>
-        <input placeholder="请输入关键词" class="input-text ac_input " name="keyword" value="" id="autocomplete" autocomplete="off" style="width:300px" type="text">
-
+        <div class="box-shadow">
+            <a class="btn btn-default" src="">产品筛选：</a>
+        @foreach($whereField as $f=>$lista)
+            <a class="btn btn-disabled" src="">{{$lista['name']}}</a>
+            <input class="input-text ac_input radius" name="{{$lista['field']}}"  style="width:100px"  type="text" value="{{$lista['value']}}">
+        @endforeach
     @if($selectSupplier)
         <!-- 选择供应商 -->
         <input type="hidden" value="{{$selectSupplier}}" name="selectSupplier">
@@ -33,7 +30,35 @@
     @else
     @endif    
 
-        <button type="submit" class="btn btn-default" id="search_button">搜索</button>
+            <button type="submit" class="btn btn-primary radius" >搜索</button>
+            <a class="btn btn-primary radius" href="{{url('cms/supplier')}}">清空所有筛选</a> 
+        </div>
+
+        <div class="box-shadow">
+            <a class="btn btn-default" src="">产品排序：</a>
+
+            @foreach($whereField as $f=>$lista)
+                <a class="btn btn-primary size-MINI radius" href="{{url('cms/supplier'.$lista['sortUrl'].'&page='.$data->currentPage())}}">{{$lista['name']}}</a>
+            @endforeach
+
+            @foreach($orderbyCurr as $list)
+            <span class="btn btn-primary active size-MINI radius">
+
+                        <a href="{{$list['sortOne']}}" class="Hui-iconfont" style="color:#fff">
+                            {{$list['name']}}
+                            @if($list['value']==1)
+                                    <i class="Hui-iconfont">&#xe6d6;</i>
+                            @else
+                                <i class="Hui-iconfont">&#xe6d5;</i>
+                            @endif
+                        </a>
+                        <span class="pipe">|</span>
+                        <a href="{{$list['sortX']}}" class="Hui-iconfont" style="color:#fff">
+                            <i class="Hui-iconfont">&#xe6a6;</i>
+                        </a>
+            </span>
+            @endforeach
+        </div>
     </form>
 
     @if($selectSupplier)
@@ -58,15 +83,13 @@
     <table class="table table-border table-striped table-bordered table-hover table-bg">
         <thead>
             <tr class="text-c">
+
                         @if($selectSupplier)@else
                         <th class="tc" width="5%"><input type="checkbox" name=""></th>
                         @endif
-                        <th class="tc">供应商</th>
-                        <th>品牌</th>
-                        <th>供应品类</th>
-                        <th>授信额度</th>
-                        <th>是否签协</th>
-                        <th>合同到期日</th>
+            @foreach($whereField as $f=>$lista)
+                        <th class="tc">{{$lista['name']}}</th>
+            @endforeach
                         <th>操作</th>
             </tr>
         </thead>
@@ -76,29 +99,20 @@
             @foreach($data as $list)
 
             @if($selectSupplier)
-            <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');">
+                <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');">
             @else
-            <tr class="text-c @if($list->close) c-warning @endif" ondblclick="actionEdit('编辑','{{url('cms/supplier/'.$list->supplierId.'/edit')}}','1');" >
+                <tr class="text-c @if($list->close) danger @endif" ondblclick="actionEdit('编辑','{{url('cms/supplier/'.$list->supplierId.'/edit')}}','1');" >
             @endif
-                @if($selectSupplier)@else
+
+            @if($selectSupplier)@else
                 <td class="tc"><input type="checkbox" name="id[]" value="{{$list->supplierId}}" selected=""></td>
-                @endif
-                <td>
-                    <a href="#" title="{{$list->abbreviation}}">{{$list->fullName}}{{$list->supplierId}}</a>
-                </td>
-                <td  @if($list->close && !$selectSupplier) class=" c-warning " @endif>{{$list->brand}}</td>
-                <td @if($list->close && !$selectSupplier) class=" c-warning " @endif>{{$list->brandType}}</td>
-                <td @if($list->close && !$selectSupplier) class=" c-warning " @endif>{{$list->credit}}</td>
-                <td @if($list->close && !$selectSupplier) class=" c-warning " @endif>
-                    @foreach($isBoolean as $k=>$v)
-                        @if($list->signIs==$k)
-                            {{$v}}
-                        @break
-                        @endif
-                    @endforeach
-                 </td>
-                <td @if($list->close && !$selectSupplier) class=" c-warning " @endif><?php echo date('Y-m-d',$list->contractDate);?></td>
-                <td @if($list->close && !$selectSupplier) class=" c-warning " @endif>
+            @endif
+
+            @foreach($whereField as $f=>$lista)
+                <td  @if($list->close && !$selectSupplier) class=" danger " @endif>{{$list->$lista['field']}}</td>
+            @endforeach
+
+                 <td @if($list->close && !$selectSupplier) class=" danger " @endif>
                     @if($selectSupplier)
                     <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                    @else
@@ -125,88 +139,6 @@
 
 </div>
 <script type="text/javascript">
-$(function(){
-    var url = '{{url("cms/supplier/keyword")}}';
-    // var searchURL = "/cases/search.action";
-    var isClicked = false;
-    var defauntkeyword = "请输入关键词";
-    $("#autocomplete").autocomplete(url, {
-        scroll:false,
-        selectFirst:false,
-        // delay:5,
-        dataType:"json",//ajax的跨域，必须用jsonp,jQuery自动会加一个callback参数,后台要获得callback参数，并写回来
-        //     //自定义提示
-        // tips:function(data) {
-        //         //这里的data是跟formatItem 的data是一样的，所以格式也一样
-        //     return data.pinyin;
-        // },
-        parse: function(data) {
-            if(data==null||typeof(data)=="undefined"||data.length==0){
-                return null;
-            }
-
-            // data = data.keylist;
-            var rows = [];
-            for(var i=0; i<data.length; i++){
-                rows[rows.length] = {
-                    data:data[i],//这里data是对象数组，格式[{key:aa,address:nn},{key:aa,address:nn}]
-                    value:data[i].fullName,
-                    result:data[i].fullName
-                };
-            }
-            return rows;
-        },
-        // extraParams: {query:function (){return $('#autocomplete').val();}},
-        extraParams: {query:function (){
-                var keyword = trim($("#autocomplete").val());
-                var type  = trim($("#type").val());
-                return {"keyword":keyword,"type":type,"_token":"{{csrf_token()}}"};
-            }
-        },
-
-        formatItem: function(data, i, total) {  //就是下拉框显示的内容，可以有格式之类的
-            return "<p>"+data.fullName+"</p>";
-        },
-        formatMatch: function(data, i, total) {  //要匹配的内容
-            return data.fullName;
-        },
-        formatResult: function(data) {  //最终在inputText里显示的内容，就是以后要搜索的内容
-            return data.fullName;
-        }
-    }).result(function(e, data) {
-        if(!isClicked) {
-            startSearch();
-        }
-    });
-
-    $("#autocomplete").keydown(function(e) {
-        if(e.keyCode==13){
-            e.preventDefault();
-            if(!isClicked) {
-                startSearch();
-            }
-        }
-    });
-
-    function startSearch() {
-        var keys = trim($("#autocomplete").val());
-        keys = trim(keys);
-        if(keys==defauntkeyword||keys==''){
-            // window.location.href='/pic/lists-10-w11/';
-        }else{
-            // window.location.href="/pic/lists-10-w11-k"+encodeURIComponent(keys)+"/";
-        }
-    }
-    function trim(m){
-        while((m.length>0)&&(m.charAt(0)==' ')){
-            m = m.substring(1, m.length);
-        }
-        while((m.length>0)&&(m.charAt(m.length-1)==' ')){
-            m = m.substring(0, m.length-1);
-        }
-        return m;
-    }
-});
 
 @if($selectSupplier)
 var index = parent.layer.getFrameIndex(window.name); //获取窗口索引

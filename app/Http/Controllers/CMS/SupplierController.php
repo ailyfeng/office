@@ -23,7 +23,7 @@ use Validator;
 class SupplierController extends CMSController
 {
 
-    const whereField = array('fullName'=>'供应商全称','abbreviation'=>'供应商简称','brand'=>'品牌');
+    // const whereField = array('fullName'=>'供应商全称','abbreviation'=>'供应商简称','brand'=>'品牌');
 
     /**
      * 查询公司产品供应商
@@ -31,52 +31,156 @@ class SupplierController extends CMSController
      * @todo 如果没有数据会报错
      */
     public static function index(){
-
-
-        $input = Input::except("_token");
-
-
-        $id = isset($input['id'])?$input['id']:false;
-        $name = isset($input['name'])?$input['name']:false;
-        $type = isset($input['type'])?$input['type']:false;
-        $field  = self::whereField;
-        $typeTemp = false;
-        foreach (self::whereField as $key => $value) {
-            if($type==$key){
-                $typeTemp = $key;
-                break;
-            }
-        }
-
-        $type = empty($typeTemp)?'fullName':$typeTemp;
-
-        //产品选择供应商时要用到一下参数
-        if(!empty($input['selectSupplier'])){
-
-            $selectSupplier = true;
-
-            $pageParam = [
-                            'type'=>$type,
-                            'name'=>$name,
-                            'selectSupplier'=>$input['selectSupplier'],
-                            'id'=>$id
+        $whereField    = [
+                            'fullName'      =>['field'=>'fullName',       'value'=>false,   'name'=>'供应商全称'   ,'sortUrl'=>false],
+                            'abbreviation'  =>['field'=>'abbreviation',   'value'=>false,   'name'=>'供应商简称'   ,'sortUrl'=>false],
+                            'brandType'     =>['field'=>'brandType',       'value'=>false,   'name'=>'供应品类'    ,'sortUrl'=>false],
+                            'credit'        =>['field'=>'credit',          'value'=>false,   'name'=>'授信额度'    ,'sortUrl'=>false],
+                            'brand'         =>['field'=>'brand',           'value'=>false,     'name'=>'品牌'     ,'sortUrl'=>false]
                         ];
 
-        }else{
-
-            $selectSupplier = false;
-            $pageParam =[];
-
-        }
-
+        $input = Input::except("_token");
+        $id = isset($input['id'])?$input['id']:false;
+        $selectSupplier = isset($input['selectSupplier'])?$input['selectSupplier']:false;
+        $name = isset($input['name'])?$input['name']:false;
+        $pageParam = array('selectSupplier'=>$selectSupplier,'id'=>$id,'name'=>$name);
 
         $isBoolean = Supplier::isBoolean();
 
+        $where = array();
+        $orderbyTemp = array();
+        $fieldUrl = false;
 
-        if(!empty($input['keyword'])){
-            $pageParam['keyword']=$input['keyword'];
 
-            $data = Supplier::where($type,'regexp',$input['keyword'])->orderBy('supplierId','desc')->paginate(15);
+        $url = "?id=$id&selectSupplier=$selectSupplier&name=$name";//当前地址参数
+        foreach ($input as $key => $value) {
+
+            //筛选
+            if(isset($whereField[$key])){
+
+
+                $value = isset($value)?trim($value):false;
+
+                if(!empty($value) &&  isset($whereField[$key])){
+                    
+                    $pageParam[$key] = $value; 
+                    
+                    $url = empty($url)?'?':$url.'&';
+
+                    $url.= $key.'='.$value;  
+
+                    $fieldUrl = empty($fieldUrl)?'?':$fieldUrl.'&';
+                    $fieldUrl .= $key.'='.$value;  
+
+                    $whereField[$key]['value']=$value;
+ 
+                    $where[] =[$key , 'regexp', $value];
+                }
+            }
+
+            //排序
+            $keySort = substr($key,0,-4);
+
+            if(isset($whereField[$keySort])){
+                $pageParam[$key]=$value;
+                
+                $url = empty($url)?'?':$url.'&';
+
+                $url.= $key.'='.$value;
+
+                $orderbyTemp[$keySort]=$value;
+
+            }
+
+        }
+
+        // dd($whereField);
+
+        $orderbyCurr = array();
+        foreach ($orderbyTemp as $key => $value) {
+                    $orderbyCurr[$key]= [
+                            'name'=>$whereField[$key]['name'],
+                            'sortOne'=>$value
+                    ];
+        }
+
+        $orderby = array();
+        foreach ($orderbyTemp as $key => $value) {
+
+
+                $orderby[] = [
+                                'field'=>$key,
+                                'sort'=>$value?'asc':'desc'
+                            ];
+
+        }
+
+        //组装当前排序
+        foreach ($orderbyCurr as $keyOne=>&$list) {
+
+                $newOrt= $list['sortOne']?0:1;
+                $sortUrl = $fieldUrl;
+                $sortX = $fieldUrl;
+                
+                //当前排序
+                foreach ($orderbyTemp as $keyTwo => $value) {
+
+                    $keyTwoSort = $keyTwo.'Sort';
+
+                    if($keyOne==$keyTwo){
+
+                        $sortUrl .= $sortUrl?'&'.$keyTwoSort.'='.$newOrt:'?'.$keyTwoSort.'='.$newOrt;
+
+                    }else{
+                        $sortUrl .= $sortUrl?'&'.$keyTwoSort.'='.$value:'?'.$keyTwoSort.'='.$value;
+
+                        $sortX .= $sortX?'&'.$keyTwoSort.'='.$value:'?'.$keyTwoSort.'='.$value;
+
+                    }
+                }
+
+                //当前排序为空
+                if(!$sortX){
+                    if($fieldUrl){
+                        $sortX = $fieldUrl;
+                    }else{
+                        $sortX = url('cms/supplier');
+                    }
+                }
+
+                $list['value'] = $newOrt;
+                $list['sortOne'] = $sortUrl;
+                $list['sortX'] = $sortX;
+        }
+
+
+        //选择要排序的字段
+        foreach ($whereField as $key=>&$list) {
+
+                if(!$url){
+                    $u = '?';
+                }else{
+                    $u = '&';
+                }
+            if(isset($orderbyCurr[$key])){
+                $tmp = $url;
+            }else{
+                $tmp = $url .$u.$list['field'].'Sort'.'=1';
+            }
+
+            $list['sortUrl'] = $tmp ;
+
+        }
+
+
+        if(!empty($where) || !empty($orderby)){
+            $Supplier = Supplier::where($where);
+
+            foreach ($orderby as $o) {
+                $Supplier->orderBy($o['field'],$o['sort']);
+            }
+
+            $data = $Supplier->paginate(15);
 
         }else{
 
@@ -87,28 +191,14 @@ class SupplierController extends CMSController
 
        $data->appends($pageParam);
 
-        // $Supplier = new Supplier();
-
-        // $Supplier->where('close','!=',1);
-
-        // $Supplier->orderBy('supplierId','desc');
-
-        //  $data = $Supplier->leftJoin("supplier_contact", function ($join){  
-                      
-        //                $join->on("supplier.supplierId", "=", "supplier_contact.supplierId");
-        //                // $join->get(['supplier.*','supplier_contact.name'])
-
-        //              })->paginate(15);
- 
-// dd($data);
-
         return view('cms.supplier.index',compact(
                                                 'data',
                                                 'isBoolean',
                                                 'selectSupplier',
                                                 'id',
                                                 'name',
-                                                'field',
+                                                'whereField',
+                                                'orderbyCurr',
                                                 'type'
                                                 )
         );

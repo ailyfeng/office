@@ -40,161 +40,6 @@ class ProductController extends CMSController
      */
     const defaultField  = 'chineseBrand';
 
-    /**
-     * 查询产品
-     *
-     * @access private
-     * @static function
-     */
-    public static function indexBak(){
-
-        $input = Input::except('_token');
-
-        //搜索词
-        $keyword = !empty($input['keyword'])?$input['keyword']:false; 
-        
-        //搜索字段
-        $field = !empty($input['field'])?$input['field']:false;
-
-        //判断查询的字段和keyword是否合法
-        $tempField = false;
-        foreach (self::$whereField as $k => $v) {
-            if($v==$field){
-                $tempField = $field;
-                break;
-            }
-        }
-
-        $Product = new Product();
-        $data = array();
-        if($keyword){//筛选查找
-
-            $field = $tempField?$tempField:self::$defaultField;
-            
-            if(!$tempField){ // 用户没用根据快捷搜索的功能查找 需要统计关键字使用最高的字段
-
-                foreach (self::$whereField as $field) {
-
-                    if($field=='name'){//类别统计
-                        
-                        $num[$field] = Classify::where('type' ,'=', 1)->where($field,'regexp',$keyword)->count();
-
-                    }else{
-
-                        $num[$field] = Product::where($field ,'regexp',$keyword)->count();
-
-                    }
-                }
-
-                $tmpFiledKey=self::$defaultField;
-
-                $tmpFiledValue=0;
-
-                foreach ($num as $key => $value) {
-
-                    if($value>$tmpFiledValue){
-                        $tmpFiledValue=$value;
-                        $field=$key;
-
-                    }
-                }
-
-            }
-
-            if($field=='name'){//根据类别查找
-
-                //根据产品分类查找
-                $classifySort  = Classify::select(['id','sort'])->where('type' ,'=', 1)->where($field,'regexp',$keyword)->orderBy($field,'asc')->first();
-
-                // dd($classifySort);
-                if($classifySort){
-                    
-                    $classifyId  = Classify::select(['id'])->where('type' ,'=', 1)->where('sort','regexp',$classifySort->sort)->orderBy('sort','asc')->get();
-                    
-                    if($classifyId){
-
-                        //通过产品类别查找产品
-                        $data =  $Product->select([
-                                                'product.*',
-                                                'classify.name as name',
-                                                'classify.id as id',
-                                                'classify.close as classifyClose',
-                                                'classify.sort as sort'
-                                                ])->join("classify", function ($join){
-
-                                       $join->on("product.type", "=", "classify.id");
-
-                                     })->whereIn('product.type', $classifyId)->orderBy('classify.sort','asc')->simplePaginate(15);
-
-                    }
-
-                }
-
-            }else{ //不需要产品类别查找数据
-
-                // $data = Product::where($field,'regexp',$keyword)->orderBy($field,'asc')->paginate(15);
-
-                $data = $Product->select([
-                                        'product.*',
-                                        'classify.name as name',
-                                        'classify.id as id',
-                                        'classify.close as classifyClose',
-                                        'classify.sort as sort'
-                                        ])->join("classify", function ($join){ 
-
-                               $join->on("product.type", "=", "classify.id");
-
-                             })->where($field,'regexp',$keyword)->orderBy("product.".$field,'desc')->paginate(15);
-
-            }
-
-        }else{//没有任何查找条件
-
-            $data = $Product->select([
-                                        'product.*',
-                                        'classify.name as name',
-                                        'classify.id as id',
-                                        'classify.close as classifyClose',
-                                        'classify.sort as sort'
-                                    ])->join("classify", function ($join){ 
-
-                               $join->on("product.type", "=", "classify.id");
-
-                             })->orderBy("product.productId",'desc')->paginate(15);
-
-        }
-
-        $pageParam = ['keyword'=>$keyword, 'field'=>$field];
-
-        
-        //公司产品分类名称
-        $classifyData = self::$classify();
-    
-        foreach ($data  as &$list) {
-
-            if(strrpos($list->sort, '-')){
-            
-                $list->parentName = $classifyData[substr($list->sort,0,abs(strrpos($list->sort,'-')))];
-            
-            }elseif(is_numeric($list->sort)){
-
-                $list->parentName = $classifyData[$list->sort];
-
-            }else{
-            
-                $list->parentName = $classifyData[$list->sort];
-            
-            }
-        } 
-
-
-        //添加分页时的参数
-        if($data){
-            $data->appends($pageParam);
-        }
-
-        return view('cms.product.indexBak',compact('data','pageParam'));
-    }
 
     /**
      * 查询产品
@@ -276,7 +121,6 @@ class ProductController extends CMSController
 
         }
 
-
         $orderbyCurr = array();
         foreach ($orderbyTemp as $key => $value) {
                     $orderbyCurr[$key]= [
@@ -314,12 +158,14 @@ class ProductController extends CMSController
                             ]; 
         }
 
+        //组装当前排序
         foreach ($orderbyCurr as $keyOne=>&$list) {
 
                 $newOrt= $list['sortOne']?0:1;
                 $sortUrl = $fieldUrl;
                 $sortX = $fieldUrl;
- 
+                
+                //当前排序
                 foreach ($orderbyTemp as $keyTwo => $value) {
 
                     $keyTwoSort = $keyTwo.'Sort';
@@ -336,6 +182,14 @@ class ProductController extends CMSController
                     }
                 }
 
+                //当前排序为空
+                if(!$sortX){
+                    if($fieldUrl){
+                        $sortX = $fieldUrl;
+                    }else{
+                        $sortX = url('cms/product');
+                    }
+                }
 
                 $list['value'] = $newOrt;
                 $list['sortOne'] = $sortUrl;
@@ -360,7 +214,7 @@ class ProductController extends CMSController
             $list['sortUrl'] = $tmp ;
 
         }
-
+// dd($whereField);
 
         $Product = new Product();
 
@@ -591,7 +445,7 @@ class ProductController extends CMSController
         $input = Input::except('_token','_method','supplierId_','supplierIdExt_');
 
         //验证数据
-        $validatorData = self::$validatorData($input);
+        $validatorData = self::validatorData($input);
 
         if($validatorData['validator']->passes()===true){
 
@@ -617,7 +471,7 @@ class ProductController extends CMSController
      * @static Function
      */
     public static function store(){
-        $input = Input::except("_token");
+        $input = Input::except(array("_token","supplierId_","supplierIdExt_"));
 
         if($input){
 
@@ -626,9 +480,9 @@ class ProductController extends CMSController
 
             if($validatorData['validator']->passes()===true){
 
-                $res = Product::create($input);
+                $res = Product::create($validatorData['input']);
                 if($res){
-                     return redirect('cms/product');
+                    return redirect(url('cms/alert',array('mes'=>'保存成功','url'=>urlencode(url('cms/product')))));
                 }else{
                     return back()->with('errors','数据填充失败！请稍后重试');
                 }

@@ -35,8 +35,9 @@
 
            {{csrf_field()}}
             <!-- 选择供应商 -->
-            <input type="hidden" value="" name="field" id="field"> 
-            <button type="submit" class="btn btn-primary radius" >搜索</button> 
+            <input type="hidden" value="" name="field" id="field">
+            <button type="submit" class="btn btn-primary radius" >搜索</button>
+            <a class="btn btn-primary radius" href="{{url('cms/product')}}">清空所有筛选</a> 
         </div>
 
         <div class="box-shadow">
