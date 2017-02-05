@@ -24,14 +24,6 @@ use Symfony\Component\Routing\Route;
  */
 class ProductController extends CMSController
 {
-    /**
-     * 要查找的字段范围  品名（中英文）统计、货号、规格、颜色 、类别
-     *
-     * @count  whereField
-     */
-    // const whereField    = ['chineseBrand','englishBrand','brandName','number','color','type'];
-
-
 
     /**
      * 要查找的默认字段
@@ -61,162 +53,27 @@ class ProductController extends CMSController
                         ];
 
         $input = Input::except('_token');
-        // dd($input);
-        $where = array();
-        $orderbyTemp = array();
-        $pageParam = array();
-        $fieldUrl = false;
-
-
-        $url = false;//当前地址参数
-
-        foreach ($input as $key => $value) {
-
-
-            //筛选
-            if(isset($whereField[$key])){
-
-                $value = isset($value)?trim($value):false;
-
-                if(!empty($value) &&  isset($whereField[$key])){
-                    
-                    $pageParam[$key] = $value; 
-                    
-                    $url = empty($url)?'?':$url.'&';
-
-                    $url.= $key.'='.$value;  
-
-                    $fieldUrl = empty($fieldUrl)?'?':$fieldUrl.'&';
-                    $fieldUrl .= $key.'='.$value;  
-
-                    $whereField[$key]['value']=$value;
-
-                    if ($key=='sort') {
-
-                        $where[] =['classify.'.$key, 'regexp', $value];
-
-                    }else{
-
-                        $where[] =[$key , 'regexp', $value];
-
-                    }
-
-                
-                }
-            }
-
-            //排序
-            $keySort = substr($key,0,-4);
-
-            if(isset($whereField[$keySort])){
-                $pageParam[$key]=$value;
-                
-                $url = empty($url)?'?':$url.'&';
-
-                $url.= $key.'='.$value;
-
-                $orderbyTemp[$keySort]=$value;
-
-            }
-
-        }
-
-        $orderbyCurr = array();
-        foreach ($orderbyTemp as $key => $value) {
-                    $orderbyCurr[$key]= [
-                            'name'=>$whereField[$key]['name'],
-                            'sortOne'=>$value
-                    ];
-        }
-
-        $orderby = array();
-        foreach ($orderbyTemp as $key => $value) {
-
-            if($key=='sort'){
-
-                $orderby[] = [
-                                'field'=>'classify.'.$key,
-                                'sort'=>$value?'asc':'desc'
-                            ];
-
-            }else{
-
-                $orderby[] = [
-                                'field'=>'product.'.$key,
-                                'sort'=>$value?'asc':'desc'
-                            ];
-
-            }
-        }
-
-        $tmpI = count($orderby);
-
-        for ($i=$tmpI; $i < 8; $i++) { 
-            $orderby[$i] = [
-                            'field'=>'product.type',
-                            'sort'=>'asc'
-                            ]; 
-        }
-
-        //组装当前排序
-        foreach ($orderbyCurr as $keyOne=>&$list) {
-
-                $newOrt= $list['sortOne']?0:1;
-                $sortUrl = $fieldUrl;
-                $sortX = $fieldUrl;
-                
-                //当前排序
-                foreach ($orderbyTemp as $keyTwo => $value) {
-
-                    $keyTwoSort = $keyTwo.'Sort';
-
-                    if($keyOne==$keyTwo){
-
-                        $sortUrl .= $sortUrl?'&'.$keyTwoSort.'='.$newOrt:'?'.$keyTwoSort.'='.$newOrt;
-
-                    }else{
-                        $sortUrl .= $sortUrl?'&'.$keyTwoSort.'='.$value:'?'.$keyTwoSort.'='.$value;
-
-                        $sortX .= $sortX?'&'.$keyTwoSort.'='.$value:'?'.$keyTwoSort.'='.$value;
-
-                    }
-                }
-
-                //当前排序为空
-                if(!$sortX){
-                    if($fieldUrl){
-                        $sortX = $fieldUrl;
-                    }else{
-                        $sortX = url('cms/product');
-                    }
-                }
-
-                $list['value'] = $newOrt;
-                $list['sortOne'] = $sortUrl;
-                $list['sortX'] = $sortX;
-        }
-
-
-        //选择要排序的字段
-        foreach ($whereField as $key=>&$list) {
-
-                if(!$url){
-                    $u = '?';
-                }else{
-                    $u = '&';
-                }
-            if(isset($orderbyCurr[$key])){
-                $tmp = $url;
-            }else{
-                $tmp = $url .$u.$list['field'].'Sort'.'=1';
-            }
-
-            $list['sortUrl'] = $tmp ;
-
-        }
-// dd($whereField);
 
         $Product = new Product();
+        $Classify = new Classify();
+
+        $filterWhere = self::filterWhere(
+                                        $input,
+                                        $whereField,
+                                        $Product->table,
+                                        $Classify->table,
+                                        array('sort'),
+                                        $Product->table.'.type',
+                                        'cms/product'
+                                        );
+
+        $where          = $filterWhere['where'];
+        $pageParam      =  $filterWhere['pageParam'];
+        $orderby        =  $filterWhere['orderby'];
+        $orderbyCurr    =  $filterWhere['orderbyCurr'];
+        $whereField     =  $filterWhere['whereField'];
+
+// dd($whereField);
 
         $data = array();
 
@@ -224,13 +81,13 @@ class ProductController extends CMSController
 
    
                 $data = $Product->select([
-                                        'product.*',
-                                        'classify.name as name',
-                                        'classify.id as id',
-                                        'classify.close as classifyClose',
-                                        'classify.sort as sort'
+                                        $Product->table .'.*',
+                                        $Classify->table .'.name as name',
+                                        $Classify->table .'.id as id',
+                                        $Classify->table .'.close as classifyClose',
+                                        $Classify->table .'.sort as sort'
                                         ])
-                            ->join("classify", "product.type", "=", "classify.id")
+                            ->join($Classify->table, $Product->table .'.type', "=", $Classify->table .'.id')
                             ->where($where)
 
                             ->orderBy($orderby[0]['field'], $orderby[0]['sort'])
@@ -248,16 +105,16 @@ class ProductController extends CMSController
         }else{//没有任何查找条件
 
             $data = $Product->select([
-                                        'product.*',
-                                        'classify.name as name',
-                                        'classify.id as id',
-                                        'classify.close as classifyClose',
-                                        'classify.sort as sort'
-                                    ])->join("classify", function ($join){ 
+                                        $Product->table .'.*',
+                                        $Classify->table .'.name as name',
+                                        $Classify->table .'.id as id',
+                                        $Classify->table .'.close as classifyClose',
+                                        $Classify->table .'.sort as sort'
+                                    ])->join($Classify->table, function ($join){ 
 
-                               $join->on("product.type", "=", "classify.id");
+                               $join->on($Product->table .'.type', "=", $Classify->table .'.id');
 
-                             })->orderBy("product.type",'asc')->paginate(15);
+                             })->orderBy($Product->table .'.type','asc')->paginate(15);
 
 
 
@@ -326,6 +183,7 @@ class ProductController extends CMSController
      *
      * @access public
      * @static funciton
+     * @todo  淘汰此方法
      */
     public static function keyword(){
 

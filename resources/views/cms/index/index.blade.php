@@ -48,22 +48,6 @@
 <aside class="Hui-aside">
 	<input runat="server" id="divScrollValue" type="hidden" value="" />
 	<div class="menu_dropdown bk_2">
-		<dl id="menu-article">
-			<dt><i class="Hui-iconfont">&#xe616;</i> 资讯管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li><a _href="article-list.html" data-title="资讯管理" href="javascript:void(0)">资讯管理</a></li>
-				</ul>
-			</dd>
-		</dl>
-		<dl id="menu-picture">
-			<dt><i class="Hui-iconfont">&#xe613;</i> 图片管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li><a _href="picture-list.html" data-title="图片管理" href="javascript:void(0)">图片管理</a></li>
-				</ul>
-			</dd>
-		</dl>
 		<dl id="menu-product">
 			<dt><i class="Hui-iconfont">&#xe620;</i> 产品管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
@@ -77,10 +61,10 @@
 			<dt><i class="Hui-iconfont">&#xe620;</i> 供应商管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a _href="{{url('cms/classify')}}" data-title="供应商类别管理" href="javascript:void(0)">供应商类别管理</a></li>
-					<li><a _href="{{url('cms/supplier')}}" data-title="供应商" href="javascript:void(0)">供应商列表</a></li>
-					<li><a _href="{{url('cms/index/info')}}" data-title="供应商" href="javascript:void(0)">供应商联系人</a></li>
-					<li><a _href="{{url('cms/index/info')}}" data-title="供应商" href="javascript:void(0)">供应商接触表</a></li>
+					<!-- <li><a _href="{{url('cms/classify')}}" data-title="供应商类别管理" href="javascript:void(0)">供应商类别管理</a></li> -->
+					<li><a _href="{{url('cms/supplier')}}" data-title="供应商列表" href="javascript:void(0)">供应商列表</a></li>
+					<li><a _href="{{url('cms/supplierContract')}}" data-title="供应商联系人" href="javascript:void(0)">供应商联系人</a></li>
+					<li><a _href="{{url('cms/index/info')}}" data-title="供应商接触表" href="javascript:void(0)">供应商接触表</a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -88,8 +72,8 @@
 			<dt><i class="Hui-iconfont">&#xe620;</i> 库房管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a _href="{{url('cms/supplier')}}" data-title="供应商" href="javascript:void(0)">供应商</a></li>
-					<li><a _href="{{url('cms/classify')}}" data-title="公司产品" href="javascript:void(0)">产品分类</a></li>
+					<li><a _href="{{url('cms/warehouse')}}" data-title="库房列表" href="javascript:void(0)">库房列表</a></li>
+					<li><a _href="{{url('cms/warehouse')}}" data-title="库房产品" href="javascript:void(0)">库房产品</a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -99,6 +83,22 @@
 				<ul>
 					<li><a _href="{{url('cms/supplier')}}" data-title="供应商" href="javascript:void(0)">供应商</a></li>
 					<li><a _href="{{url('cms/classify')}}" data-title="公司产品" href="javascript:void(0)">产品分类</a></li>
+				</ul>
+			</dd>
+		</dl>
+		<dl id="menu-article">
+			<dt><i class="Hui-iconfont">&#xe616;</i> 资讯管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="article-list.html" data-title="资讯管理" href="javascript:void(0)">资讯管理</a></li>
+				</ul>
+			</dd>
+		</dl>
+		<dl id="menu-picture">
+			<dt><i class="Hui-iconfont">&#xe613;</i> 图片管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="picture-list.html" data-title="图片管理" href="javascript:void(0)">图片管理</a></li>
 				</ul>
 			</dd>
 		</dl>

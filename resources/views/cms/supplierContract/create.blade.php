@@ -10,12 +10,24 @@
             供应商管理
         </a>
         <span class="c-gray en">&gt;</span> 
-        为供应商"{{$data->fullName}}"添加联系人 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+        为供应商添加联系人 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
     <article class="page-container">
         <form action="{{url('cms/supplierContract')}}" method="post" class="form form-horizontal" id="formSupplierContractAdd">
             {{csrf_field()}}
-            <input type="hidden" name="supplierId" value="{{$data->supplierId}}">
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                        <input type="hidden" name="supplierId" value="{{$data['supplierId']}}" class="supplierId">
+                    @if($errors->has('supplierId'))
+                        <input type="text" class="input-text radius error" value="{{$data['fullName']}}"  readonly="readonly" name="supplierId_" id="supplierId" placeholder="请选择供应商" onclick="actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=1')}}&sonId=supplierId&sonName=supplierId','1')" aria-required="true" aria-invalid="true">
+                        <label id="supplierId-error" class="error" for="supplierId">{{$errors->first('supplierId')}}</label>
+                    @else
+                         <input type="text" class="input-text radius" value="{{$data['fullName']}}" readonly="readonly" placeholder="请选择供应商" name="supplierId_" id="supplierId" onclick=" actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=1')}}&sonId=supplierId&sonName=supplierId','1');" aria-required="true" aria-invalid="true">
+                    @endif
+                </div>
+            </div>
+
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>姓名：</label>
                 <div class="formControls col-xs-8 col-sm-9">
@@ -223,6 +235,18 @@
 <script type="text/javascript">
  
 
+/*编辑*/
+function actionEdit(title,url,id,w,h){
+    //layer_show(title,url,w,h);
+
+    layer.open({
+      type: 2,
+      area: ['90%', '90%'],
+      fixed: false, //不固定
+      maxmin: true,
+      content: url
+    });
+}
 
 //验证表单
 $(document).ready(function(){

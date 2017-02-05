@@ -25,8 +25,8 @@
     @if($selectSupplier)
         <!-- 选择供应商 -->
         <input type="hidden" value="{{$selectSupplier}}" name="selectSupplier">
-        <input type="hidden" value="{{$name}}" name="name">
-        <input type="hidden" value="{{$id}}" name="id">
+        <input type="hidden" value="{{$sonName}}" name="sonName">
+        <input type="hidden" value="{{$sonId}}" name="sonId">
     @else
     @endif    
 
@@ -76,7 +76,7 @@
             <a class="btn btn-primary radius" data-title="添加供应商" _href="{{url('cms/supplier/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
                 <i class="Hui-iconfont">&#xe600;</i> 添加供应商
             </a>
-            </span> <span class="r">共有数据：<strong>54</strong> 条</span>
+            </span> <span class="r">共有数据：<strong>{{$data->total()}}</strong> 条</span>
     </div>
 
     @endif
@@ -146,9 +146,9 @@ var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
 //给父类传值
 function actionSelectSupplier(id,name){
 
-    parent.$('.{{$id}}').val(id);
+    parent.$('.{{$sonId}}').val(id);
 
-    parent.$('#{{$name}}').val(name);
+    parent.$('#{{$sonName}}').val(name);
 
     parent.layer.close(index);
 
@@ -184,7 +184,7 @@ function actionEdit(title,url,id,w,h){
 
     layer.open({
       type: 2,
-      area: ['800px', '600px'],
+      area: ['90%', '90%'],
       fixed: false, //不固定
       maxmin: true,
       content: url

@@ -21,10 +21,12 @@ use Validator;
  */
 class SupplierContractController extends CMSController
 {
+
     /**
-     * 查询公司产品供应商
+     * 查询公司产品供应商联系人
      */
     public static function index(){
+
 
         //产品选择供应商时要用到一下参数
         $selectSupplier = Input::get('selectSupplier')=='selectSupplier'?true:false;
@@ -33,14 +35,97 @@ class SupplierContractController extends CMSController
         
         $name = Input::get('name');
 
-        $data = Supplier::where('close','!=',1)->orderBy('supplierId','desc')->paginate(15,['*'],'aaa');
+ 
 
-        $isBoolean = Supplier::isBoolean();
+        $whereField    = [
+                            'fullName'      =>['field'=>'fullName',     'value'=>false, 'name'=>'供应商'      ,'sortUrl'=>false],
+                            'name'          =>['field'=>'name' ,        'value'=>false, 'name'=>'姓名'        ,'sortUrl'=>false],
+                            'nickname'      =>['field'=>'nickname' ,    'value'=>false, 'name'=>'英文名/昵称'  ,'sortUrl'=>false],
+                            'gender'        =>['field'=>'gender',       'value'=>false, 'name'=>'性别'        ,'sortUrl'=>false],
+                            'position'      =>['field'=>'position',     'value'=>false, 'name'=>'职位/描述'    ,'sortUrl'=>false],
+                            'age'           =>['field'=>'age',          'value'=>false, 'name'=>'年龄'        ,'sortUrl'=>false],
+                            'telOne'        =>['field'=>'telOne',       'value'=>false, 'name'=>'手机号'      ,'sortUrl'=>false]
+                        ];
 
-        return view('cms.supplierContract.index',compact('data','isBoolean','selectSupplier','id','name'));
+        $input = Input::except('_token');
+
+        $SupplierContact = new SupplierContact();
+        $Supplier = new Supplier();
+
+        $filterWhere = self::filterWhere(
+                                        $input,
+                                        $whereField,
+                                        $SupplierContact->table,
+                                        $Supplier->table,
+                                        array('fullName'),
+                                        $SupplierContact->table. '.supplierId',
+                                        'cms/supplierContract');
+
+        $where          = $filterWhere['where'];
+        $pageParam      =  $filterWhere['pageParam'];
+        $orderby        =  $filterWhere['orderby'];
+        $orderbyCurr    =  $filterWhere['orderbyCurr'];
+        $whereField     =  $filterWhere['whereField'];
+
+// dd($whereField);
+
+        $data = array();
+
+        if($where || $orderby){//筛选查找
+
+   
+                $data = $SupplierContact->select([
+                                        $SupplierContact->table .'.*',
+                                        $Supplier->table .'.fullName as fullName',
+                                        $Supplier->table .'.close as supplierClose'
+                                        ])
+                            ->join($Supplier->table, $SupplierContact->table .'.supplierId', "=", $Supplier->table .'.supplierId')
+                            ->where($where)
+
+                            ->orderBy($orderby[0]['field'], $orderby[0]['sort'])
+                            ->orderBy($orderby[1]['field'], $orderby[1]['sort'])
+                            ->orderBy($orderby[2]['field'], $orderby[2]['sort'])
+                            ->orderBy($orderby[3]['field'], $orderby[3]['sort'])
+                            ->orderBy($orderby[4]['field'], $orderby[4]['sort'])
+                            ->orderBy($orderby[5]['field'], $orderby[5]['sort'])
+                            ->orderBy($orderby[6]['field'], $orderby[6]['sort'])
+                            ->orderBy($orderby[7]['field'], $orderby[7]['sort'])
+                            ->paginate(15);
+
+
+
+        }else{//没有任何查找条件
+
+            $data = $SupplierContact->select([
+                                        $SupplierContact->table .'.*',
+                                        $Supplier->table .'.fullName as fullName',
+                                        $Supplier->table .'.close as supplierClose'
+                                    ])->join($Supplier->table, function ($join){ 
+
+                               $join->on($SupplierContact->table .'.supplierId', "=", $Supplier->table .'.supplierId');
+
+                             })->orderBy($SupplierContact->table .'.supplierId','asc')->paginate(15);
+
+
+
+        }
+
+        $isBoolean = SupplierContact::isBoolean();
+
+        foreach ($data as &$list) {
+            $list->gender = SupplierContact::isGender($list->gender);//过滤性别
+        }
+
+
+        //添加分页时的参数
+        if($data){
+            $data->appends($pageParam);
+        }
+
+
+        return view('cms.supplierContract.index',compact('data','selectSupplier','id','name','whereField','orderbyCurr'));
     
     }
-
 
     /**
      * 添加供应商联系人
@@ -51,7 +136,14 @@ class SupplierContractController extends CMSController
      */
     public static function create($supplierId){
 
-        $data = Supplier::find($supplierId);
+        $data = Supplier::select(array('supplierId','fullName'))->find($supplierId);
+        if($data){
+            
+            $data = $data->toArray();
+
+        }else{
+            $data = array('supplierId'=>null,'fullName'=>null);
+        }
 
         $isGender = SupplierContact::isGender();
 
@@ -63,15 +155,24 @@ class SupplierContractController extends CMSController
      *
      * @param Integer $supplierId  产品ID
      */
-    public static function edit($supplierId){
+    public static function edit($contactId){
 
-        $data = SupplierContact::find($supplierId);
-         
+        $data = SupplierContact::find($contactId);
 
-        $type = SupplierContact::isGender();
- 
+        if($data){
+            
+            $data->birthday = !empty($data->birthday)?date('Y-m-d',$data->birthday):null;
+            $supplierData = Supplier::find($data->supplierId); 
 
-        return view('cms.supplierContract.edit',compact('data','type'));
+        }else{
+
+                return redirect(url('cms/alert',array('mes'=>'供应商联系人不存在！','url'=>urlencode(url('cms/supplierContract')))));
+
+        }
+
+        $isGender = SupplierContact::isGender();
+
+        return view('cms.supplierContract.edit',compact('data','isGender','supplierData'));
     }
 
     /**
@@ -83,7 +184,7 @@ class SupplierContractController extends CMSController
      */
     public static function store(){
 
-        $input = Input::except("_token");
+        $input = Input::except(array("_token","supplierId_"));
 
         if($input){
 
@@ -199,15 +300,15 @@ class SupplierContractController extends CMSController
 
     }
     /**
-     * 更新供应商
+     * 更新供应商联系人
      *
      * <p>此接口地址：post.cms/supplier/{$supplierId}</p>
      * @param Integer $productId  产品ID
      * @todo 没有判断错误
      */
-    public static function update($supplierId){
+    public static function update($contactId){
 
-        $input = Input::except("_token",'_method');
+        $input = Input::except('_token','_method','supplierId_');
 
 
         //验证数据
@@ -216,15 +317,15 @@ class SupplierContractController extends CMSController
 
         if($validatorData['validator']->passes()===true){
 
-            $res = Supplier::where('supplierId',$supplierId)->update($validatorData['input']);
+            $res = SupplierContact::where('contactId',$contactId)->update($validatorData['input']);
 
             if($res){
 
-                return redirect(url('cms/alert',array('mes'=>'保存成功')));
+                return redirect(url('cms/alert',array('mes'=>'保存成功','url'=>urlencode(url('cms/supplierContract/'.$contactId.'/edit')))));
 
             }else{
 
-                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/supplier/'.$supplierId.'/edit')))));
+                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/supplierContract/'.$contactId.'/edit')))));
 
             }
 
@@ -234,40 +335,57 @@ class SupplierContractController extends CMSController
         }
     }
 
+
     /**
-     * 删除供应商
+     * 删除该产品
      *
-     * <p> delete.cms/supplier/{$supplierId}</p>
-     * @param $supplierId 公司产品ID
+     * <p> delete.cms/product/{$contactId}</p>
+     * @param Array | Int $supplierId 供应商联系人ID
      * @todo 没有判断ID是否存在
      * @return json
      */
-    public static function destroy($supplierId){
+    public static function destroy($contactId){
 
-        $res = Supplier::where("supplierId",$supplierId)->update(['close'=>1]);
 
-        if($res){
+        $input = Input::only("status");
 
-            $data = [
+        $status = intval($input['status']);
 
-                'status'=>1,
+        $ids = explode(',', $contactId);
 
-                'msg'=>'删除成功',
+        if(count($ids)>1){// 批量操作
+            
+            foreach ($ids as $k => $id) {
+                
+                $id =intval($id); 
 
-            ];
-
+                if($k==0){
+                    $resQuery = SupplierContact::where('contactId',$id);
+                }else{
+                    $resQuery->orWhere('contactId',$id);
+                }
+            }
+ 
+            $res = $resQuery->update(['close'=>$status]);
+            
         }else{
 
+            $res = SupplierContact::where("contactId",$contactId)->update(['close'=>$status]);
+        }
+
+
+        if($res){
             $data = [
-
+                'status'=>1,
+                'msg'=>$status?'已经停用':'开启使用'
+            ];
+        }else{
+            $data = [
                 'status'=>0,
-
-                'msg'=>'删除失败！请稍后重试',
-
+                'msg'=>'操作失败！请稍后重试',
             ];
 
         }
-
         return $data;
     }
 

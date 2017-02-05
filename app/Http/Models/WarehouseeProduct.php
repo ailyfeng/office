@@ -5,17 +5,17 @@ namespace App\Http\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Supplier 库房管理
+ * Class WarehouseeProduct 库房产品管理
  *
  * @copyright 成都欧飞仕科技贸易有限公司
  * @author Kenn
  * @package App\Http\Models
  * @version V.D.1.0
  */
-class Warehouse extends Model
+class WarehouseeProduct extends Model
 {
-    public   $table          = 'warehouse';
-    public   $primaryKey     = 'warehouseId';
+    public   	$table          = 'warehouse_product';
+    public   	$primaryKey     = 'id';
     public      $timestamps     = false;
     protected 	$guarded 		= [];
 }

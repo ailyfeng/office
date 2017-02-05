@@ -22,8 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Classify extends Model
 {
-    protected   $table          = 'classify';
-    protected   $primaryKey     = 'id';
+    public   $table          = 'classify';
+    public   $primaryKey     = 'id';
     public      $timestamps     = false;
     protected 	$guarded 		= [];
     public 		$parentName 		= false;

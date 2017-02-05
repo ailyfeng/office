@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Product extends Model
 {
-    protected   $table           = 'product';
-    protected   $primaryKey     = 'productId';
+    public   $table           = 'product';
+    public   $primaryKey     = 'productId';
     public      $timestamps     = false;
 
     protected   $guarded        = [];

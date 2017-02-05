@@ -10,155 +10,170 @@
             供应商管理
         </a>
         <span class="c-gray en">&gt;</span> 
-        编辑供应商：{{$data->fullName}} <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+        编辑“{{$data->name}}”的信息 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
     <article class="page-container">
-        <form action="{{url('cms/supplier/'.$data->supplierId)}}" method="post" class="form form-horizontal" id="formSupplierAdd">
+        <form action="{{url('cms/supplierContract/'.$data->contactId)}}" method="post" class="form form-horizontal" id="formSupplierContractAdd">
             {{csrf_field()}}
             <input type="hidden" name="_method" value="put">
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商全称：</label>
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('fullName'))
-                        <input type="text" class="input-text radius error" value="{{$data->fullName}}" name="fullName" aria-required="true" aria-invalid="true">
-                        <label id="fullName-error" class="error" for="fullName">{{$errors->first('fullName')}}</label>
+                        <input type="hidden" name="supplierId" value="{{$supplierData['supplierId']}}" class="supplierId">
+                    @if($errors->has('supplierId'))
+                        <input type="text" class="input-text radius error" value="{{$supplierData['fullName']}}"  readonly="readonly" name="supplierId_" id="supplierId" placeholder="请选择供应商" onclick="actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=1')}}&sonId=supplierId&sonName=supplierId','1')" aria-required="true" aria-invalid="true">
+                        <label id="supplierId-error" class="error" for="supplierId">{{$errors->first('supplierId')}}</label>
                     @else
-                         <input type="text" class="input-text radius" value="{{$data->fullName}}" placeholder="5-100个字符" name="fullName" >
+                         <input type="text" class="input-text radius" value="{{$supplierData['fullName']}}" readonly="readonly" placeholder="请选择供应商" name="supplierId_" id="supplierId" onclick=" actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=1')}}&sonId=supplierId&sonName=supplierId','1');" aria-required="true" aria-invalid="true">
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">供应商简称：</label>
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>姓名：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('abbreviation'))
-                        <input type="text" class="input-text radius error" value="{{$data->abbreviation}}" name="abbreviation" aria-required="true" aria-invalid="true">
-                        <label id="abbreviation-error" class="error" for="abbreviation">{{$errors->first('supplierIdExt')}}</label>
+                    @if($errors->has('name'))
+                        <input type="text" class="input-text radius error" value="{{$data->name}}" name="name" aria-required="true" aria-invalid="true">
+                        <label id="name-error" class="error" for="name">{{$errors->first('name')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->abbreviation}}" placeholder="2-30个字符"  name="abbreviation" >
+                         <input type="text" class="input-text radius" value="{{$data->name}}" placeholder="2-30个字符" name="name" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商类型：</label>
-                <div class="formControls col-xs-8 col-sm-9 skin-minimal">
-                    @foreach($type as $k=>$v)
-                          <div class="check-box">
-                            <input type="checkbox" id="checkbox" value="{{$k}}" 
-                                @foreach($data->type as $kone=>$vone)
-                                    @if($k==$vone)checked="checked" @endif  
-                                @endforeach
-                             name="type[]">
-                            <label for="checkbox">{{$v}}</label>
-                          </div>
+                <label class="form-label col-xs-4 col-sm-2">英文名/昵称：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    @if($errors->has('nickname'))
+                        <input type="text" class="input-text radius error" value="{{$data->nickname}}" name="nickname" aria-required="true" aria-invalid="true">
+                        <label id="nickname-error" class="error" for="nickname">{{$errors->first('nickname')}}</label>
+                    @else
+                         <input type="text" class="input-text radius " value="{{$data->nickname}}" placeholder="2-30个字符"  name="nickname" >
+                    @endif
+                </div>
+            </div>
+
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">性别：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+
+                    @foreach($isGender as $k=>$v)
+                    
+                     <div class="radio-box">
+                        <input type="radio" id="radio-{{$k}}" name="gender" value="{{$k}}" @if($k==$data->gender)checked="checked" @endif >
+                        <label for="radio-{{$k}}">{{$v}}</label>
+                      </div>
+
                     @endforeach
-<!-- 
-                    @if($errors->has('type'))
-                        <input type="text" class="input-text radius error" value="" name="type" aria-required="true" aria-invalid="true">
-                        <label id="type-error" class="error" for="type">{{$errors->first('type')}}</label>
 
-
-                    @else
-                         <input type="text" class="input-text radius " value=""  placeholder="2-30个汉字" name="type" >
-                    @endif -->
                 </div>
             </div>
-
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应品牌：</label>
+                <label class="form-label col-xs-4 col-sm-2">职位/描述：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('brand'))
-                        <input type="text" class="input-text radius error" value="{{$data->brand}}" name="brand" aria-required="true" aria-invalid="true">
-                        <label id="brand-error" class="error" for="brand">{{$errors->first('brand')}}</label>
+                    @if($errors->has('position'))
+                    <textarea class="textarea radius error" name="position" placeholder="250个字符" aria-required="true" aria-invalid="true">{{$data->position}}</textarea>
+                        <label id="account-error" class="error" for="position">{{$errors->first('position')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->brand}}" placeholder="2-30个字符"  name="brand" >
+                        <textarea class="textarea radius" name="position" placeholder="250个字符" onKeyUp="textarealength(this,250)">{{$data->position}}</textarea>
+                        <p class="textarea-numberbar"><em class="textarea-length">0</em>/250</p>
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应品类：</label>
+                <label class="form-label col-xs-4 col-sm-2">年龄：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('brandType'))
-                        <input type="text" class="input-text radius error" value="{{$data->brandType}}" name="brandType" aria-required="true" aria-invalid="true">
-                        <label id="brandType-error" class="error" for="brandType">{{$errors->first('brandType')}}</label>
+                    @if($errors->has('age'))
+                        <input type="text" class="input-text radius error" value="{{$data->age}}" name="age" aria-required="true" aria-invalid="true">
+                        <label id="age-error" class="error" for="age">{{$errors->first('age')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->brandType}}"  placeholder="2-30个字符"  name="brandType" >
+                         <input type="text" class="input-text radius " value="{{$data->age}}"  placeholder=""  name="age" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>办公地址：</label>
+                <label class="form-label col-xs-4 col-sm-2">座机电话：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('officeAdd'))
-                        <input type="text" class="input-text radius error" value="{{$data->officeAdd}}" name="officeAdd" aria-required="true" aria-invalid="true">
-                        <label id="officeAdd-error" class="error" for="officeAdd">{{$errors->first('officeAdd')}}</label>
+                    @if($errors->has('phone'))
+                        <input type="text" class="input-text radius error" value="{{$data->phone}}" name="phone" aria-required="true" aria-invalid="true">
+                        <label id="phone-error" class="error" for="phone">{{$errors->first('phone')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->officeAdd}}" placeholder="5-100个字符" name="officeAdd" >
+                         <input type="text" class="input-text radius " value="{{$data->phone}}" placeholder="" name="phone" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>库房地址：</label>
+                <label class="form-label col-xs-4 col-sm-2">分机：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('warehoustAdd'))
-                        <input type="text" class="input-text radius error" value="{{$data->warehoustAdd}}" name="warehoustAdd" aria-required="true" aria-invalid="true">
-                        <label id="warehoustAdd-error" class="error" for="warehoustAdd">{{$errors->first('warehoustAdd')}}</label>
+                    @if($errors->has('phoneExt'))
+                        <input type="text" class="input-text radius error" value="{{$data->phoneExt}}" name="phoneExt" aria-required="true" aria-invalid="true">
+                        <label id="phoneExt-error" class="error" for="phoneExt">{{$errors->first('phoneExt')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->warehoustAdd}}" placeholder="5-100个字符" name="warehoustAdd" >
+                         <input type="text" class="input-text radius " value="{{$data->phoneExt}}" placeholder="" name="phoneExt" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>采购区域：</label>
+                <label class="form-label col-xs-4 col-sm-2">手机一：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('area'))
-                        <input type="text" class="input-text radius error" value="{{$data->area}}" name="area" aria-required="true" aria-invalid="true">
-                        <label id="area-error" class="error" for="area">{{$errors->first('area')}}</label>
+                    @if($errors->has('telOne'))
+                        <input type="text" class="input-text radius error" value="{{$data->telOne}}" name="telOne" aria-required="true" aria-invalid="true">
+                        <label id="telOne-error" class="error" for="telOne">{{$errors->first('telOne')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->area}}" placeholder="5-30个字符" name="area" >
+                         <input type="text" class="input-text radius " value="{{$data->telOne}}" placeholder="" name="telOne" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">结算方式：</label>
+                <label class="form-label col-xs-4 col-sm-2">手机二：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('settlementMmethod'))
-                        <input type="text" class="input-text radius error" value="{{$data->settlementMmethod}}" name="settlementMmethod" aria-required="true" aria-invalid="true">
-                        <label id="settlementMmethod-error" class="error" for="settlementMmethod">{{$errors->first('settlementMmethod')}}</label>
+                    @if($errors->has('telTwo'))
+                        <input type="text" class="input-text radius error" value="{{$data->telTwo}}" name="telTwo" aria-required="true" aria-invalid="true">
+                        <label id="telTwo-error" class="error" for="telTwo">{{$errors->first('telTwo')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->settlementMmethod}}" placeholder="5-30个字符" name="settlementMmethod" >
+                         <input type="text" class="input-text radius " value="{{$data->telTwo}}" placeholder="" name="telTwo" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">收款方式：</label>
+                <label class="form-label col-xs-4 col-sm-2">邮箱：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('paymentMethod'))
-                        <input type="text" class="input-text radius error" value="{{$data->paymentMethod}}" name="paymentMethod" aria-required="true" aria-invalid="true">
-                        <label id="paymentMethod-error" class="error" for="paymentMethod">{{$errors->first('paymentMethod')}}</label>
+                    @if($errors->has('email'))
+                        <input type="text" class="input-text radius error" value="{{$data->email}}" name="email" aria-required="true" aria-invalid="true">
+                        <label id="email-error" class="error" for="email">{{$errors->first('email')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->paymentMethod}}" placeholder="5-30个字符" name="paymentMethod" >
+                         <input type="text" class="input-text radius " value="{{$data->email}}" placeholder="" name="email" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">结算价格（含税）：</label>
+                <label class="form-label col-xs-4 col-sm-2">QQ：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('priceTax'))
-                        <input type="text" class="input-text radius error" value="{{$data->priceTax}}" name="priceTax" aria-required="true" aria-invalid="true">
-                        <label id="priceTax-error" class="error" for="priceTax">{{$errors->first('priceTax')}}</label>
+                    @if($errors->has('qq'))
+                        <input type="text" class="input-text radius error" value="{{$data->qq}}" name="qq" aria-required="true" aria-invalid="true">
+                        <label id="qq-error" class="error" for="qq">{{$errors->first('qq')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->priceTax}}" placeholder="0000.00" name="priceTax" >
+                         <input type="text" class="input-text radius " value="{{$data->qq}}" placeholder="" name="qq" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">结算价格（不含税）：</label>
+                <label class="form-label col-xs-4 col-sm-2">微信：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('priceNoTax'))
-                        <input type="text" class="input-text radius error" value="{{$data->priceNoTax}}" name="priceNoTax" aria-required="true" aria-invalid="true">
-                        <label id="priceNoTax-error" class="error" for="priceNoTax">{{$errors->first('priceNoTax')}}</label>
+                    @if($errors->has('wechat'))
+                        <input type="text" class="input-text radius error" value="{{$data->wechat}}" name="wechat" aria-required="true" aria-invalid="true">
+                        <label id="wechat-error" class="error" for="wechat">{{$errors->first('wechat')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->priceNoTax}}" placeholder="0000.00" name="priceNoTax" >
+                         <input type="text" class="input-text radius " value="{{$data->wechat}}" placeholder="" name="wechat" >
+                    @endif
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">个人帐户：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    @if($errors->has('account'))
+                        <input type="text" class="input-text radius error" value="{{$data->account}}" name="account" aria-required="true" aria-invalid="true">
+                        <label id="account-error" class="error" for="priceNoTax">{{$errors->first('account')}}</label>
+                    @else
+                         <input type="text" class="input-text radius " value="{{$data->account}}" placeholder="" name="account" >
                     @endif
                 </div>
             </div>
@@ -166,87 +181,22 @@
                 <label class="form-label col-xs-4 col-sm-2">帐户信息：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('account'))
-                        <input type="text" class="input-text radius error" value="{{$data->account}}" name="account" aria-required="true" aria-invalid="true">
+                        <input type="text" class="input-text radius error" value="{{$data->wechat}}" name="account" aria-required="true" aria-invalid="true">
                         <label id="account-error" class="error" for="account">{{$errors->first('account')}}</label>
                     @else
-                         <input type="text" class="input-text radius " value="{{$data->account}}" placeholder="5-30个字符" name="account" >
+                         <input type="text" class="input-text radius " value="{{$data->wechat}}" placeholder="5-30个字符" name="account" >
                     @endif
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">是否送货：</label>
+                <label class="form-label col-xs-4 col-sm-2">生日：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-
-                    @foreach($isBoolean as $k=>$v)
-
-                     <div class="radio-box">
-                        <input type="radio" id="radio-{{$k}}" name="deliveryIs" value="{{$k}}" @if($k==$data->deliveryIs)checked="checked" @endif >
-                        <label for="radio-{{$k}}">{{$v}}</label>
-                      </div>
-
-                    @endforeach
-
-                </div>
-            </div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">是否签协：</label>
-                <div class="formControls col-xs-8 col-sm-9">
-
-                    @foreach($isBoolean as $k=>$v)
-                    
-                     <div class="radio-box">
-                        <input type="radio" id="radio-{{$k}}" name="signIs" value="{{$k}}" @if($k==$data->signIs)checked="checked" @endif >
-                        <label for="radio-{{$k}}">{{$v}}</label>
-                      </div>
-
-                    @endforeach
-
-                </div>
-            </div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">退换货要求：</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('returnRequirements'))
-                    <textarea class="textarea radius error" name="returnRequirements" placeholder="退换货要求描述" aria-required="true" aria-invalid="true">{{$data->returnRequirements}}</textarea>
-                        <label id="account-error" class="error" for="returnRequirements">{{$errors->first('returnRequirements')}}</label>
+                    @if($errors->has('birthday'))
+                        <input type="text" name="birthday" id="birthday" class=" input-text radius error" value="{{$data->birthday}}" aria-required="true" readonly  aria-invalid="true">
+                        <label id="birthday-error" class="error" for="birthday">{{$errors->first('birthday')}}</label>
                     @else
-                        <textarea class="textarea radius" name="returnRequirements" placeholder="250个字符" onKeyUp="textarealength(this,250)">{{$data->returnRequirements}}</textarea>
-                        <p class="textarea-numberbar"><em class="textarea-length">0</em>/250</p>
-                    @endif
-                </div>
-            </div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">合同到期日：</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('contractDate'))
-                        <input type="text" name="contractDate" id="contractDate" value="<?php echo date('Y-m-d',$data->contractDate);?>" class=" input-text radius error" aria-required="true" readonly  aria-invalid="true">
-                        <label id="contractDate-error" class="error" for="contractDate">{{$errors->first('contractDate')}}</label>
-                    @else
-                         <input type="text" name="contractDate" id="contractDate" value="<?php echo date('Y-m-d',$data->contractDate);?>" class=" input-text radius " readonly  placeholder="0000-00-00">
+                         <input type="text" name="birthday" id="birthday" class=" input-text radius " value="{{$data->birthday}}" readonly  placeholder="0000-00-00">
                         
-                    @endif
-                </div>
-            </div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">合同简报：</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('contractBriefing'))
-                    <textarea class="textarea radius error" name="contractBriefing" placeholder="退换货要求描述" aria-required="true" aria-invalid="true">{{$data->contractBriefing}}</textarea>
-                        <label id="account-error" class="error" for="contractBriefing">{{$errors->first('contractBriefing')}}</label>
-                    @else
-                        <textarea class="textarea radius" name="contractBriefing" placeholder="1250个字符" onKeyUp="textarealength(this,250)">{{$data->contractBriefing}}</textarea>
-                        <p class="textarea-numberbar"><em class="textarea-length">0</em>/250</p>
-                    @endif
-                </div>
-            </div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">授信额度：</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('credit'))
-                        <input type="text" class="input-text radius error" value="{{$data->credit}}" name="credit" aria-required="true" aria-invalid="true">
-                        <label id="credit-error" class="error" for="credit">{{$errors->first('credit')}}</label>
-                    @else
-                         <input type="text" class="input-text radius " value="{{$data->credit}}" placeholder="5-30个字符" name="credit" >
                     @endif
                 </div>
             </div>
@@ -254,7 +204,7 @@
                 <label class="form-label col-xs-4 col-sm-2">备注：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('note'))
-                    <textarea class="textarea radius error" name="note" placeholder="退换货要求描述" aria-required="true" aria-invalid="true">{{$data->note}}</textarea>
+                    <textarea class="textarea radius error" name="note" placeholder="" aria-required="true" aria-invalid="true">{{$data->note}}</textarea>
                         <label id="account-error" class="error" for="note">{{$errors->first('note')}}</label>
                     @else
                         <textarea class="textarea radius" name="note" placeholder="250个字符" onKeyUp="textarealength(this,250)">{{$data->note}}</textarea>
@@ -283,92 +233,85 @@
 <script type="text/javascript" src="{{asset('resources/officecms/laydate/laydate.js')}}"></script>
 
 <script type="text/javascript">
+ 
 
-//打开子网页
-function openUrl(id){
-    var url = '{{url("cms/upload")}}'+'/'+id+'/edit';
+/*编辑*/
+function actionEdit(title,url,id,w,h){
+    //layer_show(title,url,w,h);
+
     layer.open({
       type: 2,
-      area: ['700px', '530px'],
+      area: ['90%', '90%'],
       fixed: false, //不固定
       maxmin: true,
       content: url
     });
 }
 
-
 //验证表单
 $(document).ready(function(){
 
     ////该表单的每个提示信息再input右边展示
-    $('#formSupplierAdd input').iCheck({
+    $('#formSupplierContractAdd input').iCheck({
         checkboxClass: 'icheckbox-blue',
         radioClass: 'iradio-blue',
         increaseArea: '20%'
     });
 
-    $("#formSupplierAdd").validate({
+    $("#formSupplierContractAdd").validate({
         //表单规则
         rules:{
-            fullName:{
-                required:true,
-                minlength:5,
-                maxlength:100
-            }, 
-            // abbreviation:{
-            //     required:true,
-            //     minlength:2,
-            //     maxlength:30
-            // }, 
-            type:{
+            name:{
                 required:true,
                 minlength:2,
-                maxlength:30
-            },
-            brand:{
-                required:true,
-                minlength:2,
-                maxlength:30
-            },
-            brandType:{
-                required:true,
-                minlength:2,
-                maxlength:30
-            },
-            officeAdd:{
-                required:true,
-                minlength:2,
-                maxlength:30
-            },
-            warehoustAdd:{
-                required:true,
-                minlength:5,
-                maxlength:100
-            },
-            area:{
-                required:true,
-                minlength:5,
-                maxlength:30
-            },
-            settlementMmethod:{
-                minlength:5,
                 maxlength:30
             }, 
-            paymentMethod:{
-                minlength:5,
+            nickname:{
+                minlength:2,
                 maxlength:30
-            }, 
-            priceTax:{
-                number:true
             },
-            priceNoTax:{
-                number:true
+            position:{
+                maxlength:250
+            },
+            age:{
+                number:true,
+                maxlength:3
+            },
+            phone:{
+                number:true,
+                minlength:6,
+                maxlength:11
+            },
+            phoneExt:{
+                number:true,
+                minlength:1,
+                maxlength:11
+            },
+            telOne:{
+                minlength:11,
+                maxlength:11
+            },
+            telTwo:{
+                minlength:11,
+                maxlength:11
+            }, 
+            email:{
+                email:true
+            }, 
+            qq:{
+                number:true,
+                minlength:4,
+                maxlength:11
+            },
+            wechat:{
+                minlength:2,
+                maxlength:20
             }, 
             account:{
                 minlength:5,
-                maxlength:30
+                maxlength:40
             },
-            contractDate:{
+            birthday:{
                 date:true
             }
             // returnRequirements:{
@@ -379,78 +322,66 @@ $(document).ready(function(){
         },
         //表单提示信息 
         messages:{
-            fullName:{
-                required:"必须填写供应商全称",
-                minlength:"最小为5位",
-                maxlength:"最大为100位"
-            },
-            // abbreviation:{
-            //     required:"必须填写供应商简称",
-            //     minlength:"最小为2位",
-            //     maxlength:"最大为30位"
-            // },
-            type:{
-                required:"必须填写供应商类型",
+            name:{
+                required:"必须填写姓名",
                 minlength:"最小为2位",
                 maxlength:"最大为30位"
             },
-            brand:{
-                required:"必须填写供应品牌",
+            nickname:{
                 minlength:"最小为2位",
                 maxlength:"最大为30位"
             },
-            brandType:{
-                required:"必须填写供应品类",
-                minlength:"最小为2位",
-                maxlength:"最大为30位"
+            position:{
+                maxlength:"最大为250位"
             },
-            officeAdd:{
-                required:"必须填写办公地址",
-                minlength:"最小为5位",
-                maxlength:"最大为100位"
+            age:{
+                number:"填写年龄有误",
+                maxlength:"最大为2位"
             },
-            warehoustAdd:{
-                required:"必须填写库房地址",
-                minlength:"最小为5位",
-                maxlength:"最大为100位"
+            phone:{
+                number:"座机电话有误",
+                minlength:"最小为6位",
+                maxlength:"最大为11位"
             },
-            area:{
-                required:"必须填写采购区域",
-                minlength:"最小为5位",
-                maxlength:"最大为30位"
+            phoneExt:{
+                number:"分机有误",
+                minlength:"最小为1位",
+                maxlength:"最大为11位"
             },
-            settlementMmethod:{
-                minlength:"最小为5位",
-                maxlength:"最大为30位"
+            telOne:{
+                minlength:"手机号码不正确",
+                maxlength:"手机号码不正确"
             },
-            paymentMethod:{
-                minlength:"最小为5位",
-                maxlength:"最大为30位"
+            telTwo:{
+                minlength:"手机号码不正确",
+                maxlength:"手机号码不正确"
             },
-            priceTax:{
-                number:"请输入正确的价格"
+            email:{
+                email:"邮箱不正确"
             },
-            priceNoTax:{
-                number:"请输入正确的价格"
+            qq:{
+                number:"qq不正确",
+                minlength:"最小为4位",
+                maxlength:"最大为11位"
+            },
+            wechat:{
+                minlength:"最小为3位",
+                maxlength:"最大为20位"
             },
             account:{
                 minlength:"最小为5位",
-                maxlength:"最大为30位"
+                maxlength:"最大为40位"
             },
-            contractDate:{
+            birthday:{
                 date:"请选择正确的日期"
             }
-            // returnRequirements:{
-            //     minlength:"最小为10位",
-            //     maxlength:"最大为500位"
-            // },
         }
 
     });
 });
  
 laydate({
-  elem: '#contractDate', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+  elem: '#birthday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
   event: 'focus' //响应事件。如果没有传入event，则按照默认的click
 }); 
 

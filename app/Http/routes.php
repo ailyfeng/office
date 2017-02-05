@@ -60,7 +60,7 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'CMS'
     //供应商联系人
     Route::resource('supplierContract', 'SupplierContractController');
     Route::get('supplierContract/create/{supplierId}', 'SupplierContractController@create');
-    // Route::get('supplier/contractCreate/{id}','SupplierController@contractCreate');
+    Route::get('supplier/contractCreate/{id}','SupplierController@contractCreate');
 
     //公司产品
     Route::any('product/keyword','ProductController@keyword');

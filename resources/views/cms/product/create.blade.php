@@ -329,7 +329,7 @@ function actionEdit(title,url,id,w,h){
 
     layer.open({
       type: 2,
-      area: ['800px', '700px'],
+      area: ['90%', '90%'],
       fixed: false, //不固定
       maxmin: true,
       content: url
@@ -341,14 +341,13 @@ $(document).ready(function(){
 
     //选择供应商
     $('#supplierId').focus(function(){
-        actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=1')}}&id=supplierId&name=supplierId','1');
+        actionEdit('选择供应商','{{url('cms/supplier?selectSupplier=1')}}&sonId=supplierId&sonName=supplierId','1');
     });
 
     //选择辅助供应商
     $('#supplierIdExt').focus(function(){
-        actionEdit('选择辅助供应商','{{url('cms/supplier?selectSupplier=1')}}&id=supplierIdExt&name=supplierIdExt','1');
+        actionEdit('选择辅助供应商','{{url('cms/supplier?selectSupplier=1')}}&sonId=supplierIdExt&sonName=supplierIdExt','1');
     });
-
 
     ////该表单的每个提示信息再input右边展示
     $('#formProductAdd input').iCheck({

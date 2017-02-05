@@ -16,7 +16,7 @@
             <a class="btn btn-primary radius" onclick="actionAdd('添加分类','{{url('cms/classify/create')}}',800,400)" href="javascript:;"> 
                 <i class="Hui-iconfont">&#xe600;</i> 添加分类
             </a>
-            </span> <span class="r">共有数据：<strong>54</strong> 条</span>
+            </span> <span class="r">共有数据：<strong>{{$data->total()}}</strong> 条</span>
     </div>
     <table class="table table-border table-striped table-bordered table-hover table-bg">
         <thead>

@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Supplier extends Model
 {
-    protected   $table          = 'supplier';
-    protected   $primaryKey     = 'supplierId';
+    public   $table          = 'supplier';
+    public   $primaryKey     = 'supplierId';
     public      $timestamps     = false;
     protected   $guarded        = [];
 

@@ -23,14 +23,12 @@ use Validator;
 class SupplierController extends CMSController
 {
 
-    // const whereField = array('fullName'=>'供应商全称','abbreviation'=>'供应商简称','brand'=>'品牌');
-
     /**
      * 查询公司产品供应商
      * 
      * @todo 如果没有数据会报错
      */
-    public static function index(){
+    public static function indexbak(){
         $whereField    = [
                             'fullName'      =>['field'=>'fullName',       'value'=>false,   'name'=>'供应商全称'   ,'sortUrl'=>false],
                             'abbreviation'  =>['field'=>'abbreviation',   'value'=>false,   'name'=>'供应商简称'   ,'sortUrl'=>false],
@@ -40,10 +38,10 @@ class SupplierController extends CMSController
                         ];
 
         $input = Input::except("_token");
-        $id = isset($input['id'])?$input['id']:false;
+        $sonId = isset($input['sonId'])?$input['sonId']:false;
         $selectSupplier = isset($input['selectSupplier'])?$input['selectSupplier']:false;
-        $name = isset($input['name'])?$input['name']:false;
-        $pageParam = array('selectSupplier'=>$selectSupplier,'id'=>$id,'name'=>$name);
+        $sonName = isset($input['sonName'])?$input['sonName']:false;
+        $pageParam = array('selectSupplier'=>$selectSupplier,'sonId'=>$sonId,'sonName'=>$sonName);
 
         $isBoolean = Supplier::isBoolean();
 
@@ -52,7 +50,7 @@ class SupplierController extends CMSController
         $fieldUrl = false;
 
 
-        $url = "?id=$id&selectSupplier=$selectSupplier&name=$name";//当前地址参数
+        $url = "?sonId=$sonId&selectSupplier=$selectSupplier&sonName=$sonName";//当前地址参数
         foreach ($input as $key => $value) {
 
             //筛选
@@ -195,8 +193,78 @@ class SupplierController extends CMSController
                                                 'data',
                                                 'isBoolean',
                                                 'selectSupplier',
-                                                'id',
-                                                'name',
+                                                'sonId',
+                                                'sonName',
+                                                'whereField',
+                                                'orderbyCurr',
+                                                'type'
+                                                )
+        );
+    }
+
+    /**
+     * 查询公司产品供应商
+     * 
+     * @todo 如果没有数据会报错
+     */
+    public static function index(){
+        $whereField    = [
+                            'fullName'      =>['field'=>'fullName',       'value'=>false,   'name'=>'供应商全称'   ,'sortUrl'=>false],
+                            'abbreviation'  =>['field'=>'abbreviation',   'value'=>false,   'name'=>'供应商简称'   ,'sortUrl'=>false],
+                            'brandType'     =>['field'=>'brandType',       'value'=>false,   'name'=>'供应品类'    ,'sortUrl'=>false],
+                            'credit'        =>['field'=>'credit',          'value'=>false,   'name'=>'授信额度'    ,'sortUrl'=>false],
+                            'brand'         =>['field'=>'brand',           'value'=>false,     'name'=>'品牌'     ,'sortUrl'=>false]
+                        ];
+
+        $input = Input::except("_token");
+        $Supplier = new Supplier();
+        $filterWhere = self::filterWhere(
+                                        $input,
+                                        $whereField,
+                                        $Supplier->table,
+                                        null,
+                                        array(),
+                                        $Supplier->table.'.supplierId',
+                                        'cms/supplier'
+                                        );
+
+        $where          = $filterWhere['where'];
+        $pageParam      =  $filterWhere['pageParam'];
+        $orderby        =  $filterWhere['orderby'];
+        $orderbyCurr    =  $filterWhere['orderbyCurr'];
+        $whereField     =  $filterWhere['whereField'];
+
+        $sonId          = $filterWhere['sonId'];
+        $sonName        = $filterWhere['sonName'];
+        $selectSupplier = $filterWhere['selectSupplier'];
+
+
+        $isBoolean = Supplier::isBoolean();
+
+        if(!empty($where) || !empty($orderby)){
+            $Supplier = Supplier::where($where);
+
+            foreach ($orderby as $o) {
+                $Supplier->orderBy($o['field'],$o['sort']);
+            }
+
+            $data = $Supplier->paginate(15);
+
+        }else{
+
+            $data = Supplier::orderBy('supplierId','desc')->paginate(15);
+        
+        }
+
+
+       $data->appends($pageParam);
+
+        return view('cms.supplier.index',compact(
+                                                'data',
+                                                'isBoolean',
+                                                'selectSupplier',
+                                                'sonId',
+                                                'sonName',
                                                 'whereField',
                                                 'orderbyCurr',
                                                 'type'
@@ -235,8 +303,6 @@ class SupplierController extends CMSController
         }
         echo json_encode($data);
     }
-
-
 
     /**
      * 添加公司产品供应商

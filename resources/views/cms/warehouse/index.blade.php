@@ -15,7 +15,7 @@
             <a class="btn btn-primary radius" data-title="添加库房" _href="{{url('cms/warehouse/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
                 <i class="Hui-iconfont">&#xe600;</i> 添加库房
             </a>
-            </span> <span class="r">共有数据：<strong>54</strong> 条</span>
+            </span> <span class="r">共有数据：<strong>{{$data->total()}}</strong> 条</span>
     </div>
     <table class="table table-border table-striped table-bordered table-hover table-bg">
         <thead>
@@ -31,19 +31,23 @@
         </thead>
         <tbody>
             @foreach($data as $list)
-                <tr class="text-c @if($list->close) c-warning @endif" ondblclick="actionEdit('编辑','{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}','1');" >
+                <tr class="text-c @if($list->close) danger @endif" ondblclick="actionEdit('编辑','{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}','1');" >
                     <td class="tc"><input type="checkbox" name="id[]" value="{{$list->warehouseId}}"></td>
-                    <td class="tc @if($list->close) c-warning @endif">{{$list->name}}-{{$list->warehouseId}}</td>
-                    <td @if($list->close)  class="c-warning " @endif >{{$list->area}}</td>
-                    <td @if($list->close)  class="c-warning " @endif >{{$list->number}}</td>
-                    <td @if($list->close)  class="c-warning " @endif >{{$list->distrbutionArea}}</td>
-                    <td @if($list->close)  class="c-warning " @endif >{{$list->quota}}</td>
+                    <td class="tc @if($list->close) danger @endif">{{$list->name}}-{{$list->warehouseId}}</td>
+                    <td @if($list->close)  class="danger " @endif >{{$list->area}}</td>
+                    <td @if($list->close)  class="danger " @endif >{{$list->number}}</td>
+                    <td @if($list->close)  class="danger " @endif >{{$list->distrbutionArea}}</td>
+                    <td @if($list->close)  class="danger " @endif >{{$list->quota}}</td>
                     <td>
                         @if($list->close)
                         <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->warehouseId}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                         @else
                         <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->warehouseId}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
                         @endif
+
+                        <a style="text-decoration:none" data-title="向该库房添加公司产品" title="向该库房添加公司产品" _href="{{url('cms/supplierContract/create/'.$list->warehouseId)}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+                            <i class="Hui-iconfont">&#xe600;</i>
+                        </a>
                         <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/warehouse/'.$list->warehouseId.'/edit')}}','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
                         
                     </td>

@@ -6,25 +6,72 @@
     <a  href="{{url('cms/index/info')}}">首页 </a>
     <span class="c-gray en">&gt;</span> 
     @if($selectSupplier)
-        选择供应商
+        选择供应商联系人
     @else
-        供应商管理
+        供应商联系人管理
     @endif
     <span class="c-gray en"></span> 
     <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
 
+
+    <form method="get" action="#">
+        <div class="box-shadow">
+            <a class="btn btn-default" src="">产品筛选：</a>
+
+            @foreach($whereField as $f=>$lista)
+ 
+                <a class="btn btn-disabled" src="">{{$lista['name']}}</a>
+                <input class="input-text ac_input radius" name="{{$lista['field']}}"  style="width:100px"  type="text" value="{{$lista['value']}}">
+            
+            @endforeach
+
+           {{csrf_field()}}
+            <!-- 选择供应商 -->
+            <input type="hidden" value="" name="field" id="field">
+            <button type="submit" class="btn btn-primary radius" >搜索</button>
+            <a class="btn btn-primary radius" href="{{url('cms/supplierContract')}}">清空所有筛选</a> 
+        </div>
+
+        <div class="box-shadow">
+            <a class="btn btn-default" src="">产品排序：</a>
+
+            @foreach($whereField as $f=>$lista)
+                <a class="btn btn-primary size-MINI radius" href="{{url('cms/supplierContract'.$lista['sortUrl'].'&page='.$data->currentPage())}}">{{$lista['name']}}</a>
+            @endforeach
+
+            @foreach($orderbyCurr as $list)
+            <span class="btn btn-primary active size-MINI radius">
+
+                        <a href="{{$list['sortOne']}}" class="Hui-iconfont" style="color:#fff">
+                            {{$list['name']}}
+                            @if($list['value']==1)
+                                    <i class="Hui-iconfont">&#xe6d6;</i>
+                            @else
+                                <i class="Hui-iconfont">&#xe6d5;</i>
+                            @endif
+                        </a>
+                        <span class="pipe">|</span>
+                        <a href="{{$list['sortX']}}" class="Hui-iconfont" style="color:#fff">
+                            <i class="Hui-iconfont">&#xe6a6;</i>
+                        </a>
+            </span>
+            @endforeach
+        </div>
+
+    </form>
     @if($selectSupplier)
     @else
     <div class="cl pd-5 bg-1 bk-gray">
         <span class="l">
-            <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
-                <i class="Hui-iconfont">&#xe6e2;</i> 批量删除
+            <a href="javascript:;" onclick="actionStatus(1)" class="btn btn-danger radius">
+                <i class="Hui-iconfont">&#xe6e2;</i> 批量停用
             </a>
-            <a class="btn btn-primary radius" data-title="添加供应商" _href="{{url('cms/supplier/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
-                <i class="Hui-iconfont">&#xe600;</i> 添加供应商
+
+            <a href="javascript:;" onclick="actionStatus(0)" class="btn btn-primary radius">
+                <i class="Hui-iconfont">&#xe6e2;</i> 批量启用
             </a>
-            </span> <span class="r">共有数据：<strong>54</strong> 条</span>
+            </span> <span class="r">共有数据：<strong>{{$data->total()}}</strong> 条</span>
     </div>
     @endif
     <table class="table table-border table-striped table-bordered table-hover table-bg">
@@ -33,48 +80,39 @@
                         @if($selectSupplier)@else
                         <th class="tc" width="5%"><input type="checkbox" name=""></th>
                         @endif
-                        <th class="tc">供应商</th>
-                        <th>品牌</th>
-                        <th>供应品类</th>
-                        <th>授信额度</th>
-                        <th>联系人</th>
-                        <th>是否签协</th>
-                        <th>合同到期日</th>
+
+
+
+                @foreach($whereField as $f=>$lista)
+                    <th class="tc">{{$lista['name']}}</th>
+                @endforeach
+
+
                         <th>操作</th>
             </tr>
         </thead>
         <tbody>
             @foreach($data as $list)
-            <tr class="text-c">
-
-                @if($selectSupplier)@else
-                <td class="tc"><input type="checkbox" name="id[]" value="{{$list->supplierId}}"></td>
-                @endif
-                <td>
-                    <a href="#" title="{{$list->fullName}}">{{$list->abbreviation}}{{$list->supplierId}}</a>
-                </td>
-                <td>{{$list->brand}}</td>
-                <td>{{$list->brandType}}</td>
-                <td>{{$list->credit}}</td>
-                <td>李先生|何女士</td>
-                <td>
-                    @foreach($isBoolean as $k=>$v)
-                        @if($list->signIs==$k)
-                            {{$v}}
-                        @break
-                        @endif
-                    @endforeach
-                 </td>
-                <td><?php echo date('Y-m-d',$list->contractDate);?></td>
-                <td>
-                    @if($selectSupplier)
-                    <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
-                   @else
-                    <a style="text-decoration:none" data-title="添加公司产品" title="添加公司产品" _href="{{url('cms/product/create/'.$list->supplierId)}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+            <tr  class="text-c @if($list->close) danger @endif" ondblclick="Hui_admin_tab(this)"  _href="{{url('cms/supplierContract/'.$list->contactId.'/edit')}}" data-title="编辑" title="双击编辑">
+                <td class="tc  @if($list->close) danger @endif"><input type="checkbox" value="{{$list->contactId}}" selected="" name="contactId"></td>
+                <td @if($list->close) class=" danger " @endif>{{$list->fullName}}</td>
+                <td @if($list->close) class=" danger " @endif>{{$list->name}}</td>
+                <td @if($list->close) class=" danger " @endif>{{$list->nickname}}</td>
+                <td @if($list->close) class=" danger " @endif>{{$list->gender}}</td>
+                <td @if($list->close) class=" danger " @endif>{{$list->position}}</td>
+                <td @if($list->close) class=" danger " @endif>{{$list->age}}</td>
+                <td @if($list->close) class=" danger " @endif>{{$list->telOne}}</td>
+                <td @if($list->close) class=" danger " @endif>
+                    <a style="text-decoration:none" data-title="添加供应商联系人" title="添加供应商联系人" _href="{{url('cms/supplierContract/create/'.$list->supplierId)}}" onclick="Hui_admin_tab(this)" href="javascript:;">
                         <i class="Hui-iconfont">&#xe600;</i>
                     </a>
-                    <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/supplier/'.$list->supplierId.'/edit')}}','{{$list->supplierId}}')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
-                    <a title="删除" href="javascript:;" onclick="actionDelete(this,'{{$list->supplierId}}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                    <a style="text-decoration:none" data-title="编辑" title="编辑" _href="{{url('cms/supplierContract/'.$list->contactId.'/edit')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+                        <i class="Hui-iconfont">&#xe6df;</i>
+                    </a>
+                    @if($list->close)
+                    <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->contactId}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                    @else
+                    <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->contactId}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
                     @endif
                 </td>
 
@@ -91,20 +129,24 @@
 
 </div>
 <script type="text/javascript">
-@if($selectSupplier)
-var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
 
-//给父类传值
-function actionSelectSupplier(id,name){
+//多选
+function actionStatus(close){
+    var ids = $("input[type='checkbox']:checked").map(function(){
+      var id = $(this).val();
+      if(!isNaN(id)){
+           return id;
+      }
+    }).get().join(',');
 
-    parent.$('#{{$id}}').val(id);
+    if(!ids){
+        layer.msg("您没有选择任务项哦！", {icon: 1,time:1000});
+    }else{
+        actionDelete(ids,close);
 
-    parent.$('#{{$name}}').val(name);
-
-    parent.layer.close(index);
+    }
 
 }
-@endif
 
 /*添加*/
 function actionAdd(title,url,w,h){
@@ -116,16 +158,22 @@ function actionEdit(title,url,id,w,h){
 
     layer.open({
       type: 2,
-      area: ['800px', '600px'],
+      area: ['90%', '90%'],
       fixed: false, //不固定
       maxmin: true,
       content: url
     });
 }
-/*删除*/
-function actionDelete(obj,id){
+
+
+/*启用关闭*/
+function actionDelete(id,status){
         var tag = false;
-            layer.confirm("请确认是否要删除选择的项？", {
+        alert = '启用';
+        if(status){
+            alert = '停用';
+        }
+            layer.confirm("请确认"+alert+"该项？", {
               btn: ["确认","取消"] //按钮
             }, function(){
               
@@ -138,15 +186,14 @@ function actionDelete(obj,id){
                 tag = true;
             }
 
-                $.post("{{url('cms/supplier/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
+                $.post("{{url('cms/supplierContract/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}",'status':status},function(data){
                     layer.closeAll('loading');
                     if(data.status){
-                        layer.msg("删除成功", {icon: 1,time:1000});
-                        // $(obj).parents("tr").remove();
+                        layer.msg(data.msg, {icon: 1,time:1000});
                         
                         window.location.reload();
                     }else{
-                        layer.msg("删除失败！请重新操作！", {icon: 5,time:1000});
+                        layer.msg("操作失败！请重新操作！", {icon: 5,time:1000});
                     }
                 });
 
