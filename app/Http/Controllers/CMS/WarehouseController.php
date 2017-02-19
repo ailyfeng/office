@@ -20,14 +20,73 @@ use Validator;
  */
 class WarehouseController extends CMSController
 {
+    
     /**
      * 查询库房表
      */
     public static function index(){
 
-        $data = Warehouse::orderBy('warehouseId','desc')->paginate(15);
 
-        return view('cms.warehouse.index',compact('data'));
+        $whereField    = [
+                            'name'              =>['field'=>'name',             'value'=>false,   'name'=>'库房名称'    ,'sortUrl'=>false],
+                            'area'              =>['field'=>'area',             'value'=>false,   'name'=>'库房面积'    ,'sortUrl'=>false],
+                            'number'            =>['field'=>'number',           'value'=>false,   'name'=>'员工人数'    ,'sortUrl'=>false],
+                            'distrbutionArea'   =>['field'=>'distrbutionArea',  'value'=>false,   'name'=>'配送区域'    ,'sortUrl'=>false],
+                            'credit'            =>['field'=>'credit',           'value'=>false,   'name'=>'授信额度'    ,'sortUrl'=>false]
+                        ];
+
+        $input = Input::except("_token");
+        $Warehouse = new Warehouse();
+        $filterWhere = self::filterWhere(
+                                        $input,
+                                        $whereField,
+                                        $Warehouse->table,
+                                        null,
+                                        array(),
+                                        $Warehouse->table.'.warehouseId',
+                                        'cms/warehouse'
+                                        );
+
+        $where          = $filterWhere['where'];
+        $pageParam      =  $filterWhere['pageParam'];
+        $orderby        =  $filterWhere['orderby'];
+        $orderbyCurr    =  $filterWhere['orderbyCurr'];
+        $whereField     =  $filterWhere['whereField'];
+
+        $sonId          = $filterWhere['sonId'];
+        $sonName        = $filterWhere['sonName'];
+        $selectSupplier = $filterWhere['selectSupplier'];
+
+
+
+        if(!empty($where) || !empty($orderby)){
+            $Warehouse = Warehouse::where($where);
+
+            foreach ($orderby as $o) {
+                $Warehouse->orderBy($o['field'],$o['sort']);
+            }
+
+            $data = $Warehouse->paginate(15);
+
+        }else{
+
+            $data = Warehouse::orderBy('warehouseId','desc')->paginate(15);
+        
+        }
+
+
+       $data->appends($pageParam);
+
+        return view('cms.warehouse.index',compact(
+                                                'data',
+                                                'selectSupplier',
+                                                'sonId',
+                                                'sonName',
+                                                'whereField',
+                                                'orderbyCurr',
+                                                'type'
+                                                )
+        );
     }
 
     /**

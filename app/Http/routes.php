@@ -53,6 +53,10 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'CMS'
     //库房管理
     Route::resource('warehouse', 'WarehouseController');
 
+    //库房产品管理
+    Route::resource('warehouseProduct', 'WarehouseProductController');
+    Route::get('warehouseProduct/create/{supplierId}', 'WarehouseProductController@create');
+
     //供应商
     Route::any('supplier/keyword','SupplierController@keyword');
     Route::resource('supplier', 'SupplierController');

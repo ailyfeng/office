@@ -36,6 +36,15 @@
            {{csrf_field()}}
             <!-- 选择供应商 -->
             <input type="hidden" value="" name="field" id="field">
+
+    @if($selectSupplier)
+        <!-- 选择供应商 -->
+        <input type="hidden" value="{{$selectSupplier}}" name="selectSupplier">
+        <input type="hidden" value="{{$sonName}}" name="sonName">
+        <input type="hidden" value="{{$sonId}}" name="sonId">
+    @else
+    @endif    
+    
             <button type="submit" class="btn btn-primary radius" >搜索</button>
             <a class="btn btn-primary radius" href="{{url('cms/product')}}">清空所有筛选</a> 
         </div>
@@ -84,7 +93,19 @@
     </div>
     <table class="table table-border table-striped table-bordered table-hover table-bg">
         <thead>
+
             <tr class="text-c">
+
+                        @if($selectSupplier)@else
+                        <th class="tc" width="5%"><input type="checkbox" name=""></th>
+                        @endif
+            @foreach($whereField as $f=>$lista)
+                        <th class="tc">{{$lista['name']}}</th>
+            @endforeach
+                        <th>操作</th>
+            </tr>
+
+           <!--  <tr class="text-c">
                 <th width="25"><input type="checkbox" value="" name=""></th>
                 <th>产品中类</th>
                 <th>产品小类</th>
@@ -98,9 +119,50 @@
                 <th>标准价</th>
                 <th>包规</th>
                 <th>操作</th>
-            </tr>
+            </tr> -->
         </thead>
         <tbody>
+
+            @foreach($data as $list)
+
+            @if($selectSupplier)
+                <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->productId}}','{{$list->chineseBrand}}');">
+            @else
+                <tr class="text-c @if($list->close) danger @endif" ondblclick="actionEdit('编辑','{{url('cms/product/'.$list->productId.'/edit')}}','1');" >
+            @endif
+
+            @if($selectSupplier)@else
+                <td class="tc"><input type="checkbox" name="id[]" value="{{$list->productId}}" selected=""></td>
+            @endif
+
+            @foreach($whereField as $f=>$lista)
+                <td  @if($list->close && !$selectSupplier) class=" danger " @endif>
+                    @if($lista['field'] == 'sort')
+                        {{$list->parentName}}
+                    @else
+                        {{$list->$lista['field']}}
+                    @endif
+                </td>
+            @endforeach
+
+                 <td @if($list->close && !$selectSupplier) class=" danger " @endif>
+                    @if($selectSupplier)
+                    <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->productId}}','{{$list->chineseBrand}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                   @else
+                    @if($list->close)
+                    <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->productId}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                    @else
+                    <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->productId}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
+                    @endif
+
+                    <a title="编辑" href="javascript:;" onclick="actionEdit('产品编辑','{{url('cms/product/'.$list->productId.'/edit')}}','{{$list->productId}}')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
+                    @endif
+                </td>
+            </tr>
+            @endforeach
+
+            <!-- 
+
             @foreach($data as $list)
             <tr class="text-c" data-title="产品编辑{{$list->chineseBrand}}" _href="{{url('cms/product/'.$list->productId.'/edit')}}" ondblclick="Hui_admin_tab(this)" >
                 <td @if($list->close) class=" danger " @endif><input type="checkbox" value="{{$list->productId}}" selected=" " name="productId"></td>
@@ -128,7 +190,9 @@
 
                 </td>
             </tr>
-            @endforeach
+            @endforeach -->
+
+
         </tbody>
     </table>
                 <div class="page_list f-r">
@@ -139,107 +203,21 @@
 </div>
 <script type="text/javascript">
 
-// //搜索
-// $(function(){
-//     var url = '{{url("cms/product/keyword")}}';
-//     // var searchURL = "/cases/search.action";
-//     var isClicked = false;
-//     var defauntkeyword = "请输入关键词";
-//     $("#autocomplete").autocomplete(url, {
-//         scroll:false,
-//         selectFirst:false,
-//         // delay:5,
-//         dataType:"json",//ajax的跨域，必须用jsonp,jQuery自动会加一个callback参数,后台要获得callback参数，并写回来
-//         //     //自定义提示
-//         // tips:function(data) {
-//         //         //这里的data是跟formatItem 的data是一样的，所以格式也一样
-//         //     return data.pinyin;
-//         // },
-//         parse: function(data) {
-//             if(data==null||typeof(data)=="undefined"||data.length==0){
-//                 return null;
-//             }
 
-//             // data = data.keylist;
-//             var rows = [];
-//             for(var i=0; i<data.length; i++){
-//                 rows[rows.length] = {
-//                     data:data[i],//这里data是对象数组，格式[{key:aa,address:nn},{key:aa,address:nn}]
-//                     value:data[i].name,
-//                     result:data[i].name
-//                 };
-//             }
-//             return rows;
-//         },
-//         // extraParams: {query:function (){return $('#autocomplete').val();}},
-//         extraParams: {query:function (){
-//                 var keyword = trim($("#autocomplete").val());
-//                 return {"keyword" : keyword, "_token" : "{{csrf_token()}}"};
-//             }
-//         },
+@if($selectSupplier)
+var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
 
-//         formatItem: function(data, i, total) {  //就是下拉框显示的内容，可以有格式之类的
-//             return "<p>"+data.name+"</p>";
-//         },
-//         formatMatch: function(data, i, total) {  //要匹配的内容
-//             return data.name;
-//         },
-//         formatResult: function(data) {  //最终在inputText里显示的内容，就是以后要搜索的内容
-//             return data.name;
-//         }
-//     }).result(function(e, data) {
-//         if(!isClicked) {
-//             $("#field").val(data.field);
-//             startSearch();
-//         }
-//     });
+//给父类传值
+function actionSelectSupplier(id,name){
 
-//     $("#autocomplete").keydown(function(e) {
-//         if(e.keyCode==13){
-//             e.preventDefault();
-//             if(!isClicked) {
-//                 startSearch();
-//             }
-//         }
-//     });
+    parent.$('.{{$sonId}}').val(id);
 
-//     /**
-//      * 搜索条件 
-//      */
-//     function searchCondition(){
-//         var keyword = $("#autocomplete").val();
-//         var field   = $("#field").val();
-//         var url = '{{url("cms/product")}}?keyword='+keyword+'&field='+field+'&_token={{csrf_token()}}';
-//         return url;
-//     }
+    parent.$('#{{$sonName}}').val(name);
 
-//     /**
-//      *  开始搜索
-//      */
-//     function startSearch() {
-//         var keys = trim($("#autocomplete").val());
-//         keys = trim(keys);
-//         if(keys==defauntkeyword||keys==''){
-//             window.location.href='{{url("cms/product")}}';
-//         }else{
-//             window.location.href=searchCondition();
-//         }
-//     }
+    parent.layer.close(index);
 
-//     /**
-//      * 去空格
-//      */
-//     function trim(m){
-//         while((m.length>0)&&(m.charAt(0)==' ')){
-//             m = m.substring(1, m.length);
-//         }
-//         while((m.length>0)&&(m.charAt(m.length-1)==' ')){
-//             m = m.substring(0, m.length-1);
-//         }
-//         return m;
-//     }
-// });
-
+}
+@endif
 
 //多选
 function actionStatus(close){

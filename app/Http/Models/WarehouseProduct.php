@@ -12,10 +12,23 @@ use Illuminate\Database\Eloquent\Model;
  * @package App\Http\Models
  * @version V.D.1.0
  */
-class WarehouseeProduct extends Model
+class WarehouseProduct extends Model
 {
     public   	$table          = 'warehouse_product';
     public   	$primaryKey     = 'id';
     public      $timestamps     = false;
     protected 	$guarded 		= [];
+
+
+    /**
+     * 库存类别
+     *
+     * @access public
+     * @static
+     * @return array
+     */
+    public static function type(){
+        return array('0'=>'常备','1'=>'客户专备');
+    }
+
 }

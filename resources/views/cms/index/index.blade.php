@@ -73,7 +73,7 @@
 			<dd>
 				<ul>
 					<li><a _href="{{url('cms/warehouse')}}" data-title="库房列表" href="javascript:void(0)">库房列表</a></li>
-					<li><a _href="{{url('cms/warehouse')}}" data-title="库房产品" href="javascript:void(0)">库房产品</a></li>
+					<li><a _href="{{url('cms/warehouseProduct')}}" data-title="库房产品" href="javascript:void(0)">库房产品</a></li>
 				</ul>
 			</dd>
 		</dl>

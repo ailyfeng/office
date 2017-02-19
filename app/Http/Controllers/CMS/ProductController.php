@@ -73,6 +73,11 @@ class ProductController extends CMSController
         $orderbyCurr    =  $filterWhere['orderbyCurr'];
         $whereField     =  $filterWhere['whereField'];
 
+        $sonId          = $filterWhere['sonId'];
+        $sonName        = $filterWhere['sonName'];
+        $selectSupplier = $filterWhere['selectSupplier'];
+
+
 // dd($whereField);
 
         $data = array();
@@ -146,7 +151,16 @@ class ProductController extends CMSController
             $data->appends($pageParam);
         }
 
-        return view('cms.product.index',compact('data','whereField','type','orderbyCurr'));
+        return view('cms.product.index',compact(
+                                                    'data',
+                                                    'selectSupplier',
+                                                    'sonId',
+                                                    'sonName',
+                                                    'whereField',
+                                                    'type',
+                                                    'orderbyCurr'
+                                                    )
+                    );
     }
 
     /**
