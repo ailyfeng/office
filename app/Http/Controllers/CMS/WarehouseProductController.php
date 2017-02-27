@@ -6,6 +6,7 @@ use App\Http\Models\Supplier;
 use App\Http\Models\Product;
 use App\Http\Models\WarehouseProduct;
 use App\Http\Models\Warehouse;
+use App\Http\Models\Classify;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -77,7 +78,7 @@ class WarehouseProductController extends CMSController
         $sonName        = $filterWhere['sonName'];
         $selectSupplier = $filterWhere['selectSupplier'];
 
-dd($whereField);
+// dd($whereField);
         $data = array();
 
         if($where || $orderby){//筛选查找
@@ -103,11 +104,27 @@ dd($whereField);
                         ->orderBy($WarehouseProduct->table.'.warehouseId', 'asc')
                         ->paginate(15);
         }
+
+        $Warehouse_product_type = WarehouseProduct::type();
+        $product_typeTmp    =  Classify::where('type','=',1)->get();
+
+        foreach ($product_typeTmp as $list) {
+            # code...
+            $product_type[$list['id']] = $list['name'];
+        }
+
+        //库房产品类型
+        foreach ($data as $key => &$list) {
+            # code...
+            $list['warehouse_product_type']=$Warehouse_product_type[$list['warehouse_product_type']];
+            $list['product_type']=$product_type[$list['product_type']];
+        }
 // dd($data);
         //添加分页时的参数
         if($data){
             $data->appends($pageParam);
         }
+
 
         return view('cms.warehouseProduct.index',compact(
                                                     'data',
@@ -115,8 +132,9 @@ dd($whereField);
                                                     'sonId',
                                                     'sonName',
                                                     'whereField',
-                                                    'type',
-                                                    'orderbyCurr'
+                                                    'product_type',
+                                                    'orderbyCurr',
+                                                    'Warehouse_product_type'
                                                     )
                     );
 
@@ -129,15 +147,15 @@ dd($whereField);
      * @access public
      * @static funciton
      */
-    public static function create($id){
+    public static function create($id=null){
 
         $warehouse = Warehouse::find($id);
-        $data = Warehouse::find(3);
+        // $data = Warehouse::find(3);
 
         $isBoolean = Supplier::isBoolean();
         $type = WarehouseProduct::type();
 
-        return view('cms.warehouseProduct.create',compact('warehouse','data','isBoolean','type'));
+        return view('cms.warehouseProduct.create',compact('warehouse','isBoolean','type'));
     }
 
     /**

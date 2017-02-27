@@ -28,7 +28,7 @@ class WarehouseProduct extends Model
      * @return array
      */
     public static function type(){
-        return array('0'=>'常备','1'=>'客户专备');
+        return array('1'=>'常备','2'=>'客户专备');
     }
 
 }

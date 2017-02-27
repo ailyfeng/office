@@ -1,9 +1,6 @@
 @extends("cms.layouts.admin")
 @section("content")
 
-    <script src="{{asset('resources/OfficeCMS/uploadify/jquery.uploadify.min.js')}}" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="{{asset('resources/OfficeCMS/uploadify/uploadify.css')}}">
-
 <nav class="breadcrumb">
     <i class="Hui-iconfont">&#xe67f;</i> <a href="{{url('cms/index/info')}}" >首页 </a><span class="c-gray en">&gt;</span> 
         <a href="javascript:;" data-title="供应商管理" _href="{{url('cms/supplier')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
@@ -280,7 +277,7 @@
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/jquery.validate.min.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/validate-methods.js')}}"></script> 
 <script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/messages_zh.min.js')}}"></script> 
-<script type="text/javascript" src="{{asset('resources/officecms/laydate/laydate.js')}}"></script>
+<script type="text/javascript" src="{{asset('resources/cms/laydate/laydate.js')}}"></script>
 
 <script type="text/javascript">
 

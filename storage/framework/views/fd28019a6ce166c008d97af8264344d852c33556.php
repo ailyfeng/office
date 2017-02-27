@@ -1,38 +1,38 @@
-@extends("cms.layouts.admin")
-@section("content")
+<?php $__env->startSection("content"); ?>
 
 
 <nav class="breadcrumb">
-    <i class="Hui-iconfont">&#xe67f;</i> <a href="{{url('cms/index/info')}}" >首页 </a><span class="c-gray en">&gt;</span> 
-        <a href="javascript:;" data-title="供应商管理" _href="{{url('cms/supplier')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+    <i class="Hui-iconfont">&#xe67f;</i> <a href="<?php echo e(url('cms/index/info')); ?>" >首页 </a><span class="c-gray en">&gt;</span> 
+        <a href="javascript:;" data-title="供应商管理" _href="<?php echo e(url('cms/supplier')); ?>" onclick="Hui_admin_tab(this)" href="javascript:;">
             供应商管理
         </a>
         <span class="c-gray en">&gt;</span> 
         添加供应商 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
     <article class="page-container">
-        <form action="{{url('cms/supplier')}}" method="post" class="form form-horizontal" id="formSupplierAdd">
-            {{csrf_field()}}
+        <form action="<?php echo e(url('cms/supplier')); ?>" method="post" class="form form-horizontal" id="formSupplierAdd">
+            <?php echo e(csrf_field()); ?>
+
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应商全称：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('fullName'))
+                    <?php if($errors->has('fullName')): ?>
                         <input type="text" class="input-text radius error" value="" name="fullName" aria-required="true" aria-invalid="true">
-                        <label id="fullName-error" class="error" for="fullName">{{$errors->first('fullName')}}</label>
-                    @else
+                        <label id="fullName-error" class="error" for="fullName"><?php echo e($errors->first('fullName')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius" value="" placeholder="5-100个字符" name="fullName" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">供应商简称：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('abbreviation'))
+                    <?php if($errors->has('abbreviation')): ?>
                         <input type="text" class="input-text radius error" value="" name="abbreviation" aria-required="true" aria-invalid="true">
-                        <label id="abbreviation-error" class="error" for="abbreviation">{{$errors->first('supplierIdExt')}}</label>
-                    @else
+                        <label id="abbreviation-error" class="error" for="abbreviation"><?php echo e($errors->first('supplierIdExt')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="2-30个字符"  name="abbreviation" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
@@ -40,146 +40,146 @@
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
 
 
-                    @foreach($type as $k=>$v)
+                    <?php foreach($type as $k=>$v): ?>
                           <div class="check-box">
-                            <input type="checkbox" id="checkbox" value="{{$k}}"  @if($k==0)checked="checked" @endif  name="type[]">
-                            <label for="checkbox">{{$v}}</label>
+                            <input type="checkbox" id="checkbox" value="<?php echo e($k); ?>"  <?php if($k==0): ?>checked="checked" <?php endif; ?>  name="type[]">
+                            <label for="checkbox"><?php echo e($v); ?></label>
                           </div>
-                    @endforeach
+                    <?php endforeach; ?>
 <!-- 
-                    @if($errors->has('type'))
+                    <?php if($errors->has('type')): ?>
                         <input type="text" class="input-text radius error" value="" name="type" aria-required="true" aria-invalid="true">
-                        <label id="type-error" class="error" for="type">{{$errors->first('type')}}</label>
+                        <label id="type-error" class="error" for="type"><?php echo e($errors->first('type')); ?></label>
 
 
-                    @else
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value=""  placeholder="2-30个汉字" name="type" >
-                    @endif -->
+                    <?php endif; ?> -->
                 </div>
             </div>
 
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应品牌：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('brand'))
+                    <?php if($errors->has('brand')): ?>
                         <input type="text" class="input-text radius error" value="" name="brand" aria-required="true" aria-invalid="true">
-                        <label id="brand-error" class="error" for="brand">{{$errors->first('brand')}}</label>
-                    @else
+                        <label id="brand-error" class="error" for="brand"><?php echo e($errors->first('brand')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="2-30个字符"  name="brand" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>供应品类：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('brandType'))
+                    <?php if($errors->has('brandType')): ?>
                         <input type="text" class="input-text radius error" value="" name="brandType" aria-required="true" aria-invalid="true">
-                        <label id="brandType-error" class="error" for="brandType">{{$errors->first('brandType')}}</label>
-                    @else
+                        <label id="brandType-error" class="error" for="brandType"><?php echo e($errors->first('brandType')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value=""  placeholder="2-30个字符"  name="brandType" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>办公地址：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('officeAdd'))
+                    <?php if($errors->has('officeAdd')): ?>
                         <input type="text" class="input-text radius error" value="" name="officeAdd" aria-required="true" aria-invalid="true">
-                        <label id="officeAdd-error" class="error" for="officeAdd">{{$errors->first('officeAdd')}}</label>
-                    @else
+                        <label id="officeAdd-error" class="error" for="officeAdd"><?php echo e($errors->first('officeAdd')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="5-100个字符" name="officeAdd" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>库房地址：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('warehoustAdd'))
+                    <?php if($errors->has('warehoustAdd')): ?>
                         <input type="text" class="input-text radius error" value="" name="warehoustAdd" aria-required="true" aria-invalid="true">
-                        <label id="warehoustAdd-error" class="error" for="warehoustAdd">{{$errors->first('warehoustAdd')}}</label>
-                    @else
+                        <label id="warehoustAdd-error" class="error" for="warehoustAdd"><?php echo e($errors->first('warehoustAdd')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="5-100个字符" name="warehoustAdd" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>采购区域：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('area'))
+                    <?php if($errors->has('area')): ?>
                         <input type="text" class="input-text radius error" value="" name="area" aria-required="true" aria-invalid="true">
-                        <label id="area-error" class="error" for="area">{{$errors->first('area')}}</label>
-                    @else
+                        <label id="area-error" class="error" for="area"><?php echo e($errors->first('area')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="5-30个字符" name="area" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">结算方式：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('settlementMmethod'))
+                    <?php if($errors->has('settlementMmethod')): ?>
                         <input type="text" class="input-text radius error" value="" name="settlementMmethod" aria-required="true" aria-invalid="true">
-                        <label id="settlementMmethod-error" class="error" for="settlementMmethod">{{$errors->first('settlementMmethod')}}</label>
-                    @else
+                        <label id="settlementMmethod-error" class="error" for="settlementMmethod"><?php echo e($errors->first('settlementMmethod')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="5-30个字符" name="settlementMmethod" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">收款方式：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('paymentMethod'))
+                    <?php if($errors->has('paymentMethod')): ?>
                         <input type="text" class="input-text radius error" value="" name="paymentMethod" aria-required="true" aria-invalid="true">
-                        <label id="paymentMethod-error" class="error" for="paymentMethod">{{$errors->first('paymentMethod')}}</label>
-                    @else
+                        <label id="paymentMethod-error" class="error" for="paymentMethod"><?php echo e($errors->first('paymentMethod')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="5-30个字符" name="paymentMethod" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">结算价格（含税）：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('priceTax'))
+                    <?php if($errors->has('priceTax')): ?>
                         <input type="text" class="input-text radius error" value="" name="priceTax" aria-required="true" aria-invalid="true">
-                        <label id="priceTax-error" class="error" for="priceTax">{{$errors->first('priceTax')}}</label>
-                    @else
+                        <label id="priceTax-error" class="error" for="priceTax"><?php echo e($errors->first('priceTax')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="0000.00" name="priceTax" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">结算价格（不含税）：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('priceNoTax'))
+                    <?php if($errors->has('priceNoTax')): ?>
                         <input type="text" class="input-text radius error" value="" name="priceNoTax" aria-required="true" aria-invalid="true">
-                        <label id="priceNoTax-error" class="error" for="priceNoTax">{{$errors->first('priceNoTax')}}</label>
-                    @else
+                        <label id="priceNoTax-error" class="error" for="priceNoTax"><?php echo e($errors->first('priceNoTax')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="0000.00" name="priceNoTax" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">帐户信息：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('account'))
+                    <?php if($errors->has('account')): ?>
                         <input type="text" class="input-text radius error" value="" name="account" aria-required="true" aria-invalid="true">
-                        <label id="account-error" class="error" for="account">{{$errors->first('account')}}</label>
-                    @else
+                        <label id="account-error" class="error" for="account"><?php echo e($errors->first('account')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="5-30个字符" name="account" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">是否送货：</label>
                 <div class="formControls col-xs-8 col-sm-9">
 
-                    @foreach($isBoolean as $k=>$v)
+                    <?php foreach($isBoolean as $k=>$v): ?>
 
                      <div class="radio-box">
-                        <input type="radio" id="radio-{{$k}}" name="deliveryIs" value="{{$k}}" @if($k==0)checked="checked" @endif >
-                        <label for="radio-{{$k}}">{{$v}}</label>
+                        <input type="radio" id="radio-<?php echo e($k); ?>" name="deliveryIs" value="<?php echo e($k); ?>" <?php if($k==0): ?>checked="checked" <?php endif; ?> >
+                        <label for="radio-<?php echo e($k); ?>"><?php echo e($v); ?></label>
                       </div>
 
-                    @endforeach
+                    <?php endforeach; ?>
 
                 </div>
             </div>
@@ -187,74 +187,74 @@
                 <label class="form-label col-xs-4 col-sm-2">是否签协：</label>
                 <div class="formControls col-xs-8 col-sm-9">
 
-                    @foreach($isBoolean as $k=>$v)
+                    <?php foreach($isBoolean as $k=>$v): ?>
                     
                      <div class="radio-box">
-                        <input type="radio" id="radio-{{$k}}" name="signIs" value="{{$k}}" @if($k==0)checked="checked" @endif >
-                        <label for="radio-{{$k}}">{{$v}}</label>
+                        <input type="radio" id="radio-<?php echo e($k); ?>" name="signIs" value="<?php echo e($k); ?>" <?php if($k==0): ?>checked="checked" <?php endif; ?> >
+                        <label for="radio-<?php echo e($k); ?>"><?php echo e($v); ?></label>
                       </div>
 
-                    @endforeach
+                    <?php endforeach; ?>
 
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">退换货要求：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('returnRequirements'))
+                    <?php if($errors->has('returnRequirements')): ?>
                     <textarea class="textarea radius error" name="returnRequirements" placeholder="退换货要求描述" aria-required="true" aria-invalid="true"></textarea>
-                        <label id="account-error" class="error" for="returnRequirements">{{$errors->first('returnRequirements')}}</label>
-                    @else
+                        <label id="account-error" class="error" for="returnRequirements"><?php echo e($errors->first('returnRequirements')); ?></label>
+                    <?php else: ?>
                         <textarea class="textarea radius" name="returnRequirements" placeholder="250个字符" onKeyUp="textarealength(this,250)"></textarea>
                         <p class="textarea-numberbar"><em class="textarea-length">0</em>/250</p>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">合同到期日：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('contractDate'))
+                    <?php if($errors->has('contractDate')): ?>
                         <input type="text" name="contractDate" id="contractDate" class=" input-text radius error" aria-required="true" readonly  aria-invalid="true">
-                        <label id="contractDate-error" class="error" for="contractDate">{{$errors->first('contractDate')}}</label>
-                    @else
+                        <label id="contractDate-error" class="error" for="contractDate"><?php echo e($errors->first('contractDate')); ?></label>
+                    <?php else: ?>
                          <input type="text" name="contractDate" id="contractDate" class=" input-text radius " readonly  placeholder="0000-00-00">
                         
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">合同简报：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('contractBriefing'))
+                    <?php if($errors->has('contractBriefing')): ?>
                     <textarea class="textarea radius error" name="contractBriefing" placeholder="退换货要求描述" aria-required="true" aria-invalid="true"></textarea>
-                        <label id="account-error" class="error" for="contractBriefing">{{$errors->first('contractBriefing')}}</label>
-                    @else
+                        <label id="account-error" class="error" for="contractBriefing"><?php echo e($errors->first('contractBriefing')); ?></label>
+                    <?php else: ?>
                         <textarea class="textarea radius" name="contractBriefing" placeholder="1250个字符" onKeyUp="textarealength(this,250)"></textarea>
                         <p class="textarea-numberbar"><em class="textarea-length">0</em>/250</p>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">授信额度：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('credit'))
+                    <?php if($errors->has('credit')): ?>
                         <input type="text" class="input-text radius error" value="" name="credit" aria-required="true" aria-invalid="true">
-                        <label id="credit-error" class="error" for="credit">{{$errors->first('credit')}}</label>
-                    @else
+                        <label id="credit-error" class="error" for="credit"><?php echo e($errors->first('credit')); ?></label>
+                    <?php else: ?>
                          <input type="text" class="input-text radius " value="" placeholder="5-30个字符" name="credit" >
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">备注：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    @if($errors->has('note'))
+                    <?php if($errors->has('note')): ?>
                     <textarea class="textarea radius error" name="note" placeholder="退换货要求描述" aria-required="true" aria-invalid="true"></textarea>
-                        <label id="account-error" class="error" for="note">{{$errors->first('note')}}</label>
-                    @else
+                        <label id="account-error" class="error" for="note"><?php echo e($errors->first('note')); ?></label>
+                    <?php else: ?>
                         <textarea class="textarea radius" name="note" placeholder="250个字符" onKeyUp="textarealength(this,250)"></textarea>
                         <p class="textarea-numberbar"><em class="textarea-length">0</em>/250</p>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -270,18 +270,18 @@
         </form>
     </article>
 </div>
-<script type="text/javascript" src="{{asset('resources/cms/static/h-ui/js/H-ui.js')}}"></script> 
-<script type="text/javascript" src="{{asset('resources/cms/lib/icheck/jquery.icheck.min.js')}}"></script> 
-<script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/jquery.validate.min.js')}}"></script> 
-<script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/validate-methods.js')}}"></script> 
-<script type="text/javascript" src="{{asset('resources/cms/lib/jquery.validation/1.14.0/messages_zh.min.js')}}"></script> 
-<script type="text/javascript" src="{{asset('resources/cms/laydate/laydate.js')}}"></script>
+<script type="text/javascript" src="<?php echo e(asset('resources/cms/static/h-ui/js/H-ui.js')); ?>"></script> 
+<script type="text/javascript" src="<?php echo e(asset('resources/cms/lib/icheck/jquery.icheck.min.js')); ?>"></script> 
+<script type="text/javascript" src="<?php echo e(asset('resources/cms/lib/jquery.validation/1.14.0/jquery.validate.min.js')); ?>"></script> 
+<script type="text/javascript" src="<?php echo e(asset('resources/cms/lib/jquery.validation/1.14.0/validate-methods.js')); ?>"></script> 
+<script type="text/javascript" src="<?php echo e(asset('resources/cms/lib/jquery.validation/1.14.0/messages_zh.min.js')); ?>"></script> 
+<script type="text/javascript" src="<?php echo e(asset('resources/cms/laydate/laydate.js')); ?>"></script>
 
 <script type="text/javascript">
 
 //打开子网页
 function openUrl(id){
-    var url = '{{url("cms/upload")}}'+'/'+id+'/edit';
+    var url = '<?php echo e(url("cms/upload")); ?>'+'/'+id+'/edit';
     layer.open({
       type: 2,
       area: ['700px', '530px'],
@@ -451,4 +451,5 @@ laydate({
 
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make("cms.layouts.admin", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

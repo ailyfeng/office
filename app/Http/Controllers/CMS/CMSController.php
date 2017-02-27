@@ -281,7 +281,7 @@ class CMSController extends Controller
         //传给分页适用的参数
         $pageParam = array();
 
-        $select = array('*');
+        $select = array();
 
         $where = array();
 
@@ -313,14 +313,14 @@ class CMSController extends Controller
 
         }
 
+        //需要查询的字段
+        foreach ($whereField as $table=>$fieldArr) {
+            foreach ($fieldArr as $field => $fieldValue) {
+                $select[] = $table.'.'.$field.' as '.$table.'_'.$field;
+            }
+        }
 
         if(empty($input)){
-
-                foreach ($whereField as $table=>$fieldArr) {
-                    foreach ($fieldArr as $field => $fieldValue) {
-                        $select[] = $table.'.'.$field.' as '.$table.'_'.$field;
-                    }
-                }
             $data = array(
                         'select'        => $select,
                         'where'         => $where,
@@ -335,7 +335,7 @@ class CMSController extends Controller
             return $data;
         }
 
-
+// dd($input);
         foreach ($input as $inputTable => $inputValue) {
 
                 //筛选
@@ -364,7 +364,7 @@ class CMSController extends Controller
                             $fieldUrl .= $key.'='.$value;  
 
                             $fieldArr[$key]['value']=$value;
-                            $whereField[$table][$key] = $value;
+                            $whereField[$table][$key]['value'] = $value;
                             switch ($value) {
                                 case is_numeric($value):
                                     $regexp = '=';
@@ -464,11 +464,10 @@ class CMSController extends Controller
                 $list['sortX'] = $sortX;
         }
 
-
         //选择要排序的字段
         foreach ($whereField as $table=>&$fieldArr) {
         // foreach ($whereField as $key=>&$list) {
-            foreach ($fieldArr as $field => &$fieldValue) {
+            foreach ($fieldArr as $field => $fieldValue) {
 
                     if(!$url){
                         $u = '?';
@@ -480,12 +479,13 @@ class CMSController extends Controller
                 }else{
                     $tmp = $url .$u.$field.'Sort'.'=1';
                 }
-                // print_r($fieldValue);
-                $fieldValue['sortUrl'] = $tmp ;
+                
+                $fieldArr[$field]['sortUrl'] = $tmp ;    
+                
+                
             }
 
         }
-dd($whereField);
 
         $data = array(
                         'select'        => $select,

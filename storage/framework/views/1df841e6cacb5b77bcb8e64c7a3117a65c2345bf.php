@@ -16,8 +16,31 @@
 
         <?php foreach($whereField as $table=>$tableField): ?>
             <?php foreach($tableField as $field=>$fieldValue): ?>
-                <a class="btn btn-disabled" src=""><?php echo e($fieldValue['name']); ?></a>
-                <input class="input-text ac_input radius" name="<?php echo e($table); ?>[<?php echo e($field); ?>]"  style="width:100px"  type="text" value="<?php echo e($fieldValue['value']); ?>">
+                <?php if($table.$field =='warehouse_producttype'){?>
+                        <a class="btn btn-disabled" src=""><?php echo e($fieldValue['name']); ?></a>
+                    <span class="select-box radius" style="width:120px" >
+                      <select class="select" size="1" name="<?php echo e($table); ?>[<?php echo e($field); ?>]">
+                      <option value="0" >无</option>
+                       <?php foreach($Warehouse_product_type as $key=>$value): ?>
+                            <option value="<?php echo e($key); ?>"  <?php if($key==$fieldValue['value']): ?> selected="selected"  <?php endif; ?> ><?php echo e($value); ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </span>
+                <?php }elseif($table.$field =='producttype'){?>
+
+                        <a class="btn btn-disabled" src=""><?php echo e($fieldValue['name']); ?></a>
+                    <span class="select-box radius" style="width:120px" >
+                      <select class="select" size="1" name="<?php echo e($table); ?>[<?php echo e($field); ?>]">
+                      <option value="0" >无</option>
+                       <?php foreach($product_type as $key=>$value): ?>
+                            <option value="<?php echo e($key); ?>"  <?php if($key==$fieldValue['value']): ?> selected="selected"  <?php endif; ?> ><?php echo e($value); ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </span>
+                <?php }else{?>
+                    <a class="btn btn-disabled" src=""><?php echo e($fieldValue['name']); ?></a>
+                    <input class="input-text ac_input radius" name="<?php echo e($table); ?>[<?php echo e($field); ?>]"  style="width:100px"  type="text" value="<?php echo e($fieldValue['value']); ?>">
+                <?php }?>
             <?php endforeach; ?>
         <?php endforeach; ?>
 

@@ -17,8 +17,31 @@
 
         @foreach($whereField as $table=>$tableField)
             @foreach($tableField as $field=>$fieldValue)
-                <a class="btn btn-disabled" src="">{{$fieldValue['name']}}</a>
-                <input class="input-text ac_input radius" name="{{$table}}[{{$field}}]"  style="width:100px"  type="text" value="{{$fieldValue['value']}}">
+                <?php if($table.$field =='warehouse_producttype'){?>
+                        <a class="btn btn-disabled" src="">{{$fieldValue['name']}}</a>
+                    <span class="select-box radius" style="width:120px" >
+                      <select class="select" size="1" name="{{$table}}[{{$field}}]">
+                      <option value="0" >无</option>
+                       @foreach($Warehouse_product_type as $key=>$value)
+                            <option value="{{$key}}"  @if($key==$fieldValue['value']) selected="selected"  @endif >{{$value}}</option>
+                        @endforeach
+                      </select>
+                    </span>
+                <?php }elseif($table.$field =='producttype'){?>
+
+                        <a class="btn btn-disabled" src="">{{$fieldValue['name']}}</a>
+                    <span class="select-box radius" style="width:120px" >
+                      <select class="select" size="1" name="{{$table}}[{{$field}}]">
+                      <option value="0" >无</option>
+                       @foreach($product_type as $key=>$value)
+                            <option value="{{$key}}"  @if($key==$fieldValue['value']) selected="selected"  @endif >{{$value}}</option>
+                        @endforeach
+                      </select>
+                    </span>
+                <?php }else{?>
+                    <a class="btn btn-disabled" src="">{{$fieldValue['name']}}</a>
+                    <input class="input-text ac_input radius" name="{{$table}}[{{$field}}]"  style="width:100px"  type="text" value="{{$fieldValue['value']}}">
+                <?php }?>
             @endforeach
         @endforeach
 

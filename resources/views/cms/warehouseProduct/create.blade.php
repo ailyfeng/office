@@ -1,8 +1,8 @@
 @extends("cms.layouts.admin")
 @section("content")
 
-    <script src="{{asset('resources/OfficeCMS/uploadify/jquery.uploadify.min.js')}}" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="{{asset('resources/OfficeCMS/uploadify/uploadify.css')}}">
+    <script src="{{asset('resources/cms/uploadify/jquery.uploadify.min.js')}}" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="{{asset('resources/cms/uploadify/uploadify.css')}}">
 
 <nav class="breadcrumb">
     <i class="Hui-iconfont">&#xe67f;</i> <a href="{{url('cms/index/info')}}" >首页 </a><span class="c-gray en">&gt;</span> 
