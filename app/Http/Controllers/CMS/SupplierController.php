@@ -205,67 +205,67 @@ class SupplierController extends CMSController
             $input['contractDate'] = strtotime($input['contractDate']);
             $input['type'] = serialize(json_encode($input['type']));
             $rules = [
-                'fullName'=>'required|min:5|max:100',
-                'abbreviation'=>'min:2|max:30',
-                'brand'=>'required|min:2|max:30',
-                'brand'=>'required|min:2|max:30',
-                'brandType'=>'required|min:2|max:30',
-                'officeAdd'=>'required|min:5|max:100',
-                'warehoustAdd'=>'required|min:5|max:100',
-                'area'=>'required|min:2|max:30',
-                'settlementMmethod'=>'min:2|max:30',
-                'paymentMethod'=>'min:2|max:30',
-                'priceTax' => 'numeric',
-                'priceNoTax' => 'numeric',
-                'credit'=>'min:2|max:30',
+                'fullName'=>'required|min:1|max:100',
+                'abbreviation'=>'max:100',
+                'brand'=>'required|min:1|max:100',
+                'brand'=>'required|min:1|max:100',
+                'brandType'=>'required|min:1|max:100',
+                'officeAdd'=>'required|min:1|max:100',
+                'warehoustAdd'=>'required|min:1|max:100',
+                'area'=>'required|min:1|max:100',
+                'settlementMmethod'=>'max:100',
+                'paymentMethod'=>'max:100',
+                'priceTax' => 'max:100',
+                'priceNoTax' => 'max:100',
+                'credit'=>'max:100',
             ];
 
             $message = [
                 'fullName.required'=>'请填写供应商全称',
-                'fullName.min'=>'供应商全称最少5个字符',
+                'fullName.min'=>'供应商全称最少1个字符',
                 'fullName.max'=>'供应商全称最多100个字符',
 
                 // 'abbreviation.required'=>'请填写供应商简称',
-                'abbreviation.min'=>'供应商简称最少2个字符',
-                'abbreviation.max'=>'供应商简称最多30个字符',
+                // 'abbreviation.min'=>'供应商简称最少2个字符',
+                'abbreviation.max'=>'供应商简称最多100个字符',
 
                 'brand.required'=>'请填写供应品牌',
-                'brand.min'=>'供应品牌最少2个字符',
-                'brand.max'=>'供应品牌最多30个字符',
+                'brand.min'=>'供应品牌最少1个字符',
+                'brand.max'=>'供应品牌最多100个字符',
 
                 'brandType.required'=>'请填写供应品类',
-                'brandType.min'=>'供应品类最少2个字符',
-                'brandType.max'=>'供应品类最多30个字符',
+                'brandType.min'=>'供应品类最少1个字符',
+                'brandType.max'=>'供应品类最多100个字符',
 
                 'officeAdd.required'=>'请填写办公地址',
-                'officeAdd.min'=>'办公地址最少5个字符',
+                'officeAdd.min'=>'办公地址最少1个字符',
                 'officeAdd.max'=>'办公地址最多100个字符',
 
                 'warehoustAdd.required'=>'请填写库房地址',
-                'warehoustAdd.min'=>'库房地址最少5个字符',
+                'warehoustAdd.min'=>'库房地址最少1个字符',
                 'warehoustAdd.max'=>'库房地址最多100个字符',
 
                 'area.required'=>'请填写采购区域',
-                'area.min'=>'采购区域最少2个字符',
-                'area.max'=>'采购区域最多30个字符',
+                'area.min'=>'采购区域最少1个字符',
+                'area.max'=>'采购区域最多100个字符',
 
-                'settlementMmethod.required'=>'请填写结算方式',
-                'settlementMmethod.min'=>'结算方式最少2个字符',
-                'settlementMmethod.max'=>'结算方式最多30个字符',
+                // 'settlementMmethod.required'=>'请填写结算方式',
+                // 'settlementMmethod.min'=>'结算方式最少2个字符',
+                'settlementMmethod.max'=>'结算方式最多100个字符',
 
                 // 'paymentMethod.required'=>'请填写收款方式',
-                'paymentMethod.min'=>'收款方式最少2个字符',
-                'paymentMethod.max'=>'收款方式最多30个字符',
+                // 'paymentMethod.min'=>'收款方式最少2个字符',
+                'paymentMethod.max'=>'收款方式最多100个字符',
 
                 // 'priceTax.required' => '请填写结算价格（含税）',
-                'priceTax.numeric' => '结算价格（含税）有误',
+                'priceTax.max' => '结算价格（含税）最多100个字符',
 
                 // 'priceNoTax.required' => '请填写结算价格（不含税）',
-                'priceNoTax.numeric' => '结算价格（不含税）有误',
+                'priceNoTax.max' => '结算价格（不含税）最多100个字符',
 
                 // 'credit.required'=>'请填写授信额度',
-                'credit.min'=>'授信额度最少2个字符',
-                'credit.max'=>'授信额度最多30个字符',
+                // 'credit.min'=>'授信额度最少2个字符',
+                'credit.max'=>'授信额度最多100个字符',
             ];
 
 
@@ -287,10 +287,14 @@ class SupplierController extends CMSController
 
         $input = Input::except("_token",'_method');
 
-
         //验证数据
         $validatorData = self::validatorData($input);
-  
+        // dd($validatorData['input']['contractDate']);
+        if($tmpContractDate = Supplier::select('contractDate')->find($supplierId)){
+            if($tmpContractDate->contractDate<$validatorData['input']['contractDate']){
+                return redirect(url('cms/alert',array('mes'=>'该供应商合同已经到期，不能改动！','url'=>urlencode(url('cms/supplier/'.$supplierId.'/edit')))));
+            }
+        }
 
         if($validatorData['validator']->passes()===true){
 

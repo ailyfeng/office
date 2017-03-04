@@ -309,143 +309,145 @@ $(document).ready(function(){
         rules:{
             fullName:{
                 required:true,
-                minlength:5,
+                minlength:1,
                 maxlength:100
             }, 
-            // abbreviation:{
-            //     required:true,
-            //     minlength:2,
-            //     maxlength:30
-            // }, 
+            abbreviation:{
+                // required:true,
+                // minlength:2,
+                maxlength:100
+            }, 
             type:{
                 required:true,
-                minlength:2,
-                maxlength:30
+                minlength:1,
+                maxlength:100
             },
             brand:{
                 required:true,
                 minlength:2,
-                maxlength:30
+                maxlength:100
             },
             brandType:{
                 required:true,
-                minlength:2,
-                maxlength:30
+                minlength:1,
+                maxlength:100
             },
             officeAdd:{
                 required:true,
-                minlength:2,
-                maxlength:30
+                minlength:1,
+                maxlength:100
             },
             warehoustAdd:{
                 required:true,
-                minlength:5,
+                minlength:1,
                 maxlength:100
             },
             area:{
                 required:true,
-                minlength:5,
-                maxlength:30
+                minlength:1,
+                maxlength:100
             },
             settlementMmethod:{
-                minlength:5,
-                maxlength:30
+                // minlength:1,
+                maxlength:100
             }, 
             paymentMethod:{
-                minlength:5,
-                maxlength:30
+                // minlength:1,
+                maxlength:100
             }, 
             priceTax:{
-                number:true
+                // number:true
+                maxlength:100
             },
             priceNoTax:{
-                number:true
+                // number:true
+                maxlength:100
             }, 
             account:{
-                minlength:5,
-                maxlength:30
+                maxlength:100
             },
             contractDate:{
                 date:true
+            },
+            returnRequirements:{
+                // required:true,
+                // minlength:5,
+                maxlength:250
             }
-            // returnRequirements:{
-            //     required:true,
-            //     minlength:5,
-            //     maxlength:30
-            // }, 
         },
         //表单提示信息 
         messages:{
             fullName:{
                 required:"必须填写供应商全称",
-                minlength:"最小为5位",
+                minlength:"最小为1位",
                 maxlength:"最大为100位"
             },
-            // abbreviation:{
-            //     required:"必须填写供应商简称",
-            //     minlength:"最小为2位",
-            //     maxlength:"最大为30位"
-            // },
+            abbreviation:{
+                // required:"必须填写供应商简称",
+                // minlength:"最小为2位",
+                maxlength:"最大为100位"
+            },
             type:{
                 required:"必须填写供应商类型",
-                minlength:"最小为2位",
-                maxlength:"最大为30位"
+                minlength:"最小为1位",
+                maxlength:"最大为100位"
             },
             brand:{
                 required:"必须填写供应品牌",
-                minlength:"最小为2位",
-                maxlength:"最大为30位"
+                minlength:"最小为1位",
+                maxlength:"最大为100位"
             },
             brandType:{
                 required:"必须填写供应品类",
-                minlength:"最小为2位",
-                maxlength:"最大为30位"
+                minlength:"最小为1位",
+                maxlength:"最大为100位"
             },
             officeAdd:{
                 required:"必须填写办公地址",
-                minlength:"最小为5位",
+                minlength:"最小为1位",
                 maxlength:"最大为100位"
             },
             warehoustAdd:{
                 required:"必须填写库房地址",
-                minlength:"最小为5位",
+                minlength:"最小为1位",
                 maxlength:"最大为100位"
             },
             area:{
                 required:"必须填写采购区域",
-                minlength:"最小为5位",
-                maxlength:"最大为30位"
+                minlength:"最小为1位",
+                maxlength:"最大为100位"
             },
             settlementMmethod:{
-                minlength:"最小为5位",
-                maxlength:"最大为30位"
+                // minlength:"最小为1位",
+                maxlength:"最大为100位"
             },
             paymentMethod:{
-                minlength:"最小为5位",
-                maxlength:"最大为30位"
+                // minlength:"最小为5位",
+                maxlength:"最大为100位"
             },
             priceTax:{
-                number:"请输入正确的价格"
+                // number:"请输入正确的价格"
+                maxlength:"最大为100位"
             },
             priceNoTax:{
-                number:"请输入正确的价格"
+                // number:"请输入正确的价格"
+                maxlength:"最大为100位"
             },
             account:{
-                minlength:"最小为5位",
-                maxlength:"最大为30位"
+                // minlength:"最小为5位",
+                maxlength:"最大为100位"
             },
             contractDate:{
                 date:"请选择正确的日期"
+            },
+            returnRequirements:{
+                // minlength:"最小为10位",
+                maxlength:"最大为250位"
             }
-            // returnRequirements:{
-            //     minlength:"最小为10位",
-            //     maxlength:"最大为500位"
-            // },
         }
 
     });
 });
- 
 laydate({
   elem: '#contractDate', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
   event: 'focus' //响应事件。如果没有传入event，则按照默认的click

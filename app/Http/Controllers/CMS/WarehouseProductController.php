@@ -26,7 +26,6 @@ use Validator;
 class WarehouseProductController extends CMSController
 {
 
-
     /**
      * 查询库房产品管理
      * 
@@ -38,22 +37,24 @@ class WarehouseProductController extends CMSController
         $WarehouseProduct = new WarehouseProduct();
 
         $whereField    = [
-                            //库房产品
-                            $WarehouseProduct->table=>[
-                                'type'          =>['value'=>false,  'name'=>'库存类型',      'sortUrl'=>false],
-                                'postion'       =>['value'=>false,  'name'=>'库存位置',      'sortUrl'=>false],
-                                'minNum'        =>['value'=>false,  'name'=>'最低库存量',    'sortUrl'=>false],
-                                'maxNum'        =>['value'=>false,  'name'=>'最高库存量',    'sortUrl'=>false],
-                                'cycle'         =>['value'=>false,  'name'=>'盘点周期',      'sortUrl'=>false]
-                            ],
-
                             //公司产品
                             $Product->table=>[
                                 'chineseBrand'  =>['value'=>false,   'name'=>'品牌(中文)'     ,'sortUrl'=>false],
                                 'englishBrand'  =>['value'=>false,   'name'=>'品牌(英文)'     ,'sortUrl'=>false],
                                 'brandName'     =>['value'=>false,   'name'=>'品名'           ,'sortUrl'=>false],
                                 'type'          =>['value'=>false,  'name'=>'产品类型',      'sortUrl'=>false],
+                            ],
+                            //库房产品
+                            $WarehouseProduct->table=>[
+                                'id'            =>false,
+                                'close'         =>false,
+                                'type'          =>['value'=>false,  'name'=>'库存类型',      'sortUrl'=>false],
+                                'postion'       =>['value'=>false,  'name'=>'库存位置',      'sortUrl'=>false],
+                                'minNum'        =>['value'=>false,  'name'=>'最低库存量',    'sortUrl'=>false],
+                                'maxNum'        =>['value'=>false,  'name'=>'最高库存量',    'sortUrl'=>false],
+                                'cycle'         =>['value'=>false,  'name'=>'盘点周期',      'sortUrl'=>false]
                             ]
+
 
                         ];
 
@@ -125,7 +126,7 @@ class WarehouseProductController extends CMSController
             $data->appends($pageParam);
         }
 
-
+// dd($whereField);
         return view('cms.warehouseProduct.index',compact(
                                                     'data',
                                                     'selectSupplier',
@@ -152,10 +153,9 @@ class WarehouseProductController extends CMSController
         $warehouse = Warehouse::find($id);
         // $data = Warehouse::find(3);
 
-        $isBoolean = Supplier::isBoolean();
         $type = WarehouseProduct::type();
 
-        return view('cms.warehouseProduct.create',compact('warehouse','isBoolean','type'));
+        return view('cms.warehouseProduct.create',compact('warehouse','type'));
     }
 
     /**
@@ -163,15 +163,21 @@ class WarehouseProductController extends CMSController
      *
      * @param Integer $supplierId  产品ID
      */
-    public static function edit($supplierId){
+    public static function edit($id){
 
-        $data = Supplier::find($supplierId);
-        $isBoolean = Supplier::isBoolean();
-        $type = Supplier::type();
+        $data = WarehouseProduct::find($id);
+        if($data){
+            $warehouse = Warehouse::select('name')->find($data->warehouseId);
+            $data->name = $warehouse->name;
+            $product = Product::select('chineseBrand')->find($data->productId);
+            $data->productName = $product->chineseBrand;
+        }
 
-        $data->type = json_decode(unserialize($data->type),true);
+        $type = WarehouseProduct::type();
+// dd($data);
+        // $data->type = json_decode(unserialize($data->type),true);
 
-        return view('cms.warehouseProduct.edit',compact('data','isBoolean','type'));
+        return view('cms.warehouseProduct.edit',compact('data','type'));
     }
 
     /**
@@ -218,15 +224,14 @@ class WarehouseProductController extends CMSController
      *  @static Function
      *  @return Array | false
      */
-    public static function validatorData($input){
-
+    public static function validatorData($input,$id=false){
         if(!is_array($input)){
             return false;
         }
         
         $input['warehouseId'] = intval($input['warehouseId']);
         $input['productId'] = intval($input['productId']);
-        $input['type']=implode('-', $input['type']);
+        // $input['type']=implode('-', $input['type']);
 
         $rules = [
             'warehouseId' => 'numeric',
@@ -248,11 +253,16 @@ class WarehouseProductController extends CMSController
 
         ];
 
-        $warehouseProduct = warehouseProduct::where(['warehouseId'=>$input['warehouseId'],'productId'=>$input['productId']])->first();
-        if($warehouseProduct){
-            $rules['productId']='array';
-            $message['productId.array']='该库房中的产品已经存在';
+        if(!$id){
+            $warehouseProduct = warehouseProduct::where(['warehouseId'=>$input['warehouseId'],'productId'=>$input['productId']])->first();
+            
+            if($warehouseProduct){
+                $rules['productId']='array';
+                $message['productId.array']='该库房中的产品已经存在';
+            }
+
         }
+
 
 
         $validator = Validator::make($input,$rules,$message);
@@ -269,18 +279,18 @@ class WarehouseProductController extends CMSController
      * @param Integer $productId  产品ID
      * @todo 没有判断错误
      */
-    public static function update($supplierId){
+    public static function update($id){
 
-        $input = Input::except("_token",'_method');
+        $input = Input::except(array("_token",'warehouseId_','productId_','_method'));
 
 
         //验证数据
-        $validatorData = self::validatorData($input);
+        $validatorData = self::validatorData($input,$id);
   
 
         if($validatorData['validator']->passes()===true){
 
-            $res = Supplier::where('supplierId',$supplierId)->update($validatorData['input']);
+            $res = warehouseProduct::where('id',$id)->update($validatorData['input']);
 
             if($res){
 
@@ -288,7 +298,7 @@ class WarehouseProductController extends CMSController
 
             }else{
 
-                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/supplier/'.$supplierId.'/edit')))));
+                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/warehouseProduct/'.$id.'/edit')))));
 
             }
 
@@ -301,19 +311,19 @@ class WarehouseProductController extends CMSController
     /**
      * 删除供应商
      *
-     * <p> delete.cms/supplier/{$supplierId}</p>
-     * @param Integer | String $supplierId 公司产品ID
+     * <p> delete.cms/supplier/{$paramId}</p>
+     * @param Integer | String $paramId 公司产品ID
      * @todo 没有判断ID是否存在
      * @return json
      */
-    public static function destroy($supplierId){
+    public static function destroy($paramId){
 
         $input = Input::only("status");
 
         $status = intval($input['status']);
 
 
-        $ids = explode(',', $supplierId);
+        $ids = explode(',', $paramId);
 
         if(count($ids)>1){// 批量操作
             
@@ -322,9 +332,9 @@ class WarehouseProductController extends CMSController
                 $id =intval($id); 
 
                 if($k==0){
-                    $resQuery = Supplier::where('supplierId',$id);
+                    $resQuery = warehouseProduct::where('id',$id);
                 }else{
-                    $resQuery->orWhere('supplierId',$id);
+                    $resQuery->orWhere('id',$id);
                 }
             }
  
@@ -332,7 +342,7 @@ class WarehouseProductController extends CMSController
             
         }else{
 
-            $res = Supplier::where("supplierId",$supplierId)->update(['close'=>$status]);
+            $res = warehouseProduct::where("id",$paramId)->update(['close'=>$status]);
         }
 
 

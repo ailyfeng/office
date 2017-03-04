@@ -6,7 +6,7 @@
 
 <nav class="breadcrumb">
     <i class="Hui-iconfont">&#xe67f;</i> <a href="{{url('cms/index/info')}}" >首页 </a><span class="c-gray en">&gt;</span> 
-        <a href="javascript:;" data-title="供应商管理" _href="{{url('cms/supplier')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+        <a href="javascript:;" data-title="库房产品管理" _href="{{url('cms/supplier')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
             库房产品管理
         </a>
         <span class="c-gray en">&gt;</span> 
@@ -21,18 +21,6 @@
     <article class="page-container">
         <form action="{{url('cms/warehouseProduct')}}" method="post" class="form form-horizontal" id="formWarehouseProductAdd">
             {{csrf_field()}}
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>库房：</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                        <input type="hidden" name="warehouseId" value="{{$warehouse['warehouseId']}}" class="warehouseId">
-                    @if($errors->has('warehouseId'))
-                        <input type="text" class="input-text radius error" value="{{$warehouse['name']}}"  readonly="readonly" name="warehouseId_" id="warehouseId" placeholder="请选择库房" onclick="actionEdit('请选择库房','{{url('cms/warehouse?selectSupplier=1')}}&sonId=warehouseId&sonName=warehouseId','1')" aria-required="true" aria-invalid="true">
-                        <label id="warehouseId-error" class="error" for="warehouseId">{{$errors->first('warehouseId')}}</label>
-                    @else
-                         <input type="text" class="input-text radius" value="{{$warehouse['name']}}" readonly="readonly" placeholder="请选择库房" name="warehouseId_" id="warehouseId" onclick=" actionEdit('请选择库房','{{url('cms/warehouse?selectSupplier=1')}}&sonId=warehouseId&sonName=warehouseId','1');" aria-required="true" aria-invalid="true">
-                    @endif
-                </div>
-            </div>
 
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>公司产品：</label>
@@ -47,13 +35,26 @@
                 </div>
             </div>
             <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>库房：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                        <input type="hidden" name="warehouseId" value="{{$warehouse['warehouseId']}}" class="warehouseId">
+                    @if($errors->has('warehouseId'))
+                        <input type="text" class="input-text radius error" value="{{$warehouse['name']}}"  readonly="readonly" name="warehouseId_" id="warehouseId" placeholder="请选择库房" onclick="actionEdit('请选择库房','{{url('cms/warehouse?selectSupplier=1')}}&sonId=warehouseId&sonName=warehouseId','1')" aria-required="true" aria-invalid="true">
+                        <label id="warehouseId-error" class="error" for="warehouseId">{{$errors->first('warehouseId')}}</label>
+                    @else
+                         <input type="text" class="input-text radius" value="{{$warehouse['name']}}" readonly="readonly" placeholder="请选择库房" name="warehouseId_" id="warehouseId" onclick=" actionEdit('请选择库房','{{url('cms/warehouse?selectSupplier=1')}}&sonId=warehouseId&sonName=warehouseId','1');" aria-required="true" aria-invalid="true">
+                    @endif
+                </div>
+            </div>
+            <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>库存类别：</label>
                 <div class="formControls col-xs-8 col-sm-9 skin-minimal">
                     @foreach($type as $k=>$v)
-                          <div class="check-box">
-                            <input type="checkbox" id="checkbox" value="{{$k}}"  @if($k==0)checked="checked" @endif  name="type[]">
-                            <label for="checkbox">{{$v}}</label>
-                          </div>
+
+                     <div class="radio-box">
+                        <input type="radio" id="radio-{{$k}}" name="type" value="{{$k}}" @if($k==0)checked="checked" @endif >
+                        <label for="radio-{{$k}}">{{$v}}</label>
+                      </div>
                     @endforeach
                 </div>
             </div>

@@ -317,10 +317,16 @@ class CMSController extends Controller
         foreach ($whereField as $table=>$fieldArr) {
             foreach ($fieldArr as $field => $fieldValue) {
                 $select[] = $table.'.'.$field.' as '.$table.'_'.$field;
+
+                if(!empty($fieldValue)){
+                    $whereField[$table][$field]['sortUrl']= '?'.$table.'['.$field.'Sort]=1';   
+                }
             }
         }
+        // dd($whereField);
 
         if(empty($input)){
+
             $data = array(
                         'select'        => $select,
                         'where'         => $where,
@@ -335,87 +341,83 @@ class CMSController extends Controller
             return $data;
         }
 
-// dd($input);
+
         foreach ($input as $inputTable => $inputValue) {
 
-                //筛选
+            if(!is_array($inputValue)) continue 1;
+
+             //筛选
             foreach ($inputValue as $key => $value) {
 
                 foreach ($whereField as $table=>$fieldArr) {
 
-                    if($inputTable!=$table){
-                        continue 1;
-                    }
-
+                    if($inputTable!=$table) continue 1;
 
                     if(isset($fieldArr[$key])){
 
                         $value = isset($value)?trim($value):false;
 
-                        if(!empty($value) &&  isset($fieldArr[$key])){
-                            
+
+                        if(!empty($value) &&  is_array($fieldArr[$key])){
+              
+
                             $pageParam[$key] = $value; 
                             
                             $url = empty($url)?'?':$url.'&';
 
-                            $url.= $key.'='.$value;
+                            $url.= $table.'['.$key.']='.$value;
 
                             $fieldUrl = empty($fieldUrl)?'?':$fieldUrl.'&';
-                            $fieldUrl .= $key.'='.$value;  
+                            $fieldUrl .= $table.'['.$key.']='.$value;
 
                             $fieldArr[$key]['value']=$value;
+                            
                             $whereField[$table][$key]['value'] = $value;
+
                             switch ($value) {
                                 case is_numeric($value):
-                                    $regexp = '=';
-                                    break;
+                                    $regexp = '='; 
+                                    break 1;
                                 default:
                                     $regexp = 'regexp';
-                                    break;
+                                    break 1;
                             }
 
                             $where[] =[$table . '.' . $key, $regexp, $value];
 
                         }
                     }
+   
+                    //排序
+                    $keySort = substr($key,0,-4);
 
-                }
+                    if(!empty($fieldArr[$keySort])){
+                        $pageParam[$key]=$value;
 
-                //排序
-                $keySort = substr($key,0,-4);
+                        $url = empty($url)?'?':$url.'&';
 
-                if(!empty($fieldArr[$keySort])){
-                    $pageParam[$key]=$value;
-                    
-                    $url = empty($url)?'?':$url.'&';
+                        $url.= $table.'['.$key.']='.$value;
 
-                    $url.= $key.'='.$value;
+                        $orderbyTemp[$table.'['.$key.']']=$value;
 
-                    $orderbyTemp[$keySort]=$value;
+                        $orderby[] = [
+                                        'field'=>$table.'.'.$keySort,
+                                        'sort'=>$value?'asc':'desc'
+                                    ];
+
+                        $orderbyCurr[$table.'['.$key.']'] =[
+
+                                    'name'=>$fieldArr[$keySort]['name'],
+                                    'sortOne'=>$value
+                                ];
+
+                    }
 
                 }
 
             }
-        }
-
-        foreach ($orderbyTemp as $key => $value) {
-
-            foreach ($whereField as $table=>$fieldArr) {
-
-                $orderbyCurr[$key]= [
-                        'name'=>$fieldArr[$key]['name'],
-                        'sortOne'=>$value
-                ];
-
-                $orderby[] = [
-                                'field'=>$table.'.'.$key,
-                                'sort'=>$value?'asc':'desc'
-                            ];
-
-            }
 
         }
-
 
         $tmpI = count($orderby);
 
@@ -425,7 +427,7 @@ class CMSController extends Controller
                             'sort'=>'asc'
                             ]; 
         }
-
+        // dd($orderbyCurr);
         //组装当前排序
         foreach ($orderbyCurr as $keyOne=>&$list) {
 
@@ -466,22 +468,23 @@ class CMSController extends Controller
 
         //选择要排序的字段
         foreach ($whereField as $table=>&$fieldArr) {
-        // foreach ($whereField as $key=>&$list) {
+
             foreach ($fieldArr as $field => $fieldValue) {
+                
+                if(empty($fieldValue)) continue 1;
 
                     if(!$url){
                         $u = '?';
                     }else{
                         $u = '&';
                     }
-                if(isset($orderbyCurr[$field])){
+                if(isset($orderbyCurr[$table.'['.$field.'Sort]'])){
                     $tmp = $url;
                 }else{
-                    $tmp = $url .$u.$field.'Sort'.'=1';
+                    $tmp = $url .$u.$table.'['.$field.'Sort]'.'=1';
                 }
                 
                 $fieldArr[$field]['sortUrl'] = $tmp ;    
-                
                 
             }
 

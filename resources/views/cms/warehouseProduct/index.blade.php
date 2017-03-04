@@ -17,6 +17,7 @@
 
         @foreach($whereField as $table=>$tableField)
             @foreach($tableField as $field=>$fieldValue)
+            @if($fieldValue)
                 <?php if($table.$field =='warehouse_producttype'){?>
                         <a class="btn btn-disabled" src="">{{$fieldValue['name']}}</a>
                     <span class="select-box radius" style="width:120px" >
@@ -42,6 +43,7 @@
                     <a class="btn btn-disabled" src="">{{$fieldValue['name']}}</a>
                     <input class="input-text ac_input radius" name="{{$table}}[{{$field}}]"  style="width:100px"  type="text" value="{{$fieldValue['value']}}">
                 <?php }?>
+            @endif
             @endforeach
         @endforeach
 
@@ -62,7 +64,9 @@
 
             @foreach($whereField as $table=>$tableField)
                 @foreach($tableField as $field=>$fieldValue)
-                    <a class="btn btn-primary size-MINI radius" href="{{url('cms/warehouseProduct'.$fieldValue['sortUrl'].'&page='.$data->currentPage())}}">{{$fieldValue['name']}}</a>
+                        @if($fieldValue)
+                            <a class="btn btn-primary size-MINI radius" href="{{url('cms/warehouseProduct'.$fieldValue['sortUrl'].'&page='.$data->currentPage())}}">{{$fieldValue['name']}}</a>
+                        @endif
                 @endforeach
             @endforeach
 
@@ -98,8 +102,8 @@
             <a href="javascript:;" onclick="actionStatus(0)" class="btn btn-primary radius">
                 <i class="Hui-iconfont">&#xe615;</i> 批量启用
             </a>
-            <a class="btn btn-primary radius" data-title="添加供应商" _href="{{url('cms/warehouseProduct/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
-                <i class="Hui-iconfont">&#xe600;</i> 添加供应商
+            <a class="btn btn-primary radius" data-title="添加库房产品" _href="{{url('cms/warehouseProduct/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;">
+                <i class="Hui-iconfont">&#xe600;</i> 创建库房产品
             </a>
             </span> <span class="r">共有数据：<strong>{{$data->total()}}</strong> 条</span>
     </div>
@@ -115,7 +119,9 @@
 
             @foreach($whereField as $table=>$tableField)
                 @foreach($tableField as $field=>$fieldValue)
+                        @if($fieldValue)
                         <th class="tc">{{$fieldValue['name']}}</th>
+                        @endif
                 @endforeach
             @endforeach
                         <th>操作</th>
@@ -127,35 +133,34 @@
             @foreach($data as $list)
 
                 @if($selectSupplier)
-                    <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');">
+                    <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->warehouse_product_id}}','{{$list->fullName}}');">
                 @else
-                    <tr class="text-c @if($list->close) danger @endif" ondblclick="actionEdit('编辑','{{url('cms/supplier/'.$list->supplierId.'/edit')}}','1');" >
+                    <tr class="text-c @if($list->warehouse_product_close) danger @endif" ondblclick="actionEdit('编辑','{{url('cms/warehouseProduct')}}/{{$list->warehouse_product_id}}/edit','1');" >
                 @endif
 
                 @if($selectSupplier)@else
-                    <td class="tc"><input type="checkbox" name="id[]" value="{{$list->supplierId}}" selected=""></td>
+                    <td class="tc"><input type="checkbox" name="id[]" value="{{$list->warehouse_product_id}}" selected=""></td>
                 @endif
 
                 @foreach($whereField as $table=>$tableField)
                     @foreach($tableField as $field=>$fieldValue)
-                        <td  @if($list->close && !$selectSupplier) class=" danger " @endif><?php $tmpField=$table.'_'.$field;echo $list->$tmpField;?></td>
+                        @if($fieldValue)
+                            <td  @if($list->warehouse_product_close && !$selectSupplier) class=" danger " @endif><?php $tmpField=$table.'_'.$field;echo $list->$tmpField;?></td>
+                        @endif
                     @endforeach
                 @endforeach
 
-                     <td @if($list->close && !$selectSupplier) class=" danger " @endif>
+                     <td @if($list->warehouse_product_close && !$selectSupplier) class=" danger " @endif>
                         @if($selectSupplier)
-                        <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                        <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->warehouse_product_id}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                        @else
-                        @if($list->close)
-                        <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->supplierId}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                        @if($list->warehouse_product_close)
+                        <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->warehouse_product_id}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                         @else
-                        <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->supplierId}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
+                        <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->warehouse_product_id}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
                         @endif
-
-                        <a style="text-decoration:none" data-title="添加供应商联系人" title="添加供应商联系人" _href="{{url('cms/warehouseProduct/create/'.$list->supplierId)}}" onclick="Hui_admin_tab(this)" href="javascript:;">
-                            <i class="Hui-iconfont">&#xe600;</i>
-                        </a>
-                        <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/warehouseProduct/'.$list->supplierId.'/edit')}}','{{$list->supplierId}}')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
+                                <!-- data-title="添加供应商" _href="{{url('cms/warehouseProduct/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;" -->
+                        <!-- <a title="编辑" href="javascript:;" data-title="添加供应商" onclick="Hui_admin_tab(this)"  _href="{{url('cms/warehouseProduct')}}/{{$list->warehouse_product_id}}/edit"  style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>  -->
                         @endif
                     </td>
                 </tr>
