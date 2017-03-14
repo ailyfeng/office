@@ -61,7 +61,6 @@
 			<dt><i class="Hui-iconfont">&#xe620;</i> 供应商管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<!-- <li><a _href="{{url('cms/classify')}}" data-title="供应商类别管理" href="javascript:void(0)">供应商类别管理</a></li> -->
 					<li><a _href="{{url('cms/supplier')}}" data-title="供应商列表" href="javascript:void(0)">供应商列表</a></li>
 					<li><a _href="{{url('cms/supplierContract')}}" data-title="供应商联系人" href="javascript:void(0)">供应商联系人</a></li>
 					<li><a _href="{{url('cms/supplierRecord')}}" data-title="供应商接触表" href="javascript:void(0)">供应商接触表</a></li>
