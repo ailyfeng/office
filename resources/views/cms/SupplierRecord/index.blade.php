@@ -18,12 +18,12 @@
         @foreach($whereField as $table=>$tableField)
             @foreach($tableField as $field=>$fieldValue)
             @if($fieldValue)
-                <?php if($table.$field =='warehouse_producttype'){?>
+                <?php if($table.$field =='supplier_recordtype'){?>
                         <a class="btn btn-disabled" src="">{{$fieldValue['name']}}</a>
                     <span class="select-box radius" style="width:120px" >
                       <select class="select" size="1" name="{{$table}}[{{$field}}]">
                       <option value="0" >无</option>
-                       @foreach($Warehouse_product_type as $key=>$value)
+                       @foreach($SupplierRecord_type as $key=>$value)
                             <option value="{{$key}}"  @if($key==$fieldValue['value']) selected="selected"  @endif >{{$value}}</option>
                         @endforeach
                       </select>
@@ -56,7 +56,7 @@
     @endif    
 
             <button type="submit" class="btn btn-primary radius" >搜索</button>
-            <a class="btn btn-primary radius" href="{{url('cms/warehouseProduct')}}">清空所有筛选</a> 
+            <a class="btn btn-primary radius" href="{{url('cms/supplierRecord')}}">清空所有筛选</a> 
         </div>
 
         <div class="box-shadow">
@@ -65,7 +65,7 @@
             @foreach($whereField as $table=>$tableField)
                 @foreach($tableField as $field=>$fieldValue)
                         @if($fieldValue)
-                            <a class="btn btn-primary size-MINI radius" href="{{url('cms/warehouseProduct'.$fieldValue['sortUrl'].'&page='.$data->currentPage())}}">{{$fieldValue['name']}}</a>
+                            <a class="btn btn-primary size-MINI radius" href="{{url('cms/supplierRecord'.$fieldValue['sortUrl'].'&page='.$data->currentPage())}}">{{$fieldValue['name']}}</a>
                         @endif
                 @endforeach
             @endforeach
@@ -133,34 +133,32 @@
             @foreach($data as $list)
 
                 @if($selectSupplier)
-                    <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->warehouse_product_id}}','{{$list->fullName}}');">
+                    <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->supplier_record_recordId}}','{{$list->fullName}}');">
                 @else
-                    <tr class="text-c @if($list->warehouse_product_close) danger @endif" ondblclick="actionEdit('编辑','{{url('cms/warehouseProduct')}}/{{$list->warehouse_product_id}}/edit','1');" >
+                    <tr class="text-c @if($list->supplier_record_close) danger @endif" data-title="{{$list->supplier_fullName}}" _href="{{url('cms/supplierRecord')}}/{{$list->supplier_record_recordId}}/edit" ondblclick="Hui_admin_tab(this)" >
                 @endif
 
                 @if($selectSupplier)@else
-                    <td class="tc"><input type="checkbox" name="id[]" value="{{$list->warehouse_product_id}}" selected=""></td>
+                    <td class="tc"><input type="checkbox" name="id[]" value="{{$list->supplier_record_recordId}}" selected=""></td>
                 @endif
 
                 @foreach($whereField as $table=>$tableField)
                     @foreach($tableField as $field=>$fieldValue)
                         @if($fieldValue)
-                            <td  @if($list->warehouse_product_close && !$selectSupplier) class=" danger " @endif><?php $tmpField=$table.'_'.$field;echo $list->$tmpField;?></td>
+                            <td  @if($list->supplier_record_close && !$selectSupplier) class=" danger " @endif><?php $tmpField=$table.'_'.$field;echo $list->$tmpField;?></td>
                         @endif
                     @endforeach
                 @endforeach
 
-                     <td @if($list->warehouse_product_close && !$selectSupplier) class=" danger " @endif>
+                     <td @if($list->supplier_record_close && !$selectSupplier) class=" danger " @endif>
                         @if($selectSupplier)
-                        <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->warehouse_product_id}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                        <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->supplier_record_recordId}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                        @else
-                        @if($list->warehouse_product_close)
-                        <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->warehouse_product_id}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
-                        @else
-                        <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->warehouse_product_id}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
-                        @endif
-                                <!-- data-title="添加供应商" _href="{{url('cms/warehouseProduct/create')}}" onclick="Hui_admin_tab(this)" href="javascript:;" -->
-                        <!-- <a title="编辑" href="javascript:;" data-title="添加供应商" onclick="Hui_admin_tab(this)"  _href="{{url('cms/warehouseProduct')}}/{{$list->warehouse_product_id}}/edit"  style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>  -->
+                            @if($list->supplier_record_close)
+                            <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->supplier_record_recordId}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                            @else
+                            <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->supplier_record_recordId}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
+                            @endif
                         @endif
                     </td>
                 </tr>
@@ -247,7 +245,7 @@ function actionDelete(id,status){
                 tag = true;
             }
 
-                $.post("{{url('cms/warehouseProduct/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}",'status':status},function(data){
+                $.post("{{url('cms/supplierRecord/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}",'status':status},function(data){
                     layer.closeAll('loading');
                     if(data.status){
                         layer.msg(data.msg, {icon: 1,time:1000});

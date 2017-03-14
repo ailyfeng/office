@@ -44,19 +44,16 @@ class SupplierRecordController extends CMSController
         $whereField    = [
                             //公司产品
                             $Supplier->table=>[
+                                'supplierId'            =>false,
                                 'fullName'  	=>['value'=>false,   'name'=>'供应商全称'     ,'sortUrl'=>false]
                             ],
                             //库房产品
                             $SupplierRecord->table=>[
-                                'id'            =>false,
+                                'recordId'      =>false,
                                 'close'         =>false,
                                 'type'          =>['value'=>false,  'name'=>'联系方式',      'sortUrl'=>false],
-                                'postion'       =>['value'=>false,  'name'=>'库存位置',      'sortUrl'=>false],
-                                'minNum'        =>['value'=>false,  'name'=>'最低库存量',    'sortUrl'=>false],
-                                'maxNum'        =>['value'=>false,  'name'=>'最高库存量',    'sortUrl'=>false],
-                                'cycle'         =>['value'=>false,  'name'=>'盘点周期',      'sortUrl'=>false]
+                                'memberId'      =>['value'=>false,  'name'=>'操作人员',      'sortUrl'=>false]
                             ]
-
 
                         ];
 
@@ -64,13 +61,13 @@ class SupplierRecordController extends CMSController
         $filterWhere = self::filterWhereExt(
                                         $input,
                                         $whereField,
-                                        $SupplierRecord->table.'.warehouseId',
-                                        'cms/warehouseProduct'
+                                        $SupplierRecord->table.'.recordId',
+                                        'cms/supplierRecord'
                                         );
 
         // dd($filterWhere);
 
-        $select          = $filterWhere['select'];
+        $select         = $filterWhere['select'];
         $where          = $filterWhere['where'];
         $pageParam      =  $filterWhere['pageParam'];
         $orderby        =  $filterWhere['orderby'];
@@ -104,31 +101,25 @@ class SupplierRecordController extends CMSController
 
             $data = $SupplierRecord->select($select)
                         ->join($Supplier->table, $Supplier->table .'.supplierId', "=", $SupplierRecord->table .'.supplierId')
-                        ->orderBy($SupplierRecord->table.'.warehouseId', 'asc')
+                        ->orderBy($SupplierRecord->table.'.recordId', 'asc')
                         ->paginate(15);
         }
 
-        $Warehouse_product_type = SupplierRecord::type();
-        $product_typeTmp    =  Classify::where('type','=',1)->get();
+        $SupplierRecord_type = SupplierRecord::type();
 
-        foreach ($product_typeTmp as $list) {
-            # code...
-            $product_type[$list['id']] = $list['name'];
-        }
-
-        //库房产品类型
+         
         foreach ($data as $key => &$list) {
             # code...
-            $list['warehouse_product_type']=isset($Warehouse_product_type[$list['warehouse_product_type']])?$Warehouse_product_type[$list['warehouse_product_type']]:false;
-            $list['product_type']=isset($product_type[$list['product_type']])?$product_type[$list['product_type']]:false;
+            $list['supplier_record_type']=isset($SupplierRecord_type[$list['supplier_record_type']])?$SupplierRecord_type[$list['supplier_record_type']]:false;
+            // $list['product_type']=isset($product_type[$list['product_type']])?$product_type[$list['product_type']]:false;
         }
-// dd($data);
+ 
         //添加分页时的参数
         if($data){
             $data->appends($pageParam);
         }
 
-// dd($whereField);
+// dd($data);
         return view('cms.SupplierRecord.index',compact(
                                                     'data',
                                                     'selectSupplier',
@@ -137,7 +128,7 @@ class SupplierRecordController extends CMSController
                                                     'whereField',
                                                     'product_type',
                                                     'orderbyCurr',
-                                                    'Warehouse_product_type'
+                                                    'SupplierRecord_type'
                                                     )
                     );
 
@@ -166,17 +157,18 @@ class SupplierRecordController extends CMSController
      */
     public static function edit($id){
 
-        $data = WarehouseProduct::find($id);
+        $data = SupplierRecord::find($id);
         if($data){
-            $warehouse = Warehouse::select('name')->find($data->warehouseId);
-            $data->name = $warehouse->name;
-            $product = Product::select('chineseBrand')->find($data->productId);
-            $data->productName = $product->chineseBrand;
-        }
+            $data->timestamp = date('Y-m-d',$data->timestamp);
+            $data->nextTimestamp = date('Y-m-d',$data->nextTimestamp);
 
-        $type = WarehouseProduct::type();
-// dd($data);
-        // $data->type = json_decode(unserialize($data->type),true);
+            $supplier = Supplier::select('fullName')->find($data->supplierId);
+            $data->fullName = $supplier->fullName;
+            $type = SupplierRecord::type();
+
+        }else{
+
+        }
 
         return view('cms.SupplierRecord.edit',compact('data','type'));
     }
@@ -198,13 +190,11 @@ class SupplierRecordController extends CMSController
             $validator = self::validatorData($input);
 
             if($validator['validator']->passes() ===true){
-                
-// dd($input);
-
+               
                 $res = SupplierRecord::create($validator['input']);
 
                 if($res){
-                    
+
                     return redirect('cms/supplierRecord');
                 
                 }else{
@@ -266,8 +256,7 @@ class SupplierRecordController extends CMSController
      */
     public static function update($id){
 
-        $input = Input::except(array("_token",'warehouseId_','productId_','_method'));
-
+        $input = Input::except(array("_token",'supplierId_','memberId_'));
 
         //验证数据
         $validatorData = self::validatorData($input,$id);
@@ -275,15 +264,15 @@ class SupplierRecordController extends CMSController
 
         if($validatorData['validator']->passes()===true){
 
-            $res = warehouseProduct::where('id',$id)->update($validatorData['input']);
+            $res = SupplierRecord::find($id)->update($validatorData['input']);
 
             if($res){
 
-                return redirect(url('cms/alert',array('mes'=>'保存成功')));
+                return redirect(url('cms/alert',array('mes'=>'保存成功','url'=>urlencode(url('cms/supplierRecord/'.$id.'/edit')))));
 
             }else{
 
-                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/warehouseProduct/'.$id.'/edit')))));
+                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/supplierRecord/'.$id.'/edit')))));
 
             }
 
@@ -317,9 +306,9 @@ class SupplierRecordController extends CMSController
                 $id =intval($id); 
 
                 if($k==0){
-                    $resQuery = warehouseProduct::where('id',$id);
+                    $resQuery = SupplierRecord::where('recordId',$id);
                 }else{
-                    $resQuery->orWhere('id',$id);
+                    $resQuery->orWhere('recordId',$id);
                 }
             }
  
@@ -327,7 +316,7 @@ class SupplierRecordController extends CMSController
             
         }else{
 
-            $res = warehouseProduct::where("id",$paramId)->update(['close'=>$status]);
+            $res = SupplierRecord::where("recordId",$paramId)->update(['close'=>$status]);
         }
 
 
@@ -346,29 +335,29 @@ class SupplierRecordController extends CMSController
         return $data;
     }
 
-    /**
-     * 添加供应商联系人
-     *
-     * @access  public
-     * @static  Function 
-     * @param   Integer $id 供应商ID
-     */
-    public static function contractCreate($id=false){
+    // /**
+    //  * 添加供应商联系人
+    //  *
+    //  * @access  public
+    //  * @static  Function 
+    //  * @param   Integer $id 供应商ID
+    //  */
+    // public static function contractCreate($id=false){
         
-        $id = intval($id);
+    //     $id = intval($id);
 
-        if($id>0){
-
-
-        }
-
-        $isBoolean = Supplier::isBoolean();
-
-        $data = Supplier::find($id,['fullName']);
+    //     if($id>0){
 
 
-        return view('cms.SupplierRecord.contract_reate',compact('data','isBoolean'));
-    }
+    //     }
+
+    //     $isBoolean = Supplier::isBoolean();
+
+    //     $data = Supplier::find($id,['fullName']);
+
+
+    //     return view('cms.SupplierRecord.contract_reate',compact('data','isBoolean'));
+    // }
 
 
 }

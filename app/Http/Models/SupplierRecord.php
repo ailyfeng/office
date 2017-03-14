@@ -37,4 +37,8 @@ class SupplierRecord extends Model
 
         return $data;
     }
+
+    public function findByOne(){
+        return $this->hasOne('\App\Http\Models\Supplier','supplierId','supplierId');
+    }
 }
