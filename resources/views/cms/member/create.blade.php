@@ -205,8 +205,8 @@
                 <div class="formControls col-xs-8 col-sm-9">
                     @foreach($employType as $k=>$v)
                         <div class="radio-box">
-                            <input type="radio" id="radio-{{$k}}" name="employType" value="{{$k}}" @if($k==0)checked="checked" @endif >
-                            <label for="radio-{{$k}}">{{$v}}</label>
+                            <input type="radio" id="radio-employType-{{$k}}" name="employType" value="{{$k}}" @if($k==0)checked="checked" @endif >
+                            <label for="radio-employType-{{$k}}">{{$v}}</label>
                         </div>
 
                     @endforeach
@@ -218,8 +218,8 @@
                 <div class="formControls col-xs-8 col-sm-9">
                     @foreach($departmentId as $k=>$v)
                         <div class="radio-box">
-                            <input type="radio" id="radio-{{$k}}" name="departmentId" value="{{$k}}" @if($k==0)checked="checked" @endif >
-                            <label for="radio-{{$k}}">{{$v}}</label>
+                            <input type="radio" id="radio-departmentId-{{$k}}" name="departmentId" value="{{$k}}" @if($k==0)checked="checked" @endif >
+                            <label for="radio-departmentId-{{$k}}">{{$v}}</label>
                         </div>
 
                     @endforeach
@@ -233,8 +233,8 @@
                     @foreach($level as $k=>$v)
 
                         <div class="radio-box">
-                            <input type="radio" id="radio-{{$k}}" name="level" value="{{$k}}" @if($k==0)checked="checked" @endif >
-                            <label for="radio-{{$k}}">{{$v}}</label>
+                            <input type="radio" id="radio-level-{{$k}}" name="level" value="{{$k}}" @if($k==0)checked="checked" @endif >
+                            <label for="radio-level-{{$k}}">{{$v}}</label>
                         </div>
 
                     @endforeach
@@ -308,8 +308,8 @@
                     @foreach($checkLevel as $k=>$v)
 
                      <div class="radio-box">
-                        <input type="radio" id="radio-{{$k}}" name="checkLevel" value="{{$k}}" @if($k==0)checked="checked" @endif >
-                        <label for="radio-{{$k}}">{{$v}}</label>
+                        <input type="radio" id="radio-checkLevel-{{$k}}" name="checkLevel" value="{{$k}}" @if($k==0)checked="checked" @endif >
+                        <label for="radio-checkLevel-{{$k}}">{{$v}}</label>
                       </div>
 
                     @endforeach

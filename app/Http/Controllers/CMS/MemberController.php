@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\CMS;
 
 use App\Http\Models\Members;
-use App\Http\Models\Supplier;
-use App\Http\Models\SupplierContact;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -31,23 +29,23 @@ class MemberController extends CMSController
      */
     public static function index(){
         $whereField    = [
-                            'fullName'      =>['field'=>'fullName',       'value'=>false,   'name'=>'供应商全称'   ,'sortUrl'=>false],
-                            'abbreviation'  =>['field'=>'abbreviation',   'value'=>false,   'name'=>'供应商简称'   ,'sortUrl'=>false],
-                            'brandType'     =>['field'=>'brandType',       'value'=>false,   'name'=>'供应品类'    ,'sortUrl'=>false],
-                            'credit'        =>['field'=>'credit',          'value'=>false,   'name'=>'授信额度'    ,'sortUrl'=>false],
-                            'brand'         =>['field'=>'brand',           'value'=>false,     'name'=>'品牌'     ,'sortUrl'=>false]
+                            'nameChinese'   =>['field'=>'nameChinese',     'value'=>false,   'name'=>'姓名'       ,'sortUrl'=>false],
+                            'sex'           =>['field'=>'sex',             'value'=>false,   'name'=>'性别'       ,'sortUrl'=>false],
+                            'departmentId'  =>['field'=>'departmentId',    'value'=>false,   'name'=>'所属部门'    ,'sortUrl'=>false],
+                            'employType'    =>['field'=>'employType',      'value'=>false,   'name'=>'雇佣方式'    ,'sortUrl'=>false],
+                            'telOne'        =>['field'=>'telOne',          'value'=>false,   'name'=>'手机一'     ,'sortUrl'=>false]
                         ];
 
         $input = Input::except("_token");
-        $Supplier = new Supplier();
+        $Members = new Members();
         $filterWhere = self::filterWhere(
                                         $input,
                                         $whereField,
-                                        $Supplier->table,
+                                        $Members->table,
                                         null,
                                         array(),
-                                        $Supplier->table.'.supplierId',
-                                        'cms/supplier'
+                                        $Members->table.'.memberId',
+                                        'cms/member'
                                         );
 
         $where          = $filterWhere['where'];
@@ -61,29 +59,38 @@ class MemberController extends CMSController
         $selectSupplier = $filterWhere['selectSupplier'];
 
 
-        $isBoolean = Supplier::isBoolean();
 
         if(!empty($where) || !empty($orderby)){
-            $Supplier = Supplier::where($where);
+            $Members = Members::where($where);
 
             foreach ($orderby as $o) {
-                $Supplier->orderBy($o['field'],$o['sort']);
+                $Members->orderBy($o['field'],$o['sort']);
             }
 
-            $data = $Supplier->paginate(15);
+            $data = $Members->paginate(15);
 
         }else{
 
-            $data = Supplier::orderBy('supplierId','desc')->paginate(15);
+            $data = Members::orderBy('memberId','desc')->paginate(15);
         
         }
-
+//        dd($data);
+        $sexArr = Members::sex();
+        $employTypeArr = Members::employType();
+        $departmentIdArr = Members::departmentId();
+        foreach ($data as &$list){
+            $list->employType = $employTypeArr[$list->employType];
+            $list->departmentId = $departmentIdArr[$list->departmentId];
+            $list->sex = $sexArr[$list->sex];
+        }
 
        $data->appends($pageParam);
 
         return view('cms.member.index',compact(
+                                                'sexArr',
+                                                'employTypeArr',
+                                                'departmentIdArr',
                                                 'data',
-                                                'isBoolean',
                                                 'selectSupplier',
                                                 'sonId',
                                                 'sonName',
@@ -103,14 +110,13 @@ class MemberController extends CMSController
      */
     public static function create(){
 
-        $isBoolean = Supplier::isBoolean();
-        $employType           = Members::employType();
+        $employType     = Members::employType();
         $departmentId   = Members::departmentId();
         $level          = Members::level();
         $sex            = Members::sex();
         $checkLevel     = Members::checkLevel();
 
-        return view('cms.member.create',compact('isBoolean','employType','departmentId','level','sex','checkLevel'));
+        return view('cms.member.create',compact('employType','departmentId','level','sex','checkLevel'));
     }
 
     /**
@@ -118,15 +124,32 @@ class MemberController extends CMSController
      *
      * @param Integer $supplierId  产品ID
      */
-    public static function edit($supplierId){
+    public static function edit($memberId){
 
-        $data = Supplier::find($supplierId);
-        $isBoolean = Supplier::isBoolean();
-        $type = Supplier::type();
+        $data = Members::find($memberId);
+        if(!$data){
+            return back()->with('errors','数据不存在！');
+        }
+        $data->employeeDate = date('Y-m-d',$data->employeeDate);
+        $data->staffDate = date('Y-m-d',$data->staffDate);
+        $data->leaveData = date('Y-m-d',$data->leaveData);
+        $data->brithday = date('Y-m-d',$data->brithday);
+        $leadRes = Members::select('nameChinese')->find($data->leadId);
+        if(!empty($leadRes)){
+            $leadRes = $leadRes->toArray();
+            $data->leadId_  = $leadRes['nameChinese'];
+        }else{
+            $data->leadId_  = null;
+        }
 
-        $data->type = json_decode(unserialize($data->type),true);
 
-        return view('cms.member.edit',compact('data','isBoolean','type'));
+        $employType     = Members::employType();
+        $departmentId   = Members::departmentId();
+        $level          = Members::level();
+        $sex            = Members::sex();
+        $checkLevel     = Members::checkLevel();
+
+        return view('cms.member.edit',compact('data','employType','departmentId','level','sex','checkLevel'));
     }
 
     /**
@@ -138,7 +161,7 @@ class MemberController extends CMSController
      */
     public static function store(){
 
-        $input = Input::except("_token");
+        $input = Input::except("_token",'leadId_');
 
         if($input){
 
@@ -149,13 +172,11 @@ class MemberController extends CMSController
                 $res = Members::create($validator['input']);
 
                 if($res){
-                    dd($res);
-                    return redirect('cms/member');
-                
+                    return redirect(url('cms/alert',array('mes'=>'保存成功','url'=>urlencode(url('cms/member')))));
                 }else{
-
                     return back()->with('errors','数据填充失败！请稍后重试');
                 }
+
             }else{
 
                 return back()->withErrors($validator['validator']);
@@ -203,38 +224,30 @@ class MemberController extends CMSController
     /**
      * 更新员工信息
      *
-     * <p>此接口地址：post.cms/supplier/{$supplierId}</p>
-     * @param Integer $productId  产品ID
+     * <p>此接口地址：post.cms/member/{$memberId}</p>
+     * @param Integer $memberId  用户ID
      * @todo 没有判断错误
      */
-    public static function update($supplierId){
+    public static function update($memberId){
 
-        $input = Input::except("_token",'_method');
+        $input = Input::except("_token",'_method','leadId_');
 
         //验证数据
         $validatorData = self::validatorData($input);
-        // dd($validatorData['input']['contractDate']);
-        if($tmpContractDate = Supplier::select('contractDate')->find($supplierId)){
-            if($tmpContractDate->contractDate<$validatorData['input']['contractDate']){
-                return redirect(url('cms/alert',array('mes'=>'该供应商合同已经到期，不能改动！','url'=>urlencode(url('cms/supplier/'.$supplierId.'/edit')))));
-            }
-        }
 
         if($validatorData['validator']->passes()===true){
 
-            $res = Supplier::where('supplierId',$supplierId)->update($validatorData['input']);
+            $res = Members::where('memberId',$memberId)->update($validatorData['input']);
 
             if($res){
-
-                return redirect(url('cms/alert',array('mes'=>'保存成功')));
-
+                return redirect(url('cms/alert',array('mes'=>'更新成功！','url'=>urlencode(url('cms/member/'.$memberId.'/edit')))));
             }else{
-
-                return redirect(url('cms/alert',array('mes'=>'保存失败','url'=>urlencode(url('cms/supplier/'.$supplierId.'/edit')))));
-
+                return redirect(url('cms/alert',array('mes'=>'更新失败！','url'=>urlencode(url('cms/member/'.$memberId.'/edit')))));
             }
 
+
         }else{
+
                 return back()->withErrors($validatorData['validator']);
 
         }
@@ -264,9 +277,9 @@ class MemberController extends CMSController
                 $id =intval($id); 
 
                 if($k==0){
-                    $resQuery = Supplier::where('supplierId',$id);
+                    $resQuery = Members::where('memberid',$id);
                 }else{
-                    $resQuery->orWhere('supplierId',$id);
+                    $resQuery->orWhere('memberid',$id);
                 }
             }
  
@@ -274,7 +287,7 @@ class MemberController extends CMSController
             
         }else{
 
-            $res = Supplier::where("supplierId",$supplierId)->update(['close'=>$status]);
+            $res = Members::where("memberid",$supplierId)->update(['close'=>$status]);
         }
 
 

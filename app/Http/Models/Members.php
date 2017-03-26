@@ -26,7 +26,7 @@ class Members extends Model
      * @return array
      */
     public static function employType(){
-        return array('0'=>'专职','1'=>'兼职','2'=>'计时工');
+        return array('1'=>'专职','2'=>'兼职','3'=>'计时工');
     }
 
     /**
@@ -35,7 +35,7 @@ class Members extends Model
      * @return array
      */
     public static function departmentId(){
-        return array('0'=>'销售部','1'=>'库房管理','2'=>'技术部','3'=>'财务部','4'=>'送货部');
+        return array('1'=>'销售部','2'=>'库房管理','3'=>'技术部','4'=>'财务部','5'=>'送货部');
     }
 
     /**
@@ -44,7 +44,7 @@ class Members extends Model
      * @return array
      */
     public static  function level(){
-        return ['0'=>'一级','1'=>'二级','2'=>'三级','3'=>'四级','4'=>'五级','5'=>'六级'];
+        return ['1'=>'一级','2'=>'二级','3'=>'三级','4'=>'四级','5'=>'五级','6'=>'六级'];
     }
 
 
@@ -54,7 +54,7 @@ class Members extends Model
      * @return array
      */
     public static function sex(){
-        return ['0'=>'先生','1'=>'女士'];
+        return ['1'=>'先生','2'=>'女士'];
     }
 
     /**
@@ -63,7 +63,7 @@ class Members extends Model
      * @return array
      */
     public static function checkLevel(){
-        return ['0'=>'一级','1'=>'二级','2'=>'三级','3'=>'四级','4'=>'五级','5'=>'六级'];
+        return ['1'=>'一级','2'=>'二级','3'=>'三级','4'=>'四级','5'=>'五级','6'=>'六级'];
     }
 
 

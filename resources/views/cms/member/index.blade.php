@@ -19,8 +19,41 @@
         <div class="box-shadow">
             <a class="btn btn-default" src="">产品筛选：</a>
         @foreach($whereField as $f=>$lista)
-            <a class="btn btn-disabled" src="">{{$lista['name']}}</a>
-            <input class="input-text ac_input radius" name="{{$lista['field']}}"  style="width:100px"  type="text" value="{{$lista['value']}}">
+
+                @if($f=='sex')
+                    <a class="btn btn-disabled" src="">{{$lista['name']}}</a>
+                    <span class="select-box radius" style="width:120px" >
+                  <select class="select" size="1" name="sex">
+                        <option value="" >无</option>
+                      @foreach($sexArr as $key=>$value)
+                          <option value="{{$key}}" @if($lista['value']==$key) selected="selected"  @endif >{{$value}}</option>
+                      @endforeach
+                  </select>
+                </span>
+                @elseif($f=='employType')
+                    <a class="btn btn-disabled" src="">{{$lista['name']}}</a>
+                    <span class="select-box radius" style="width:120px" >
+                  <select class="select" size="1" name="employType">
+                        <option value="" >无</option>
+                      @foreach($employTypeArr as $key=>$value)
+                          <option value="{{$key}}" @if($key==$lista['value']) selected="selected"  @endif >{{$value}}</option>
+                      @endforeach
+                  </select>
+                    </span>
+                @elseif($f=='departmentId')
+                    <a class="btn btn-disabled" src="">{{$lista['name']}}</a>
+                    <span class="select-box radius" style="width:120px" >
+                  <select class="select" size="1" name="departmentId">
+                        <option value="" >无</option>
+                      @foreach($departmentIdArr as $key=>$value)
+                          <option value="{{$key}}" @if($key==$lista['value']) selected="selected"  @endif >{{$value}}</option>
+                      @endforeach
+                  </select>
+                    </span>
+                @else
+                    <a class="btn btn-disabled" src="">{{$lista['name']}}</a>
+                    <input class="input-text ac_input radius" name="{{$lista['field']}}"  style="width:100px"  type="text" value="{{$lista['value']}}">
+                @endif
         @endforeach
     @if($selectSupplier)
         <!-- 选择供应商 -->
@@ -31,7 +64,7 @@
     @endif    
 
             <button type="submit" class="btn btn-primary radius" >搜索</button>
-            <a class="btn btn-primary radius" href="{{url('cms/supplier')}}">清空所有筛选</a> 
+            <a class="btn btn-primary radius" href="{{url('cms/member')}}">清空所有筛选</a>
         </div>
 
         <div class="box-shadow">
@@ -95,17 +128,17 @@
         </thead>
         <tbody>
 
-            
+
             @foreach($data as $list)
 
             @if($selectSupplier)
-                <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');">
+                <tr class="text-c" ondblclick="actionSelectSupplier('{{$list->memberId}}','{{$list->nameChinese}}');">
             @else
-                <tr class="text-c @if($list->close) danger @endif" ondblclick="actionEdit('编辑','{{url('cms/supplier/'.$list->supplierId.'/edit')}}','1');" >
+                <tr class="text-c @if($list->close) danger @endif" data-title="{{$list->nameChinese}}" _href="{{url('cms/member')}}/{{$list->memberId}}/edit" ondblclick="Hui_admin_tab(this)" >
             @endif
 
             @if($selectSupplier)@else
-                <td class="tc"><input type="checkbox" name="id[]" value="{{$list->supplierId}}" selected=""></td>
+                <td class="tc"><input type="checkbox" name="id[]" value="{{$list->memberId}}" selected=""></td>
             @endif
 
             @foreach($whereField as $f=>$lista)
@@ -114,18 +147,14 @@
 
                  <td @if($list->close && !$selectSupplier) class=" danger " @endif>
                     @if($selectSupplier)
-                    <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->supplierId}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                    <a title="选择" href="javascript:;" onclick="actionSelectSupplier('{{$list->memberId}}','{{$list->fullName}}');" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                    @else
                     @if($list->close)
-                    <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->supplierId}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
+                    <a title="启用" href="javascript:;" onclick="actionDelete('{{$list->memberId}}',0)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>
                     @else
-                    <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->supplierId}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
+                    <a title="停用" href="javascript:;" onclick="actionDelete('{{$list->memberId}}',1)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>
                     @endif
 
-                    <a style="text-decoration:none" data-title="添加供应商联系人" title="添加供应商联系人" _href="{{url('cms/supplierContract/create/'.$list->supplierId)}}" onclick="Hui_admin_tab(this)" href="javascript:;">
-                        <i class="Hui-iconfont">&#xe600;</i>
-                    </a>
-                    <a title="编辑" href="javascript:;" onclick="actionEdit('角色编辑','{{url('cms/supplier/'.$list->supplierId.'/edit')}}','{{$list->supplierId}}')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
                     @endif
                 </td>
             </tr>
@@ -212,7 +241,7 @@ function actionDelete(id,status){
                 tag = true;
             }
 
-                $.post("{{url('cms/supplier/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}",'status':status},function(data){
+                $.post("{{url('cms/member/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}",'status':status},function(data){
                     layer.closeAll('loading');
                     if(data.status){
                         layer.msg(data.msg, {icon: 1,time:1000});
