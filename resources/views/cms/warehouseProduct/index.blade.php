@@ -34,9 +34,11 @@
                     <span class="select-box radius" style="width:120px" >
                       <select class="select" size="1" name="{{$table}}[{{$field}}]">
                       <option value="0" >无</option>
-                       @foreach($product_type as $key=>$value)
-                            <option value="{{$key}}"  @if($key==$fieldValue['value']) selected="selected"  @endif >{{$value}}</option>
-                        @endforeach
+                      @if($product_type)
+                           @foreach($product_type as $key=>$value)
+                                <option value="{{$key}}"  @if($key==$fieldValue['value']) selected="selected"  @endif >{{$value}}</option>
+                            @endforeach
+                       @endif
                       </select>
                     </span>
                 <?php }else{?>
