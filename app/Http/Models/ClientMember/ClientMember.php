@@ -21,6 +21,6 @@ class ClientMember extends Model
      * @return array
      */
     public static function sexList(){
-        return ['1'=>'先生','2'=>'女士'];
+        return ['0'=>'先生','1'=>'女士'];
     }
 }

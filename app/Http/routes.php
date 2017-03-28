@@ -53,6 +53,9 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cms','namespace'=>'CMS'
     //员工管理
     Route::resource('member', 'MemberController');
 
+    //员工管理
+    Route::resource('clientMember', 'ClientMemberController');
+
     //库房管理
     Route::resource('warehouse', 'WarehouseController');
 

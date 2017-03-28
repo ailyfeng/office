@@ -89,7 +89,7 @@
 			<dt><i class="Hui-iconfont">&#xe60d;</i> 员工管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a _href="{{url('cms/member')}}" data-title="员工列表" href="javascript:;">员工列表</a></li>
+					<li><a _href="{{url('cms/clientMember')}}" data-title="员工列表" href="javascript:;">员工列表</a></li>
 					<li><a _href="member-del.html" data-title="删除的员工" href="javascript:;">删除的会员</a></li>
 					<li><a _href="member-level.html" data-title="等级管理" href="javascript:;">等级管理</a></li>
 					<li><a _href="member-scoreoperation.html" data-title="积分管理" href="javascript:;">积分管理</a></li>
