@@ -106,10 +106,10 @@
                 <label class="form-label col-xs-4 col-sm-2">出生年月日：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('contractDate'))
-                        <input type="text" name="brithday" id="brithday" class=" input-text radius error" aria-required="true" readonly  aria-invalid="true">
-                        <label id="brithday-error" class="error" for="brithday">{{$errors->first('contractDate')}}</label>
+                        <input type="text" name="birthday" id="birthday" class=" input-text radius error" aria-required="true" readonly  aria-invalid="true">
+                        <label id="birthday-error" class="error" for="birthday">{{$errors->first('contractDate')}}</label>
                     @else
-                        <input type="text" name="brithday" id="brithday" class=" input-text radius " readonly  placeholder="0000-00-00">
+                        <input type="text" name="birthday" id="birthday" class=" input-text radius " readonly  placeholder="0000-00-00">
 
                     @endif
                 </div>
@@ -386,7 +386,7 @@ $(document).ready(function(){
 });
 
 laydate({
-    elem: '#brithday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+    elem: '#birthday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
     event: 'focus' //响应事件。如果没有传入event，则按照默认的click
 });
 

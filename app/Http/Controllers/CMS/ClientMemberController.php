@@ -97,8 +97,7 @@ class ClientMemberController extends CMSController
         if(!$data){
             return back()->with('errors','数据不存在！');
         }
-        $data->brithday = date('Y-m-d',$data->brithday);
-
+        $data->birthday = isset($data->birthday)?date('Y-m-d',$data->birthday):false;
 
         $sexList            = ClientMember::sexList();
 
@@ -127,7 +126,9 @@ class ClientMemberController extends CMSController
     public static function store(){
 
         $input = Input::except("_token");
+
 //dd($input);
+
         if($input){
 
             $validator = self::validatorData($input);
@@ -162,7 +163,7 @@ class ClientMemberController extends CMSController
         if(!is_array($input)){
             return false;
         }
-        $input['brithday'] = strtotime($input['brithday']);
+        $input['birthday'] = isset($input['birthday'])?strtotime($input['birthday']):false;
 
         $rules = [
                 'nameChinese'=>'required|max:30'
