@@ -46,7 +46,7 @@
 	</div>
 </header>
 <aside class="Hui-aside">
-	<input runat="server" id="divScrollValue" type="hidden" value="" />
+	<input runat="server" id="divScrollValue" type="hidden" value=""/>
 	<div class="menu_dropdown bk_2">
 		<dl id="menu-product">
 			<dt><i class="Hui-iconfont">&#xe620;</i> 产品管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
