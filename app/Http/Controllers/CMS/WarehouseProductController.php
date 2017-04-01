@@ -120,13 +120,13 @@ class WarehouseProductController extends CMSController
             $list['warehouse_product_type']=isset($Warehouse_product_type[$list['warehouse_product_type']])?$Warehouse_product_type[$list['warehouse_product_type']]:false;
             $list['product_type']=isset($product_type[$list['product_type']])?$product_type[$list['product_type']]:false;
         }
-// dd($data);
+
         //添加分页时的参数
         if($data){
             $data->appends($pageParam);
         }
 
-// dd($whereField);
+
         return view('cms.warehouseProduct.index',compact(
                                                     'data',
                                                     'selectSupplier',
