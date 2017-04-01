@@ -108,7 +108,7 @@ class WarehouseProductController extends CMSController
 
         $Warehouse_product_type = WarehouseProduct::type();
         $product_typeTmp    =  Classify::where('type','=',1)->get();
-
+        $product_type = array();
         foreach ($product_typeTmp as $list) {
             # code...
             $product_type[$list['id']] = $list['name'];
