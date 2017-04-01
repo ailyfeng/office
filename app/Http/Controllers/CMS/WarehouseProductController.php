@@ -126,7 +126,6 @@ class WarehouseProductController extends CMSController
             $data->appends($pageParam);
         }
 
-
         return view('cms.warehouseProduct.index',compact(
                                                     'data',
                                                     'selectSupplier',
