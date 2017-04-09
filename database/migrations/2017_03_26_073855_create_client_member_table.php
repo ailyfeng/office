@@ -12,7 +12,7 @@ class CreateClientMemberTable extends Migration
      */
     public function up()
     {
-        //
+
         Schema::create('client_member', function (Blueprint $table) {
             $table->increments('id')->comment('客户联系人ID');
             $table->string('nameChinese',30)->comment('联系人姓名');

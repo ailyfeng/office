@@ -23,15 +23,18 @@ class AlertController extends CMSController
 	 *	@param 	Url 		$url 	地址
 	 *
 	 */
-    public static function show($mes=false,$url=false){
+    public static function show(Request $resques){
 
-    	if(!$mes){
+    	if(!$resques->mes){
 
     		$mes = '操作错误信息提示';
     	
-    	}
-    	
-    	$url = urldecode($url);
+    	}else{
+
+            $mes = $resques->mes;
+        }
+    	$url = urldecode($resques->url);
+
     	
         return view('cms.alert.show',compact('mes','url'));
     

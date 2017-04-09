@@ -139,7 +139,7 @@
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">座机电话：</label>
+                <label class="form-label col-xs-4 col-sm-2">座机分机：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     @if($errors->has('phoneExt'))
                         <input type="text" name="phoneExt" class=" input-text radius error" aria-required="true"  aria-invalid="true">

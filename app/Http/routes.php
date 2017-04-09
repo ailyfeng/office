@@ -34,7 +34,7 @@ Route::group(['middleware' => ['admin.login'],'prefix'=>'cmss','namespace'=>'Off
 
     //公司产品
     Route::resource('product','ProductController');
-    
+
     //上传文件
     Route::any('upload', 'OfficeCMSController@upload');
 
